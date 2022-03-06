@@ -62,10 +62,10 @@ top_right_frame = LabelFrame(frame_right ,text="Assessmention Section" )
 top_right_frame.grid(row=0,column=0, sticky="nsew")
 
 assessment_labal = Label(top_right_frame, text="Dates Assessment Before Cutting: " + str(random.randint(3000,5000)))
-assessment_labal.grid(row=0, column=0, sticky="w", pady=50)
+assessment_labal.grid(row=0, column=0, sticky="w", pady=10)
 
 assessment_after_labal = Label(top_right_frame, text="Dates Assessment After Cutting: " + str(random.randint(1000,3000)))
-assessment_after_labal.grid(row=1, column=0, sticky="w", pady=50)
+assessment_after_labal.grid(row=1, column=0, sticky="w", pady=10)
 assessment_after_labal.grid_forget()
 
 
@@ -140,15 +140,11 @@ def submit_entry():
     # resized_image1 = palm_img1.resize((screen_width_sansan, screen_height_sansan), Image.ANTIALIAS)
     # sansan_image = ImageTk.PhotoImage(resized_image1)
     #
-    # # Grid Configurations
-    # Grid.rowconfigure(root, index=0, weight=2)
-    # Grid.columnconfigure(root, index=0, weight=2)
-    #
     #
     # my_Sansan_label = Label(Sansan_Window, image=sansan_image)
     # my_Sansan_label.grid(row=0, column=0)
-    # quit_button = Button(Sansan_Window, text="I had finished drewing", command=Sansan_Window.destroy)
-    # quit_button.grid(row=1,column=0)
+    # quit_button = Button(Sansan_Window, text="I had finished drawing", command=Sansan_Window.destroy)
+    # quit_button.grid(row=1, column=0)
     # #if leading_Sansan ==False:
 
 
@@ -175,23 +171,23 @@ selectedRadio.grid(row=5, column=0, columnspan=2)
 ##--------------------------Right Top 3 Frame-------------------------##
 
 top3_right_frame = LabelFrame(frame_right, text="Confirm The process section")
-top3_right_frame.grid(row=2,column=0)
+top3_right_frame.grid(row=2, column=0)
 
 def confirmation_click():
-    responed = messagebox.askyesno("Final Confirmation" , "Are you sure you want to do the cuttin? there is no way back from here!")
+    responed = messagebox.askyesno("Final Confirmation", "Are you sure you want to do the cuttin? there is no way back from here!")
     Label(top3_right_frame, text=responed).pack()
     # if responed == 1:
 
 
 
 final_confirmation = Button(top3_right_frame, text="Are you sure you want to cut?", command=confirmation_click)
-final_confirmation.grid(row=0,column=0,pady=10,padx=65)
+final_confirmation.grid(row=0, column=0, pady=10, padx=65)
 final_confirmation.grid_forget()
 
 
 ##--------------------------Right Top 4 Frame-------------------------##
-top4_right_frame = LabelFrame(frame_right,text="The lenth the robot move section")
-top4_right_frame.grid(row=3,column=0, sticky="nsew")
+top4_right_frame = LabelFrame(frame_right, text="The length the robot move section")
+top4_right_frame.grid(row=3, column=0, sticky="nsew")
 
 def range_calculator():
     return 40
