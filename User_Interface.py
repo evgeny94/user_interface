@@ -7,6 +7,9 @@ root = Tk()
 root.title('User Interface')
 root.iconbitmap('images/icon.ico')
 
+# For the submit button
+num_clicked = 0
+
 screen_width = int(int(root.winfo_screenwidth())*0.92)
 screen_height = int(int(root.winfo_screenheight())*0.9)
 
@@ -109,9 +112,26 @@ def range_calculator():
 
 def clear_entry():
     global L_length_range_label_unpressed
+    global assessment_afterCut_label
+    global L_length_range_label
+    global num_clicked
 
     ge.delete(0, END)
 
+    num_clicked = 0
+    assessment_afterCut_label.grid_forget()
+    L_length_range_label.grid_forget()
+    L_length_range_label_unpressed = Label(top3_right_frame,
+                                           text="The distance that the robot will pass will appear here\n after pressing on the submit button.",
+                                           justify=LEFT)
+    L_length_range_label_unpressed.grid(row=0, column=0, pady=10)
+
+def submit_restart():
+    global L_length_range_label_unpressed
+    global assessment_afterCut_label
+    global L_length_range_label
+
+    assessment_afterCut_label.grid_forget()
     L_length_range_label.grid_forget()
     L_length_range_label_unpressed = Label(top3_right_frame,
                                            text="The distance that the robot will pass will appear here\n after pressing on the submit button.",
@@ -119,27 +139,66 @@ def clear_entry():
     L_length_range_label_unpressed.grid(row=0, column=0, pady=10)
 
 def submit_entry():
-    global leading_Sansan
     global ge
     global new_image
     global L_length_range_label
+    global assessment_afterCut_label
+    global L_length_range_label_unpressed
+    global num_clicked
 
-    assessment_afterCut_label = Label(top1_right_frame, text="Dates Assessment After Cutting: " + str(int(ge.get()) + random.randint(-50, 50)))
-    assessment_afterCut_label.grid(row=1, column=0, sticky="w", pady=5)
+    num_clicked = num_clicked + 1
 
-    Sansan_Window = Toplevel()
-    Sansan_Window.title('Marking The Leading Sansan Manually')
+    # Number of clicks on submit for deleting previous grids
+    # First time clicked
+    if num_clicked == 1:
+        found_respond = messagebox.askyesno("Manual decision about the <Leading Sansan>",
+                                            "Has the computational system found the <Leading Sansan>?")
+        # Leading Sansan found
+        if found_respond == 1:
+            assessment_afterCut_label = Label(top1_right_frame, text="Dates Assessment After Cutting: " + str(
+                int(ge.get()) + random.randint(-50, 50)))
+            assessment_afterCut_label.grid(row=1, column=0, sticky="w", pady=5)
 
-    my_Sansan_label = Label(Sansan_Window, image=new_image)
-    my_Sansan_label.grid(row=0, column=0)
-    quit_button = Button(Sansan_Window, text="I had finished drawing", command=Sansan_Window.destroy)
-    quit_button.grid(row=1, column=0, pady=5)
+            L_length_range_label_unpressed.grid_forget()
+            L_length_range_label = Label(top3_right_frame, text="The distance that the robot will pass is: " + str(
+                range_calculator()) + " Centimeters")
+            L_length_range_label.grid(row=0, column=0, pady=10)
+        # Leading Sansan not found
+        else:
+            Sansan_Window = Toplevel()
+            Sansan_Window.title('Marking The Leading Sansan Manually')
 
-    L_length_range_label_unpressed.grid_forget()
-    L_length_range_label = Label(top3_right_frame, text="The distance that the robot will pass is: " + str(range_calculator()) + " Centimeters")
-    L_length_range_label.grid(row=0, column=0, pady=10)
+            my_Sansan_label = Label(Sansan_Window, image=new_image)
+            my_Sansan_label.grid(row=0, column=0)
+            quit_button = Button(Sansan_Window, text="I had finished drawing", command=Sansan_Window.destroy)
+            quit_button.grid(row=1, column=0, pady=5)
+    # Already clicked
+    else:
+        submit_restart()
+        found_respond = messagebox.askyesno("Manual decision about the <Leading Sansan>",
+                                            "Has the computational system found the <Leading Sansan>?")
+        # Leading Sansan found
+        if found_respond == 1:
+            assessment_afterCut_label = Label(top1_right_frame, text="Dates Assessment After Cutting: " + str(
+                int(ge.get()) + random.randint(-50, 50)))
+            assessment_afterCut_label.grid(row=1, column=0, sticky="w", pady=5)
 
-    #if leading_Sansan ==False:
+            L_length_range_label_unpressed.grid_forget()
+            L_length_range_label = Label(top3_right_frame, text="The distance that the robot will pass is: " + str(
+                range_calculator()) + " Centimeters")
+            L_length_range_label.grid(row=0, column=0, pady=10)
+        # Leading Sansan not found
+        else:
+            Sansan_Window = Toplevel()
+            Sansan_Window.title('Marking The Leading Sansan Manually')
+
+            my_Sansan_label = Label(Sansan_Window, image=new_image)
+            my_Sansan_label.grid(row=0, column=0)
+            quit_button = Button(Sansan_Window, text="I had finished drawing", command=Sansan_Window.destroy)
+            quit_button.grid(row=1, column=0, pady=5)
+
+
+
 
 
 Radiobutton(top2_right_frame, text="Manual marking on the image", variable=r, value="Manual marking", command=lambda : clicked(r.get())).grid(row=2, column=0, sticky="w")
@@ -158,7 +217,6 @@ b_clear.grid(row=4, column=1, sticky="w")
 selectedRadio = Label(top2_right_frame, text="Option Selected: " + str(r.get()))
 selectedRadio.grid(row=5, column=0, columnspan=2)
 
-# Case we don't found the leading Sansan
 ##--------------------------Right Top 3 Frame-------------------------##
 top3_right_frame = LabelFrame(frame_right, text="Trajectory Length Section")
 top3_right_frame.grid(row=2, column=0, sticky="nsew")
@@ -174,9 +232,9 @@ top4_right_frame = LabelFrame(frame_right, text="Final Confirmation")
 top4_right_frame.grid(row=3, column=0, sticky="nsew")
 
 def confirmation_click():
-    respond = messagebox.askyesno("Final Confirmation", "Are you sure you want to do the cut? There is no way back from here.")
+    confirmation_respond = messagebox.askyesno("Final Confirmation", "Are you sure you want to do the cut? There is no way back from here.")
 
-    # if respond == 1:
+    # if confirmation_respond == 1:
 
 final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10)
 final_confirmation.pack(pady=10)
