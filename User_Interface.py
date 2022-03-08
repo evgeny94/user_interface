@@ -9,10 +9,10 @@ root.iconbitmap('images/icon.ico')
 
 screen_width = int(int(root.winfo_screenwidth())*0.92)
 screen_height = int(int(root.winfo_screenheight())*0.9)
-print(screen_width)
-print(screen_height)
+
 screen_width1 = root.winfo_screenwidth()
 screen_height1 = root.winfo_screenheight()
+
 geometry = str(screen_width) + "x" + str(screen_height)
 
 root.geometry(geometry)
@@ -32,51 +32,41 @@ Grid.columnconfigure(root, index=0, weight=2)
 ##--------------------------Left Side-------------------------##
 
 # Frame Creation
-frame = LabelFrame(root, text="Picture")
-frame.grid(row=0, column=0, sticky="nsew")
+frame_left = LabelFrame(root, text="Picture")
+frame_left.grid(row=0, column=0, sticky="nsew")
 
 # Frame Configuration
-frame.rowconfigure(index=0, weight=1)
-frame.columnconfigure(index=0, weight=1)
+frame_left.rowconfigure(index=0, weight=1)
+frame_left.columnconfigure(index=0, weight=1)
 
-my_label = Label(frame, image=new_image)
+my_label = Label(frame_left, image=new_image)
 my_label.grid(row=0, column=0, columnspan=2, sticky="nsew")
 
 ##--------------------------Right Side-------------------------##
-
 # Frame Creation
 frame_right = LabelFrame(root, text="Information Section")
 frame_right.grid(row=0, column=1, sticky="nsew")
 
 # Frame Configuration
-frame_right.rowconfigure(index=0, weight=0)
-frame_right.columnconfigure(index=0, weight=0)
-frame_right.rowconfigure(index=1, weight=0)
-frame_right.columnconfigure(index=1, weight=0)
-frame_right.rowconfigure(index=2, weight=0)
+frame_right.rowconfigure(index=0, weight=1)
+frame_right.rowconfigure(index=1, weight=1)
+frame_right.rowconfigure(index=2, weight=1)
 frame_right.rowconfigure(index=3, weight=0)
 
-##--------------------------Right Top Frame-------------------------##
+##--------------------------Right Top 1 Frame-------------------------##
 
-top_right_frame = LabelFrame(frame_right ,text="Assessmention Section" )
-top_right_frame.grid(row=0,column=0, sticky="nsew")
+top1_right_frame = LabelFrame(frame_right, text="Assessmention Section")
+top1_right_frame.grid(row=0, column=0, sticky="nsew")
 
-assessment_labal = Label(top_right_frame, text="Dates Assessment Before Cutting: " + str(random.randint(3000,5000)))
-assessment_labal.grid(row=0, column=0, sticky="w", pady=10)
-
-assessment_after_labal = Label(top_right_frame, text="Dates Assessment After Cutting: " + str(random.randint(1000,3000)))
-assessment_after_labal.grid(row=1, column=0, sticky="w", pady=10)
-assessment_after_labal.grid_forget()
-
+assessment_label = Label(top1_right_frame, text="Dates Assessment Before Cutting: " + str(random.randint(3000, 5000)))
+assessment_label.grid(row=0, column=0, sticky="w", pady=10)
 
 ##--------------------------Right Top 2 Frame-------------------------##
-top2_right_frame = LabelFrame(frame_right,text="Cutting Option Section")
-top2_right_frame.grid(row=1,column=0, sticky="nsew")
-
-
+top2_right_frame = LabelFrame(frame_right, text="Cutting Option Section")
+top2_right_frame.grid(row=1, column=0, sticky="nsew")
 
 option_label = Label(top2_right_frame, text="Choose an option for operation:")
-option_label.grid(row=1, column=0, sticky="w",pady=10)
+option_label.grid(row=1, column=0, sticky="w", pady=10)
 
 # Radio Buttons
 r = StringVar()
@@ -119,34 +109,21 @@ def clear_entry():
 
 def submit_entry():
     global leading_Sansan
-    ge.delete(0, END)
-    assessment_labal = Label(top_right_frame,
-                             text="Dates Assessment Before Cutting: " + str(random.randint(3000, 5000)))
-    assessment_labal.grid(row=0, column=0, sticky="w", pady=50)
+    global ge
+    global new_image
 
-    assessment_after_labal = Label(top_right_frame,
-                                   text="Dates Assessment After Cutting: " + str(random.randint(1000, 3000)))
-    assessment_after_labal.grid(row=1, column=0, sticky="w", pady=50)
-    assessment_labal.grid_forget()
+    assessment_afterCut_label = Label(top1_right_frame, text="Dates Assessment After Cutting: " + str(int(ge.get()) + random.randint(-50, 50)))
+    assessment_afterCut_label.grid(row=1, column=0, sticky="w", pady=5)
 
-    # Sansan_Window = Toplevel()
-    # Sansan_Window.title('Puting The Leading Sansan By Yourself')
-    #
-    # screen_width_sansan = int(int(Sansan_Window.winfo_screenwidth()) * 0.92)
-    # screen_height_sansan = int(int(Sansan_Window.winfo_screenheight()) * 0.9)
-    # geometry = str(screen_width_sansan) + "x" + str(screen_height_sansan)
-    # Sansan_Window.geometry(geometry)
-    # palm_img1 = Image.open('images/palm.jpg')
-    # resized_image1 = palm_img1.resize((screen_width_sansan, screen_height_sansan), Image.ANTIALIAS)
-    # sansan_image = ImageTk.PhotoImage(resized_image1)
-    #
-    #
-    # my_Sansan_label = Label(Sansan_Window, image=sansan_image)
-    # my_Sansan_label.grid(row=0, column=0)
-    # quit_button = Button(Sansan_Window, text="I had finished drawing", command=Sansan_Window.destroy)
-    # quit_button.grid(row=1, column=0)
-    # #if leading_Sansan ==False:
+    Sansan_Window = Toplevel()
+    Sansan_Window.title('Marking The Leading Sansan Manually')
 
+    my_Sansan_label = Label(Sansan_Window, image=new_image)
+    my_Sansan_label.grid(row=0, column=0)
+    quit_button = Button(Sansan_Window, text="I had finished drawing", command=Sansan_Window.destroy)
+    quit_button.grid(row=1, column=0, pady=5)
+
+    #if leading_Sansan ==False:
 
 
 Radiobutton(top2_right_frame, text="Manual marking on the image", variable=r, value="Manual marking", command=lambda : clicked(r.get())).grid(row=2, column=0, sticky="w")
@@ -166,46 +143,26 @@ selectedRadio = Label(top2_right_frame, text="Option Selected: " + str(r.get()))
 selectedRadio.grid(row=5, column=0, columnspan=2)
 
 # Case we don't found the leading Sansan
-
-
 ##--------------------------Right Top 3 Frame-------------------------##
-
-top3_right_frame = LabelFrame(frame_right, text="Confirm The process section")
-top3_right_frame.grid(row=2, column=0)
-
-def confirmation_click():
-    responed = messagebox.askyesno("Final Confirmation", "Are you sure you want to do the cuttin? there is no way back from here!")
-    Label(top3_right_frame, text=responed).pack()
-    # if responed == 1:
-
-
-
-final_confirmation = Button(top3_right_frame, text="Are you sure you want to cut?", command=confirmation_click)
-final_confirmation.grid(row=0, column=0, pady=10, padx=65)
-final_confirmation.grid_forget()
-
-
-##--------------------------Right Top 4 Frame-------------------------##
-top4_right_frame = LabelFrame(frame_right, text="The length the robot move section")
-top4_right_frame.grid(row=3, column=0, sticky="nsew")
+top3_right_frame = LabelFrame(frame_right, text="Trajectory Length Section")
+top3_right_frame.grid(row=2, column=0, sticky="nsew")
 
 def range_calculator():
     return 40
 
-L_length_range_labal = Label(top4_right_frame,text="The Distance The Robot Will Move Is: " +str(range_calculator()))
-L_length_range_labal.grid(row=0, column=0, pady=10)
-L_length_range_labal.grid_forget()
+L_length_range_label = Label(top3_right_frame,text="The distance that the robot will pass is: " +str(range_calculator()) + " Centimeters")
+L_length_range_label.grid(row=0, column=0, pady=10)
 
+##--------------------------Right Top 4 Frame-------------------------##
+top4_right_frame = LabelFrame(frame_right, text="Final Confirmation")
+top4_right_frame.grid(row=3, column=0, sticky="nsew")
 
+def confirmation_click():
+    respond = messagebox.askyesno("Final Confirmation", "Are you sure you want to do the cut? There is no way back from here.")
 
-#while TRUE:
-#    root.update()
-#    width = frame.winfo_width()
-#    height = frame.winfo_height()
-#    print("The width of the label is:", width,height, "pixels")
+    # if respond == 1:
 
-#b = Button(frame, text="Click Here")
-#b.grid(row=1, column=0, sticky="nsew")
-
+final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10)
+final_confirmation.pack(pady=10)
 
 root.mainloop()
