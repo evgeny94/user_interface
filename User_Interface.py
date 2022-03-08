@@ -104,13 +104,25 @@ def clicked(value):
     selectedRadio = Label(top2_right_frame, text="Option Selected: " + str(value))
     selectedRadio.grid(row=5, column=0, columnspan=2)
 
+def range_calculator():
+    return random.randint(50, 70)
+
 def clear_entry():
+    global L_length_range_label_unpressed
+
     ge.delete(0, END)
+
+    L_length_range_label.grid_forget()
+    L_length_range_label_unpressed = Label(top3_right_frame,
+                                           text="The distance that the robot will pass will appear here\n after pressing on the submit button.",
+                                           justify=LEFT)
+    L_length_range_label_unpressed.grid(row=0, column=0, pady=10)
 
 def submit_entry():
     global leading_Sansan
     global ge
     global new_image
+    global L_length_range_label
 
     assessment_afterCut_label = Label(top1_right_frame, text="Dates Assessment After Cutting: " + str(int(ge.get()) + random.randint(-50, 50)))
     assessment_afterCut_label.grid(row=1, column=0, sticky="w", pady=5)
@@ -122,6 +134,10 @@ def submit_entry():
     my_Sansan_label.grid(row=0, column=0)
     quit_button = Button(Sansan_Window, text="I had finished drawing", command=Sansan_Window.destroy)
     quit_button.grid(row=1, column=0, pady=5)
+
+    L_length_range_label_unpressed.grid_forget()
+    L_length_range_label = Label(top3_right_frame, text="The distance that the robot will pass is: " + str(range_calculator()) + " Centimeters")
+    L_length_range_label.grid(row=0, column=0, pady=10)
 
     #if leading_Sansan ==False:
 
@@ -147,11 +163,11 @@ selectedRadio.grid(row=5, column=0, columnspan=2)
 top3_right_frame = LabelFrame(frame_right, text="Trajectory Length Section")
 top3_right_frame.grid(row=2, column=0, sticky="nsew")
 
-def range_calculator():
-    return 40
+L_length_range_label_unpressed = Label(top3_right_frame,
+                                       text="The distance that the robot will pass will appear here\n after pressing on the submit button.",
+                                       justify=LEFT)
+L_length_range_label_unpressed.grid(row=0, column=0, pady=10)
 
-L_length_range_label = Label(top3_right_frame,text="The distance that the robot will pass is: " +str(range_calculator()) + " Centimeters")
-L_length_range_label.grid(row=0, column=0, pady=10)
 
 ##--------------------------Right Top 4 Frame-------------------------##
 top4_right_frame = LabelFrame(frame_right, text="Final Confirmation")
