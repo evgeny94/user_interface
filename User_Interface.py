@@ -25,7 +25,6 @@ palm_img = Image.open('images/palm.jpg')
 #Resize the Image using resize method
 resized_image = palm_img.resize((screen_width, screen_height), Image.ANTIALIAS)
 new_image = ImageTk.PhotoImage(resized_image)
-#palm_img = ImageTk.PhotoImage(Image.open('images/palm.jpg'))  not sure why it's here
 # Grid Configurations
 Grid.rowconfigure(root, index=0, weight=2)
 Grid.columnconfigure(root, index=0, weight=2)
