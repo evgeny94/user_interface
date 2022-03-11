@@ -8,7 +8,7 @@ root.title('Radio')
 
 r = IntVar()
 r.set("0")
-
+#555
 def myDelete():
     myLabel.pack_forget()
 
