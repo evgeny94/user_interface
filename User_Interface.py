@@ -41,8 +41,13 @@ frame_left.grid(row=0, column=0, sticky="nsew")
 frame_left.rowconfigure(index=0, weight=1)
 frame_left.columnconfigure(index=0, weight=1)
 
-my_label = Label(frame_left, image=new_image)
-my_label.grid(row=0, column=0, columnspan=2, sticky="nsew")
+#my_label = Label(frame_left, image=new_image)
+#my_label.pack(fill=BOTH, expand=YES)
+
+## Canvas
+canvas = Canvas(frame_left)
+canvas.pack(anchor='nw', fill='both', expand=1)
+canvas.create_image(0, 0, image=new_image, anchor='nw')
 
 ##--------------------------Right Side-------------------------##
 # Frame Creation
