@@ -7,9 +7,7 @@ root = Tk()
 root.title('User Interface')
 root.iconbitmap('images/icon.ico')
 
-# For the submit button
-num_clicked = 0
-
+## --------------- Screen configurations --------------- ##
 screen_width = int(int(root.winfo_screenwidth())*0.92)
 screen_height = int(int(root.winfo_screenheight())*0.9)
 
@@ -20,105 +18,138 @@ geometry = str(screen_width) + "x" + str(screen_height)
 
 root.geometry(geometry)
 
-palm_img = Image.open('images/palm.jpg')
-
-#Resize the Image using resize method
-resized_image = palm_img.resize((screen_width, screen_height), Image.ANTIALIAS)
-new_image = ImageTk.PhotoImage(resized_image)
-# Grid Configurations
-Grid.rowconfigure(root, index=0, weight=2)
-Grid.columnconfigure(root, index=0, weight=2)
-#Grid.rowconfigure(root, index=1, weight=1)
-
-
-##--------------------------Left Side-------------------------##
-
-# Frame Creation
+## --------------- Frames --------------- ##
+# Frame Creation Left
 frame_left = LabelFrame(root, text="Picture")
 frame_left.grid(row=0, column=0, sticky="nsew")
 
-# Frame Configuration
+# Frame Configuration Left
 frame_left.rowconfigure(index=0, weight=1)
 frame_left.columnconfigure(index=0, weight=1)
 
-#my_label = Label(frame_left, image=new_image)
-#my_label.pack(fill=BOTH, expand=YES)
-
-## Canvas
-canvas = Canvas(frame_left)
-canvas.pack(anchor='nw', fill='both', expand=1)
-canvas.create_image(0, 0, image=new_image, anchor='nw')
-
-##--------------------------Right Side-------------------------##
-# Frame Creation
+# Frame Creation Right
 frame_right = LabelFrame(root, text="Information Section")
 frame_right.grid(row=0, column=1, sticky="nsew")
 
-# Frame Configuration
+# Frame Configuration Right
 frame_right.rowconfigure(index=0, weight=1)
 frame_right.rowconfigure(index=1, weight=1)
 frame_right.rowconfigure(index=2, weight=1)
 frame_right.rowconfigure(index=3, weight=0)
 
-##--------------------------Right Top 1 Frame-------------------------##
-
+# Right Top 1 Frame
 top1_right_frame = LabelFrame(frame_right, text="Assessmention Section")
 top1_right_frame.grid(row=0, column=0, sticky="nsew")
 
-assessment_label = Label(top1_right_frame, text="Dates Assessment Before Cutting: " + str(random.randint(3000, 5000)))
-assessment_label.grid(row=0, column=0, sticky="w", pady=10)
-
-##--------------------------Right Top 2 Frame-------------------------##
+# Right Top 2 Frame
 top2_right_frame = LabelFrame(frame_right, text="Cutting Option Section")
 top2_right_frame.grid(row=1, column=0, sticky="nsew")
 
-option_label = Label(top2_right_frame, text="Choose an option for operation:")
-option_label.grid(row=1, column=0, sticky="w", pady=10)
+# Right Top 3 Frame
+top3_right_frame = LabelFrame(frame_right, text="Trajectory Length Section")
+top3_right_frame.grid(row=2, column=0, sticky="nsew")
 
-# Radio Buttons
-r = StringVar()
-r.set("None")
+# Right Top 4 Frame
+top4_right_frame = LabelFrame(frame_right, text="Final Confirmation")
+top4_right_frame.grid(row=3, column=0, sticky="nsew")
+
+## --------------- Variables & Image --------------- ##
+# For the submit button
+num_clicked = 0
+
+
+# Image + Configurations
+palm_img = Image.open('images/palm.jpg')
+
+resized_image = palm_img.resize((screen_width, screen_height), Image.ANTIALIAS)
+new_image = ImageTk.PhotoImage(resized_image)
+
+
+## --------------- Functions --------------- ##
+def get_xy(event):
+    global lasx, lasy
+    lasx, lasy = event.x, event.y
+
+def draw(event):
+    global lasx, lasy, line
+    line = canvas.create_line((lasx, lasy, event.x, event.y), width=3, tags='currentline')
+    lasx, lasy = event.x, event.y
+
+def clear_drawing():
+    global canvas, line
+    canvas.delete('currentline')
+
+def doneStroke(event):
+    canvas.itemconfigure('currentline', width=3)
 
 def myDelete():
     selectedRadio.grid_forget()
 
 def clicked(value):
-    global selectedRadio
-    global ge
-    global b_submit
-    global b_clear
+    global selectedRadio, ge, b_submit, b_clear, b_clear_draw, manual_mark
 
     myDelete()
     if value == "Input of amount":
+        # Clear and Disable Drawing
+        clear_drawing()
+        canvas.bind("<Button-1>", 'none')
+        canvas.bind("<B1-Motion>", 'none')
+        canvas.bind("<B1-ButtonRelease>", 'none')
+
+        # Entry
         ge = Entry(top2_right_frame, width=28, borderwidth=2)
-        ge.grid(row=4, column=0, sticky="w", padx=5, pady=10)
+        ge.grid(row=5, column=0, sticky="w", padx=5, pady=10)
 
+        # Submit Button
         b_submit = Button(top2_right_frame, text="Submit", command=submit_entry)
-        b_submit.grid(row=4, column=0, sticky="e", padx=10, pady=10)
+        b_submit.grid(row=5, column=0, sticky="e", padx=10, pady=10)
 
+        # Clear Entry Button
         b_clear = Button(top2_right_frame, text="Clear", command=clear_entry)
-        b_clear.grid(row=4, column=1, sticky="w")
+        b_clear.grid(row=5, column=1, sticky="w")
+
+        # Completed Drawing Button DISABLED
+        b_done_draw = Button(top2_right_frame, text="Continue", command=clear_drawing, state=DISABLED)
+        b_done_draw.grid(row=3, column=0, padx=50, pady=10, sticky="w")
+
+        # Clear Drawing Button DISABLED
+        b_clear_draw = Button(top2_right_frame, text="Clear Drawing", command=clear_drawing, state=DISABLED)
+        b_clear_draw.grid(row=3, column=0, padx=50, pady=10, sticky="e", columnspan=2)
     else:
+        # Enable Drawing
+        canvas.bind("<Button-1>", get_xy)
+        canvas.bind("<B1-Motion>", draw)
+        canvas.bind("<B1-ButtonRelease>", doneStroke)
+
+        # Entry DISABLED
         ge = Entry(top2_right_frame, width=28, borderwidth=2, state=DISABLED)
-        ge.grid(row=4, column=0, sticky="w", padx=5, pady=10)
+        ge.grid(row=5, column=0, sticky="w", padx=5, pady=10)
 
+        # Submit Button DISABLED
         b_submit = Button(top2_right_frame, text="Submit", command=submit_entry, state=DISABLED)
-        b_submit.grid(row=4, column=0, sticky="e", padx=10, pady=10)
+        b_submit.grid(row=5, column=0, sticky="e", padx=10, pady=10)
 
+        # Clear Entry Button DISABLED
         b_clear = Button(top2_right_frame, text="Clear", command=clear_entry, state=DISABLED)
-        b_clear.grid(row=4, column=1, sticky="w")
+        b_clear.grid(row=5, column=1, sticky="w")
 
+        # Completed Drawing Button DISABLED
+        b_done_draw = Button(top2_right_frame, text="Continue", command=clear_drawing)
+        b_done_draw.grid(row=3, column=0, padx=50, pady=10, sticky="w")
+
+        # Clear Drawing Button DISABLED
+        b_clear_draw = Button(top2_right_frame, text="Clear Drawing", command=clear_drawing)
+        b_clear_draw.grid(row=3, column=0, padx=50, pady=10, sticky="e", columnspan=2)
+
+    # Selected String From Radio Buttons
     selectedRadio = Label(top2_right_frame, text="Option Selected: " + str(value))
-    selectedRadio.grid(row=5, column=0, columnspan=2)
+    selectedRadio.grid(row=6, column=0, columnspan=2)
 
 def range_calculator():
     return random.randint(50, 70)
 
 def clear_entry():
-    global L_length_range_label_unpressed
-    global assessment_afterCut_label
-    global L_length_range_label
-    global num_clicked
+    global L_length_range_label_unpressed, assessment_afterCut_label, L_length_range_label, num_clicked, final_confirmation
 
     ge.delete(0, END)
 
@@ -130,10 +161,14 @@ def clear_entry():
                                            justify=LEFT)
     L_length_range_label_unpressed.grid(row=0, column=0, pady=10)
 
+    # Disabling Cut Button
+    final_confirmation.pack_forget()
+    final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10,
+                                state=DISABLED)
+    final_confirmation.pack(pady=10)
+
 def submit_restart():
-    global L_length_range_label_unpressed
-    global assessment_afterCut_label
-    global L_length_range_label
+    global L_length_range_label_unpressed, assessment_afterCut_label, L_length_range_label, final_confirmation
 
     assessment_afterCut_label.grid_forget()
     L_length_range_label.grid_forget()
@@ -142,13 +177,14 @@ def submit_restart():
                                            justify=LEFT)
     L_length_range_label_unpressed.grid(row=0, column=0, pady=10)
 
+    # Disabling Cut Button
+    final_confirmation.pack_forget()
+    final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10,
+                                state=DISABLED)
+    final_confirmation.pack(pady=10)
+
 def submit_entry():
-    global ge
-    global new_image
-    global L_length_range_label
-    global assessment_afterCut_label
-    global L_length_range_label_unpressed
-    global num_clicked
+    global ge, new_image, L_length_range_label, assessment_afterCut_label, L_length_range_label_unpressed, num_clicked, final_confirmation
 
     num_clicked = num_clicked + 1
 
@@ -164,11 +200,23 @@ def submit_entry():
             assessment_afterCut_label.grid(row=1, column=0, sticky="w", pady=5)
 
             L_length_range_label_unpressed.grid_forget()
+
             L_length_range_label = Label(top3_right_frame, text="The distance that the robot will pass is: " + str(
                 range_calculator()) + " Centimeters")
             L_length_range_label.grid(row=0, column=0, pady=10)
+
+            # Enabling Cut Button
+            final_confirmation.pack_forget()
+            final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10)
+            final_confirmation.pack(pady=10)
+
         # Leading Sansan not found
         else:
+            # Disabling Cut Button
+            final_confirmation.pack_forget()
+            final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10, state=DISABLED)
+            final_confirmation.pack(pady=10)
+
             Sansan_Window = Toplevel()
             Sansan_Window.title('Marking The Leading Sansan Manually')
 
@@ -191,8 +239,19 @@ def submit_entry():
             L_length_range_label = Label(top3_right_frame, text="The distance that the robot will pass is: " + str(
                 range_calculator()) + " Centimeters")
             L_length_range_label.grid(row=0, column=0, pady=10)
+
+            # Enabling Cut Button
+            final_confirmation.pack_forget()
+            final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10)
+            final_confirmation.pack(pady=10)
         # Leading Sansan not found
         else:
+            # Disabling Cut Button
+            final_confirmation.pack_forget()
+            final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10,
+                                        state=DISABLED)
+            final_confirmation.pack(pady=10)
+
             Sansan_Window = Toplevel()
             Sansan_Window.title('Marking The Leading Sansan Manually')
 
@@ -201,29 +260,68 @@ def submit_entry():
             quit_button = Button(Sansan_Window, text="I had finished drawing", command=Sansan_Window.destroy)
             quit_button.grid(row=1, column=0, pady=5)
 
+def confirmation_click():
+    confirmation_respond = messagebox.askyesno("Final Confirmation", "Are you sure you want to do the cut? There is no way back from here.")
+
+    # if confirmation_respond == 1:
 
 
+##------------##-------------- MAIN -------------##------------##
+# Grid Configurations
+Grid.rowconfigure(root, index=0, weight=2)
+Grid.columnconfigure(root, index=0, weight=2)
+#Grid.rowconfigure(root, index=1, weight=1)
 
+
+##--------------------------Left Side-------------------------##
+# Main Canvas
+canvas = Canvas(frame_left)
+canvas.pack(anchor='nw', fill='both', expand=1)
+canvas.create_image(0, 0, image=new_image, anchor='nw')
+
+##--------------------------Right Side-------------------------##
+##--------------------------Right Top 1 Frame-------------------------##
+
+assessment_label = Label(top1_right_frame, text="Dates Assessment Before Cutting: " + str(random.randint(3000, 5000)))
+assessment_label.grid(row=0, column=0, sticky="w", pady=10)
+
+##--------------------------Right Top 2 Frame-------------------------##
+
+option_label = Label(top2_right_frame, text="Choose an option for operation:")
+option_label.grid(row=1, column=0, sticky="w", pady=10)
+
+# Radio Buttons
+r = StringVar()
+r.set("None")
 
 Radiobutton(top2_right_frame, text="Manual marking on the image", variable=r, value="Manual marking", command=lambda : clicked(r.get())).grid(row=2, column=0, sticky="w")
-Radiobutton(top2_right_frame, text="Enter input for the amount that will remain", variable=r, value="Input of amount", command=lambda : clicked(r.get())).grid(row=3, column=0, sticky="w")
+Radiobutton(top2_right_frame, text="Enter input for the amount that will remain", variable=r, value="Input of amount", command=lambda : clicked(r.get())).grid(row=4, column=0, sticky="w")
 
-# Input Box
+# Completed Drawing Button DISABLED
+b_done_draw = Button(top2_right_frame, text="Continue", command=clear_drawing, state=DISABLED)
+b_done_draw.grid(row=3, column=0, padx=50, pady=10, sticky="w")
+
+# Clear Drawing Button DISABLED
+b_clear_draw = Button(top2_right_frame, text="Clear Drawing", command=clear_drawing, state=DISABLED)
+b_clear_draw.grid(row=3, column=0, padx=50, pady=10, sticky="e", columnspan=2)
+
+# Input Box DISABLED
 ge = Entry(top2_right_frame, width=28, borderwidth=2, state=DISABLED)
-ge.grid(row=4, column=0, sticky="w", padx=5, pady=10)
+ge.grid(row=5, column=0, sticky="w", padx=5, pady=10)
 
+# Submit Button DISABLED
 b_submit = Button(top2_right_frame, text="Submit", command=submit_entry, state=DISABLED)
-b_submit.grid(row=4, column=0, sticky="e", padx=10, pady=10)
+b_submit.grid(row=5, column=0, sticky="e", padx=10, pady=10)
 
+# Clear Entry Button DISABLED
 b_clear = Button(top2_right_frame, text="Clear", command=clear_entry, state=DISABLED)
-b_clear.grid(row=4, column=1, sticky="w")
+b_clear.grid(row=5, column=1, sticky="w")
 
+# Selected String From Radio Buttons
 selectedRadio = Label(top2_right_frame, text="Option Selected: " + str(r.get()))
-selectedRadio.grid(row=5, column=0, columnspan=2)
+selectedRadio.grid(row=6, column=0, columnspan=2)
 
 ##--------------------------Right Top 3 Frame-------------------------##
-top3_right_frame = LabelFrame(frame_right, text="Trajectory Length Section")
-top3_right_frame.grid(row=2, column=0, sticky="nsew")
 
 L_length_range_label_unpressed = Label(top3_right_frame,
                                        text="The distance that the robot will pass will appear here\n after pressing on the submit button.",
@@ -232,15 +330,8 @@ L_length_range_label_unpressed.grid(row=0, column=0, pady=10)
 
 
 ##--------------------------Right Top 4 Frame-------------------------##
-top4_right_frame = LabelFrame(frame_right, text="Final Confirmation")
-top4_right_frame.grid(row=3, column=0, sticky="nsew")
 
-def confirmation_click():
-    confirmation_respond = messagebox.askyesno("Final Confirmation", "Are you sure you want to do the cut? There is no way back from here.")
-
-    # if confirmation_respond == 1:
-
-final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10)
+final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10, state=DISABLED)
 final_confirmation.pack(pady=10)
 
 root.mainloop()
