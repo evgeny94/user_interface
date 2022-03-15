@@ -97,24 +97,29 @@ def clicked(value):
         canvas.bind("<B1-ButtonRelease>", 'none')
 
         # Entry
-        ge = Entry(top2_right_frame, width=28, borderwidth=2)
-        ge.grid(row=5, column=0, sticky="w", padx=5, pady=10)
+        ge['state'] = NORMAL
+        # ge = Entry(top2_right_frame, width=28, borderwidth=2)
+        # ge.grid(row=5, column=0, sticky="w", padx=5, pady=10)
 
         # Submit Button
-        b_submit = Button(top2_right_frame, text="Submit", command=submit_entry)
-        b_submit.grid(row=5, column=0, sticky="e", padx=10, pady=10)
+        b_submit['state'] = NORMAL
+        # b_submit = Button(top2_right_frame, text="Submit", command=submit_entry)
+        # b_submit.grid(row=5, column=0, sticky="e", padx=10, pady=10)
 
         # Clear Entry Button
-        b_clear = Button(top2_right_frame, text="Clear", command=clear_entry)
-        b_clear.grid(row=5, column=1, sticky="w")
+        b_clear['state'] = NORMAL
+        # b_clear = Button(top2_right_frame, text="Clear", command=clear_entry)
+        # b_clear.grid(row=5, column=1, sticky="w")
 
         # Completed Drawing Button DISABLED
-        b_done_draw = Button(top2_right_frame, text="Continue", command=clear_drawing, state=DISABLED)
-        b_done_draw.grid(row=3, column=0, padx=50, pady=10, sticky="w")
+        b_done_draw['state'] = DISABLED
+        # b_done_draw = Button(top2_right_frame, text="Continue", command=clear_drawing, state=DISABLED)
+        # b_done_draw.grid(row=3, column=0, padx=50, pady=10, sticky="w")
 
         # Clear Drawing Button DISABLED
-        b_clear_draw = Button(top2_right_frame, text="Clear Drawing", command=clear_drawing, state=DISABLED)
-        b_clear_draw.grid(row=3, column=0, padx=50, pady=10, sticky="e", columnspan=2)
+        b_clear_draw['state'] = DISABLED
+        # b_clear_draw = Button(top2_right_frame, text="Clear Drawing", command=clear_drawing, state=DISABLED)
+        # b_clear_draw.grid(row=3, column=0, padx=50, pady=10, sticky="e", columnspan=2)
     else:
         # Enable Drawing
         canvas.bind("<Button-1>", get_xy)
@@ -122,28 +127,34 @@ def clicked(value):
         canvas.bind("<B1-ButtonRelease>", doneStroke)
 
         # Entry DISABLED
-        ge = Entry(top2_right_frame, width=28, borderwidth=2, state=DISABLED)
-        ge.grid(row=5, column=0, sticky="w", padx=5, pady=10)
+        ge['state'] = DISABLED
+        # ge = Entry(top2_right_frame, width=28, borderwidth=2, state=DISABLED)
+        # ge.grid(row=5, column=0, sticky="w", padx=5, pady=10)
 
         # Submit Button DISABLED
-        b_submit = Button(top2_right_frame, text="Submit", command=submit_entry, state=DISABLED)
-        b_submit.grid(row=5, column=0, sticky="e", padx=10, pady=10)
+        b_submit['state'] = DISABLED
+        # b_submit = Button(top2_right_frame, text="Submit", command=submit_entry, state=DISABLED)
+        # b_submit.grid(row=5, column=0, sticky="e", padx=10, pady=10)
 
         # Clear Entry Button DISABLED
-        b_clear = Button(top2_right_frame, text="Clear", command=clear_entry, state=DISABLED)
-        b_clear.grid(row=5, column=1, sticky="w")
+        b_clear['state'] = DISABLED
+        # b_clear = Button(top2_right_frame, text="Clear", command=clear_entry, state=DISABLED)
+        # b_clear.grid(row=5, column=1, sticky="w")
 
         # Completed Drawing Button DISABLED
-        b_done_draw = Button(top2_right_frame, text="Continue", command=clear_drawing)
-        b_done_draw.grid(row=3, column=0, padx=50, pady=10, sticky="w")
+        b_done_draw['state'] = NORMAL
+        # b_done_draw = Button(top2_right_frame, text="Continue", command=clear_drawing)
+        # b_done_draw.grid(row=3, column=0, padx=50, pady=10, sticky="w")
 
         # Clear Drawing Button DISABLED
-        b_clear_draw = Button(top2_right_frame, text="Clear Drawing", command=clear_drawing)
-        b_clear_draw.grid(row=3, column=0, padx=50, pady=10, sticky="e", columnspan=2)
+        b_clear_draw['state'] = NORMAL
+        # b_clear_draw = Button(top2_right_frame, text="Clear Drawing", command=clear_drawing)
+        # b_clear_draw.grid(row=3, column=0, padx=50, pady=10, sticky="e", columnspan=2)
 
     # Selected String From Radio Buttons
-    selectedRadio = Label(top2_right_frame, text="Option Selected: " + str(value))
-    selectedRadio.grid(row=6, column=0, columnspan=2)
+    selectedRadio['text'] = "Option Selected: " + str(value)
+    # selectedRadio = Label(top2_right_frame, text="Option Selected: " + str(value))
+    # selectedRadio.grid(row=6, column=0, columnspan=2)
 
 def range_calculator():
     return random.randint(50, 70)
