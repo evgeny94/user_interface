@@ -10,9 +10,11 @@ root.iconbitmap('images/icon.ico')
 ## --------------- Screen configurations --------------- ##
 screen_width = int(int(root.winfo_screenwidth())*0.92)
 screen_height = int(int(root.winfo_screenheight())*0.9)
+print("root managed: " + str(screen_width) + ", " + str(screen_height))
 
 screen_width1 = root.winfo_screenwidth()
 screen_height1 = root.winfo_screenheight()
+print("root: " + str(screen_width1) + ", " + str(screen_height1))
 
 geometry = str(screen_width) + "x" + str(screen_height)
 
@@ -24,8 +26,8 @@ frame_left = LabelFrame(root, text="Picture")
 frame_left.grid(row=0, column=0, sticky="nsew")
 
 # Frame Configuration Left
-frame_left.rowconfigure(index=0, weight=1)
-frame_left.columnconfigure(index=0, weight=1)
+frame_left.rowconfigure(index=0, weight=2)
+frame_left.columnconfigure(index=0, weight=2)
 
 # Frame Creation Right
 frame_right = LabelFrame(root, text="Information Section")
