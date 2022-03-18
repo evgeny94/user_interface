@@ -61,7 +61,7 @@ num_clicked = 0
 
 # Image + Configurations
 palm_img = Image.open('images/palm.jpg')
-
+width_pre, heigth_pre, cnt = 0, 0, 0
 resized_image = palm_img.resize((screen_width, screen_height), Image.ANTIALIAS)
 new_image = ImageTk.PhotoImage(resized_image)
 canvas_san = Canvas()
@@ -345,6 +345,40 @@ def did_we_funod_leading_sansun():
     if finding_chance <=0.5:
         return
 
+def redraw_line(event):
+    global canvas
+    width = event.width
+    height = event.height
+
+    coords = canvas.coords("currentline")
+    print('Canvas coords:' + str(coords))
+    print('Canvas x1:' + str(coords[0]))
+    print('Canvas y1:' + str(coords[1]))
+    print('Canvas x2:' + str(coords[2]))
+    print('Canvas y2:' + str(coords[3]))
+
+def size_changed(event):
+    global width_pre, heigth_pre, cnt
+    width, heigth = canvas.winfo_width(), canvas.winfo_height()
+    cnt = cnt + 1
+    if cnt > 1 and (width_pre != width or heigth_pre != heigth):
+        width_pre, heigth_pre = canvas.winfo_width(), canvas.winfo_height()
+        size(event)
+    else:
+        pass
+
+def size(event):
+    global new_image, resized_image, canvas
+
+    width, heigth = canvas.winfo_width(), canvas.winfo_height()
+    print('Canvas size:', width, 'x', heigth)
+
+    resized_image = palm_img.resize((width, heigth), Image.ANTIALIAS)
+    new_image = ImageTk.PhotoImage(resized_image)
+    canvas.itemconfig(img_on_canvas, image=new_image)
+    canvas.bind("<Configure>", redraw_line)
+
+root.bind('<Configure>', size_changed)   # Hook window size changes
 
 ##------------##-------------- MAIN -------------##------------##
 # Grid Configurations
@@ -357,7 +391,7 @@ Grid.columnconfigure(root, index=0, weight=2)
 # Main Canvas
 canvas = Canvas(frame_left)
 canvas.pack(anchor='nw', fill='both', expand=1)
-canvas.create_image(0, 0, image=new_image, anchor='nw')
+img_on_canvas = canvas.create_image(0, 0, image=new_image, anchor='nw')
 did_we_funod_leading_sansun()
 
 ##--------------------------Right Side-------------------------##
