@@ -7,6 +7,8 @@ root = Tk()
 root.title('User Interface')
 root.iconbitmap('images/icon.ico')
 
+##check github
+
 ## --------------- Screen configurations --------------- ##
 screen_width = int(int(root.winfo_screenwidth())*0.92)
 screen_height = int(int(root.winfo_screenheight())*0.9)
