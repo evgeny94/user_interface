@@ -32,3 +32,6 @@ def size(event):
     canvas.bind("<Configure>", redraw_line)
 
 root.bind('<Configure>', size_changed)   # Hook window size changes
+
+
+# Testing
