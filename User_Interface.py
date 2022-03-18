@@ -3,11 +3,11 @@ from tkinter import *
 from PIL import ImageTk, Image
 from tkinter import messagebox
 
+
 root = Tk()
 root.title('User Interface')
 root.iconbitmap('images/icon.ico')
 
-##check github
 
 ## --------------- Screen configurations --------------- ##
 screen_width = int(int(root.winfo_screenwidth())*0.92)
@@ -46,11 +46,13 @@ top2_right_frame = LabelFrame(frame_right, text="Cutting Option Section")
 top2_right_frame.grid(row=1, column=0, sticky="nsew")
 
 # Right Top 3 Frame
-top3_right_frame = LabelFrame(frame_right, text="Trajectory Length Section")
+top3_right_frame = LabelFrame(frame_right)
+# top3_right_frame = LabelFrame(frame_right, text="Trajectory Length Section") try
 top3_right_frame.grid(row=2, column=0, sticky="nsew")
 
 # Right Top 4 Frame
-top4_right_frame = LabelFrame(frame_right, text="Final Confirmation")
+top4_right_frame = LabelFrame(frame_right)
+#top4_right_frame = LabelFrame(frame_right, text="Final Confirmation") try
 top4_right_frame.grid(row=3, column=0, sticky="nsew")
 
 ## --------------- Variables & Image --------------- ##
@@ -64,7 +66,26 @@ resized_image = palm_img.resize((screen_width, screen_height), Image.ANTIALIAS)
 new_image = ImageTk.PhotoImage(resized_image)
 canvas_san = Canvas()
 
+#for finding sansun
+global finding_chance
+
 ## --------------- Functions --------------- ##
+
+#-----------------show/hide functions-----------------------
+
+def Hide_2_last_frames():
+    top3_right_frame['text'] = ""
+    L_length_range_label.grid_forget()
+    top4_right_frame['text'] = ""
+    final_confirmation.pack_forget()
+
+def Show_2_last_frames():
+    top3_right_frame['text'] = "Trajectory Length Section"
+    L_length_range_label.grid(row=0, column=0, pady=10)
+    top4_right_frame['text'] = "Final Confirmation"
+    final_confirmation.pack(pady=10)
+
+
 # --------------- Main Image Drawing ---------------
 def get_xy(event):
     global lasx, lasy
@@ -79,6 +100,7 @@ def clear_drawing():
     global canvas, line
 
     canvas.delete('currentline')
+    Hide_2_last_frames()
     L_length_range_label['text'] = "The distance that the robot will pass will appear here\n after pressing on the submit button."
     assessment_afterCut_label['text'] = ""
     final_confirmation['state'] = DISABLED
@@ -154,6 +176,10 @@ def leading_san_not_found(type):
     clear_button = Button(bottom_frame, text="Clear", command=clear_drawing_san)
     clear_button.grid(row=0, column=1, padx=10, pady=5)
 
+
+
+
+
 def myDelete():
     selectedRadio.grid_forget()
 
@@ -169,6 +195,9 @@ def clicked(value):
         canvas.bind("<Button-1>", 'none')
         canvas.bind("<B1-Motion>", 'none')
         canvas.bind("<B1-ButtonRelease>", 'none')
+
+        # Hide 2 last frames
+        Hide_2_last_frames()
 
         # Entry
         ge['state'] = NORMAL
@@ -193,7 +222,11 @@ def clicked(value):
         canvas.bind("<B1-Motion>", draw)
         canvas.bind("<B1-ButtonRelease>", doneStroke)
 
-        # Entry DISABLED
+        #Hide 2 last frames
+        Hide_2_last_frames()
+
+        # Entry DISABLED & Clear
+        ge.delete(0,END)
         ge['state'] = DISABLED
 
         # Submit Button DISABLED
@@ -221,6 +254,7 @@ def clear_entry():
     ge.delete(0, END)
 
     num_clicked = 0
+    Hide_2_last_frames()
     assessment_afterCut_label['text'] = ""
     L_length_range_label['state'] = NORMAL
     L_length_range_label['text'] = "The distance that the robot will pass will appear here\n after pressing on the submit button."
@@ -240,7 +274,6 @@ def submit_restart():
 def submit_entry():
     global ge, new_image, L_length_range_label, assessment_afterCut_label, num_clicked, final_confirmation
 
-    num_clicked = num_clicked + 1
 
     # Number of clicks on submit for deleting previous grids
     # First time clicked
@@ -249,11 +282,11 @@ def submit_entry():
                                             "Has the computational system found the <Leading Sansan>?")
         # Leading Sansan found
         if found_respond == 1:
+            Show_2_last_frames()
             assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(
                 int(ge.get()) + random.randint(-50, 50))
 
-            L_length_range_label['text'] = "The distance that the robot will pass is: " + str(
-                range_calculator()) + " Centimeters"
+            L_length_range_label['text'] = "The distance that the robot will pass is: " + str(range_calculator()) + " Centimeters"
 
             # Enabling Cut Button
             final_confirmation['state'] = NORMAL
@@ -268,6 +301,7 @@ def submit_entry():
                                             "Has the computational system found the <Leading Sansan>?")
         # Leading Sansan found
         if found_respond == 1:
+            Show_2_last_frames()
             assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(
                 int(ge.get()) + random.randint(-50, 50))
 
@@ -291,6 +325,7 @@ def done_drawing():
                                         "Has the computational system found the <Leading Sansan>?")
     # Leading Sansan found
     if found_respond == 1:
+        Show_2_last_frames()
         assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(int(random.randint(3000, 5000)/2.5 + random.randint(-50, 50)))
 
         L_length_range_label['text'] = "The distance that the robot will pass is: " + str(
@@ -302,6 +337,14 @@ def done_drawing():
     # Leading Sansan not found
     else:
         leading_san_not_found("marking")
+
+def did_we_funod_leading_sansun():
+    global finding_chance
+    finding_chance = random.uniform(0,1)
+    #we didnt find leding sansun
+    if finding_chance <=0.5:
+        return
+
 
 ##------------##-------------- MAIN -------------##------------##
 # Grid Configurations
@@ -315,6 +358,7 @@ Grid.columnconfigure(root, index=0, weight=2)
 canvas = Canvas(frame_left)
 canvas.pack(anchor='nw', fill='both', expand=1)
 canvas.create_image(0, 0, image=new_image, anchor='nw')
+did_we_funod_leading_sansun()
 
 ##--------------------------Right Side-------------------------##
 ##--------------------------Right Top 1 Frame-------------------------##
@@ -365,12 +409,12 @@ selectedRadio.grid(row=6, column=0, columnspan=2)
 
 L_length_range_label = Label(top3_right_frame,
                                        text="The distance that the robot will pass will appear here\n after pressing on the submit button.",
-                                       justify=LEFT)
-L_length_range_label.grid(row=0, column=0, pady=10)
+                                       justify=LEFT, font='sans 8 bold')
+# L_length_range_label.grid(row=0, column=0, pady=10)
 
 ##--------------------------Right Top 4 Frame-------------------------##
 
-final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10, state=DISABLED)
-final_confirmation.pack(pady=10)
+final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10, font='sans 16 bold', state=DISABLED)
+# final_confirmation.pack(pady=10)
 
 root.mainloop()
