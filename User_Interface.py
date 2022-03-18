@@ -25,10 +25,6 @@ root.geometry(geometry)
 frame_left = LabelFrame(root, text="Picture")
 frame_left.grid(row=0, column=0, sticky="nsew")
 
-# Frame Configuration Left
-frame_left.rowconfigure(index=0, weight=2)
-frame_left.columnconfigure(index=0, weight=2)
-
 # Frame Creation Right
 frame_right = LabelFrame(root, text="Information Section")
 frame_right.grid(row=0, column=1, sticky="nsew")
@@ -74,7 +70,7 @@ def get_xy(event):
 
 def draw(event):
     global lasx, lasy, line
-    line = canvas.create_line((lasx, lasy, event.x, event.y), width=3, tags='currentline')
+    line = canvas.create_line((lasx, lasy, event.x, event.y), width=8, tags='currentline')
     lasx, lasy = event.x, event.y
 
 def clear_drawing():
@@ -86,7 +82,7 @@ def clear_drawing():
     final_confirmation['state'] = DISABLED
 
 def doneStroke(event):
-    canvas.itemconfigure('currentline', width=3)
+    canvas.itemconfigure('currentline', width=8)
 
 def end_sansan_window(type):
     Sansan_Window.destroy()
@@ -105,7 +101,7 @@ def end_sansan_window(type):
 # --------------- Sansan Drawing ---------------
 def draw_san(event):
     global lasx, lasy, line_san
-    line_san = canvas_san.create_line((lasx, lasy, event.x, event.y), width=5, tags='line_san')
+    line_san = canvas_san.create_line((lasx, lasy, event.x, event.y), width=8, tags='line_san')
     lasx, lasy = event.x, event.y
 
 def clear_drawing_san():
@@ -113,7 +109,7 @@ def clear_drawing_san():
     canvas_san.delete('line_san')
 
 def done_san(event):
-    canvas_san.itemconfigure('line_san', width=5)
+    canvas_san.itemconfigure('line_san', width=8)
 
 # --------------- ## --------------- #
 # In case the Leading Sansan not found
