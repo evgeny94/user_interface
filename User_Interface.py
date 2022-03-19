@@ -24,7 +24,7 @@ root.geometry(geometry)
 
 ## --------------- Frames --------------- ##
 # Frame Creation Left
-frame_left = LabelFrame(root, text="Picture")
+frame_left = LabelFrame(root, text="Picture", labelanchor='n')
 frame_left.grid(row=0, column=0, sticky="nsew")
 
 # Frame Creation Right
@@ -38,20 +38,20 @@ frame_right.rowconfigure(index=2, weight=1)
 frame_right.rowconfigure(index=3, weight=0)
 
 # Right Top 1 Frame
-top1_right_frame = LabelFrame(frame_right, text="Assessmention Section")
+top1_right_frame = LabelFrame(frame_right, text="Assessmention Section", labelanchor='n')
 top1_right_frame.grid(row=0, column=0, sticky="nsew")
 
 # Right Top 2 Frame
-top2_right_frame = LabelFrame(frame_right, text="Cutting Option Section")
+top2_right_frame = LabelFrame(frame_right, text="Cutting Option Section", labelanchor='n')
 top2_right_frame.grid(row=1, column=0, sticky="nsew")
 
 # Right Top 3 Frame
-top3_right_frame = LabelFrame(frame_right)
+top3_right_frame = LabelFrame(frame_right, labelanchor='n')
 # top3_right_frame = LabelFrame(frame_right, text="Trajectory Length Section") try
 top3_right_frame.grid(row=2, column=0, sticky="nsew")
 
 # Right Top 4 Frame
-top4_right_frame = LabelFrame(frame_right)
+top4_right_frame = LabelFrame(frame_right, labelanchor='n')
 #top4_right_frame = LabelFrame(frame_right, text="Final Confirmation") try
 top4_right_frame.grid(row=3, column=0, sticky="nsew")
 
@@ -61,7 +61,9 @@ num_clicked = 0
 
 # Image + Configurations
 palm_img = Image.open('images/palm.jpg')
+palm_img_san = Image.open('images/palm.jpg')
 width_pre, heigth_pre, cnt = 0, 0, 0
+width_pre_san, heigth_pre_san, cnt_san = 0, 0, 0
 resized_image = palm_img.resize((screen_width, screen_height), Image.ANTIALIAS)
 new_image = ImageTk.PhotoImage(resized_image)
 canvas_san = Canvas()
@@ -85,20 +87,17 @@ def Show_2_last_frames():
     top4_right_frame['text'] = "Final Confirmation"
     final_confirmation.pack(pady=10)
 
-
 # --------------- Main Image Drawing ---------------
 def get_xy(event):
-    global lasx, lasy
-    lasx, lasy = event.x, event.y
+    global firstx, firsty, line
+    firstx, firsty = event.x, event.y
+    line = canvas.create_line(firstx, firsty, firstx, firsty, width=8, tags='currentline')
 
 def draw(event):
-    global lasx, lasy, line
-    line = canvas.create_line((lasx, lasy, event.x, event.y), width=8, tags='currentline')
-    lasx, lasy = event.x, event.y
+    canvas.coords('currentline', firstx, firsty, event.x, event.y)
 
 def clear_drawing():
-    global canvas, line
-
+    global canvas
     canvas.delete('currentline')
     Hide_2_last_frames()
     L_length_range_label['text'] = "The distance that the robot will pass will appear here\n after pressing on the submit button."
@@ -110,6 +109,7 @@ def doneStroke(event):
 
 def end_sansan_window(type):
     Sansan_Window.destroy()
+    Show_2_last_frames()
     if type == "numeric input":
         assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(
             int(ge.get()) + random.randint(-50, 50))
@@ -123,6 +123,10 @@ def end_sansan_window(type):
     # Enabling Cut Button
     final_confirmation['state'] = NORMAL
 # --------------- Sansan Drawing ---------------
+def get_xy_san(event):
+    global lasx, lasy
+    lasx, lasy = event.x, event.y
+
 def draw_san(event):
     global lasx, lasy, line_san
     line_san = canvas_san.create_line((lasx, lasy, event.x, event.y), width=8, tags='line_san')
@@ -136,9 +140,29 @@ def done_san(event):
     canvas_san.itemconfigure('line_san', width=8)
 
 # --------------- ## --------------- #
+def size_changed_san(event):
+    global width_pre_san, heigth_pre_san, cnt_san
+    width_san, heigth_san = canvas_san.winfo_width(), canvas_san.winfo_height()
+    cnt_san = cnt_san + 1
+    if cnt_san > 1 and (width_pre_san != width_san or heigth_pre_san != heigth_san):
+        width_pre_san, heigth_pre_san = canvas_san.winfo_width(), canvas_san.winfo_height()
+        size_san(event)
+    else:
+        pass
+
+def size_san(event):
+    global new_image_san, resized_image_san, canvas_san
+
+    width_san, heigth_san = canvas_san.winfo_width(), canvas_san.winfo_height()
+    print('Canvas size:', width_san, 'x', heigth_san)
+
+    resized_image_san = palm_img_san.resize((width_san, heigth_san), Image.ANTIALIAS)
+    new_image_san = ImageTk.PhotoImage(resized_image_san)
+    canvas_san.itemconfig(img_on_canvas_san, image=new_image_san)
+
 # In case the Leading Sansan not found
 def leading_san_not_found(type):
-    global canvas_san, final_confirmation, Sansan_Window
+    global canvas_san, final_confirmation, Sansan_Window, img_on_canvas_san
     # Disabling Cut Button
     final_confirmation['state'] = DISABLED
 
@@ -147,34 +171,44 @@ def leading_san_not_found(type):
     Sansan_Window.title('Marking The Leading Sansan Manually')
 
     # Top Frame
-    top_frame = LabelFrame(Sansan_Window, text="TOP")
+    blank_space = "_"
+    top_frame = LabelFrame(Sansan_Window, text="Picture", labelanchor='n')
     top_frame.grid(row=0, column=0, sticky="nsew")
 
     # Bottom Frame
-    bottom_frame = LabelFrame(Sansan_Window, text="BOTTOM")
+    bottom_frame = LabelFrame(Sansan_Window, text="Buttons", labelanchor='n')
     bottom_frame.grid(row=1, column=0, sticky="nsew")
 
     # Grid configuration
     Grid.rowconfigure(Sansan_Window, index=0, weight=2)
     Grid.columnconfigure(Sansan_Window, index=0, weight=2)
 
+    # Frame configuration
+    top_frame.rowconfigure(index=0, weight=2)
+    top_frame.columnconfigure(index=0, weight=2)
+    bottom_frame.rowconfigure(index=0, weight=1)
+    bottom_frame.columnconfigure(index=0, weight=1)
+    bottom_frame.columnconfigure(index=1, weight=1)
+
     # Canvas
     canvas_san = Canvas(top_frame)
     canvas_san.pack(anchor='nw', fill='both', expand=1)
-    canvas_san.create_image(0, 0, image=new_image, anchor='nw')
+    img_on_canvas_san = canvas_san.create_image(0, 0, image=new_image, anchor='nw')
 
     # Enable Drawing
-    canvas_san.bind("<Button-1>", get_xy)
+    canvas_san.bind("<Button-1>", get_xy_san)
     canvas_san.bind("<B1-Motion>", draw_san)
     canvas_san.bind("<B1-ButtonRelease>", done_san)
 
     # Exit button
     quit_button = Button(bottom_frame, text="Save and Continue", command=lambda : end_sansan_window(type))
-    quit_button.grid(row=0, column=0, padx=10, pady=5)
+    quit_button.grid(row=0, column=0, padx=5, pady=5, sticky="e")
 
     # Clear button
     clear_button = Button(bottom_frame, text="Clear", command=clear_drawing_san)
-    clear_button.grid(row=0, column=1, padx=10, pady=5)
+    clear_button.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+    Sansan_Window.bind('<Configure>', size_changed_san)  # Hook window size changes
 
 
 
@@ -356,6 +390,7 @@ def redraw_line(event):
     print('Canvas y1:' + str(coords[1]))
     print('Canvas x2:' + str(coords[2]))
     print('Canvas y2:' + str(coords[3]))
+    print('Event:' + str(width) + 'x' + str(height))
 
 def size_changed(event):
     global width_pre, heigth_pre, cnt
