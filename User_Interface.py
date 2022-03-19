@@ -105,7 +105,15 @@ def clear_drawing():
     final_confirmation['state'] = DISABLED
 
 def doneStroke(event):
-    canvas.itemconfigure('currentline', width=8)
+    global line
+    line = canvas.itemconfigure('currentline', width=8)
+    print('Canvas coords:' + str(canvas.coords('currentline')))
+
+def create_random_line():
+    global line
+    x1, y1, x2, y2 = random.randint(70, 105), random.randint(92, 148),\
+                     random.randint(373, 425), random.randint(565, 665)
+    line = canvas.create_line(x1, y1, x2, y2, width=8, tags='randomcurrentline')
 
 def end_sansan_window(type):
     Sansan_Window.destroy()
@@ -286,7 +294,7 @@ def clear_entry():
     global assessment_afterCut_label, L_length_range_label, num_clicked, final_confirmation
 
     ge.delete(0, END)
-
+    canvas.delete('randomcurrentline')
     num_clicked = 0
     Hide_2_last_frames()
     assessment_afterCut_label['text'] = ""
@@ -301,7 +309,7 @@ def submit_restart():
 
     assessment_afterCut_label['text'] = ""
     L_length_range_label['state'] = NORMAL
-
+    canvas.delete('randomcurrentline')
     # Disabling Cut Button
     final_confirmation['state'] = DISABLED
 
@@ -312,7 +320,7 @@ def submit_entry():
     # Number of clicks on submit for deleting previous grids
     # First time clicked
     if valid == True:
-        if int(ge.get())<assessment_before:
+        if int(ge.get()) < assessment_before:
             if num_clicked == 1:
                 found_respond = messagebox.askyesno("Manual decision about the <Leading Sansan>",
                                                     "Has the computational system found the <Leading Sansan>?")
@@ -326,6 +334,9 @@ def submit_entry():
 
                     # Enabling Cut Button
                     final_confirmation['state'] = NORMAL
+
+                    # Random Line
+                    create_random_line()
 
                 # Leading Sansan not found
                 else:
@@ -346,6 +357,9 @@ def submit_entry():
 
                     # Enabling Cut Button
                     final_confirmation['state'] = NORMAL
+
+                    # Random Line
+                    create_random_line()
 
                 # Leading Sansan not found
                 else:
@@ -387,24 +401,25 @@ def did_we_funod_leading_sansun():
     if finding_chance <=0.5:
         return
 
-def redraw_line(event):
+def redraw_line():
     global canvas
-    width = event.width
-    height = event.height
+    if len(canvas.coords("currentline")) != 0:
+        width, heigth = canvas.winfo_width(), canvas.winfo_height()
+        x1, y1, x2, y2 = canvas.coords("currentline")[0], canvas.coords("currentline")[1],\
+                         canvas.coords("currentline")[2], canvas.coords("currentline")[3]
+        x1_new, y1_new, x2_new, y2_new = float(round((x1/width_pre_4_line)*width)), float(round((y1/height_pre_4_line)*heigth)),\
+                                         float(round((x2/width_pre_4_line)*width)), float(round((y2/height_pre_4_line)*heigth))
 
-    coords = canvas.coords("currentline")
-    print('Canvas coords:' + str(coords))
-    print('Canvas x1:' + str(coords[0]))
-    print('Canvas y1:' + str(coords[1]))
-    print('Canvas x2:' + str(coords[2]))
-    print('Canvas y2:' + str(coords[3]))
-    print('Event:' + str(width) + 'x' + str(height))
+        canvas.coords('currentline', x1_new, y1_new, x2_new, y2_new)
+    else:
+        pass
 
 def size_changed(event):
-    global width_pre, heigth_pre, cnt
+    global width_pre, heigth_pre, cnt, width_pre_4_line, height_pre_4_line
     width, heigth = canvas.winfo_width(), canvas.winfo_height()
     cnt = cnt + 1
     if cnt > 1 and (width_pre != width or heigth_pre != heigth):
+        width_pre_4_line, height_pre_4_line = width_pre, heigth_pre
         width_pre, heigth_pre = canvas.winfo_width(), canvas.winfo_height()
         size(event)
     else:
@@ -419,7 +434,8 @@ def size(event):
     resized_image = palm_img.resize((width, heigth), Image.ANTIALIAS)
     new_image = ImageTk.PhotoImage(resized_image)
     canvas.itemconfig(img_on_canvas, image=new_image)
-    canvas.bind("<Configure>", redraw_line)
+    redraw_line()
+    # canvas.bind("<Configure>", redraw_line)
 
 root.bind('<Configure>', size_changed)   # Hook window size changes
 
