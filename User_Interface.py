@@ -308,46 +308,54 @@ def submit_restart():
 def submit_entry():
     global ge, new_image, L_length_range_label, assessment_afterCut_label, num_clicked, final_confirmation
 
-
+    valid = ge.get().isdigit()
     # Number of clicks on submit for deleting previous grids
     # First time clicked
-    if num_clicked == 1:
-        found_respond = messagebox.askyesno("Manual decision about the <Leading Sansan>",
-                                            "Has the computational system found the <Leading Sansan>?")
-        # Leading Sansan found
-        if found_respond == 1:
-            Show_2_last_frames()
-            assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(
-                int(ge.get()) + random.randint(-50, 50))
+    if valid == True:
+        if int(ge.get())<assessment_before:
+            if num_clicked == 1:
+                found_respond = messagebox.askyesno("Manual decision about the <Leading Sansan>",
+                                                    "Has the computational system found the <Leading Sansan>?")
+                # Leading Sansan found
+                if found_respond == 1:
+                    Show_2_last_frames()
+                    assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(
+                        int(ge.get()) + random.randint(-50, 50))
 
-            L_length_range_label['text'] = "The distance that the robot will pass is: " + str(range_calculator()) + " Centimeters"
+                    L_length_range_label['text'] = "The distance that the robot will pass is: " + str(range_calculator()) + " Centimeters"
 
-            # Enabling Cut Button
-            final_confirmation['state'] = NORMAL
+                    # Enabling Cut Button
+                    final_confirmation['state'] = NORMAL
 
-        # Leading Sansan not found
+                # Leading Sansan not found
+                else:
+                    leading_san_not_found("numeric input")
+            # Already clicked
+            else:
+                submit_restart()
+                found_respond = messagebox.askyesno("Manual decision about the <Leading Sansan>",
+                                                    "Has the computational system found the <Leading Sansan>?")
+                # Leading Sansan found
+                if found_respond == 1:
+                    Show_2_last_frames()
+                    assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(
+                        int(ge.get()) + random.randint(-50, 50))
+
+                    L_length_range_label['text'] = "The distance that the robot will pass is: " + str(
+                        range_calculator()) + " Centimeters"
+
+                    # Enabling Cut Button
+                    final_confirmation['state'] = NORMAL
+
+                # Leading Sansan not found
+                else:
+                    leading_san_not_found("numeric input")
         else:
-            leading_san_not_found("numeric input")
-    # Already clicked
+            clear_entry()
+            messagebox.showerror("Entry Box Error", "The number is greater than the initial assessment!\nPlease try again.")
     else:
-        submit_restart()
-        found_respond = messagebox.askyesno("Manual decision about the <Leading Sansan>",
-                                            "Has the computational system found the <Leading Sansan>?")
-        # Leading Sansan found
-        if found_respond == 1:
-            Show_2_last_frames()
-            assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(
-                int(ge.get()) + random.randint(-50, 50))
-
-            L_length_range_label['text'] = "The distance that the robot will pass is: " + str(
-                range_calculator()) + " Centimeters"
-
-            # Enabling Cut Button
-            final_confirmation['state'] = NORMAL
-
-        # Leading Sansan not found
-        else:
-            leading_san_not_found("numeric input")
+        clear_entry()
+        messagebox.showerror("Entry Box Error", "This Entry Box may contain only digits and positive numbers!\nPlease try again.")
 
 def confirmation_click():
     confirmation_respond = messagebox.askyesno("Final Confirmation", "Are you sure you want to do the cut? There is no way back from here.")
@@ -432,7 +440,8 @@ did_we_funod_leading_sansun()
 ##--------------------------Right Side-------------------------##
 ##--------------------------Right Top 1 Frame-------------------------##
 
-assessment_label = Label(top1_right_frame, text="Dates Assessment Before Cutting: " + str(random.randint(3000, 5000)))
+assessment_before = random.randint(3000, 5000)
+assessment_label = Label(top1_right_frame, text="Dates Assessment Before Cutting: " + str(assessment_before))
 assessment_label.grid(row=0, column=0, sticky="w", pady=10)
 
 assessment_afterCut_label = Label(top1_right_frame, text="")
