@@ -1,30 +1,43 @@
-try:
-    import tkinter as tk
-except ImportError:
-    import Tkinter as tk  # Python 2
+from tkinter import Canvas, Tk, ARC
 
-root = tk.Tk()
-canvas = tk.Canvas(root, width=200, height=200, borderwidth=0, highlightthickness=0,
-                   bg="black")
-canvas.grid()
+# Image dimensions
+w,h = 640,480
 
-def _create_circle(self, x, y, r, **kwargs):
-    return self.create_oval(x-r, y-r, x+r, y+r, **kwargs)
-tk.Canvas.create_circle = _create_circle
+# Create canvas
+root = Tk()
+canvas = Canvas(root, width = w, height = h, bg = 'white')
+canvas.pack()
 
-def _create_circle_arc(self, x, y, r, **kwargs):
-    if "start" in kwargs and "end" in kwargs:
-        kwargs["extent"] = kwargs["end"] - kwargs["start"]
-        del kwargs["end"]
-    return self.create_arc(x-r, y-r, x+r, y+r, **kwargs)
-tk.Canvas.create_circle_arc = _create_circle_arc
-#
-# canvas.create_circle(100, 120, 50, fill="blue", outline="#DDD", width=4)
-# canvas.create_circle_arc(100, 120, 48, fill="green", outline="", start=45, end=140)
-# canvas.create_circle_arc(100, 120, 48, fill="green", outline="", start=275, end=305)
-canvas.create_circle_arc(100, 120, 45, style="arc", outline="white", width=6,
-                         start=270-25, end=270+25)
-# canvas.create_circle(150, 40, 20, fill="#BBB", outline="")
+# curve points
+global points_sam
+global temp_arc_sam
+points_sam = []
+temp_arc_sam = None
 
-root.title("Circles and Arcs")
+def arc_sam():
+    x_arc_sam = [point_sam[0] for point_sam in points_sam]
+    y_arc_sam = [point_sam[1] for point_sam in points_sam]
+
+    return canvas.create_arc(x[0], y[0], x[-1], y[-1], start = 70, style = ARC, width = 8, extent = 90, tags='manualArcSam')
+
+def motion_sam(event):
+    global temp_arc_sam
+    points_sam.append([event.x, event.y])
+    if temp_arc_sam != None:
+        canvas_sam.delete(temp_arc_sam)
+    temp_arc_sam = arc_sam()
+
+
+def on_click_release_sam(event):
+    arc_sam()
+    global points_sam
+    points_sam = []
+
+def clear_canvas(event):
+    canvas.delete('manualArcSam')
+
+canvas.bind("<B1-Motion>", motion)
+canvas.bind("<ButtonRelease-1>", on_click_release)
+root.bind("<Key-c>", clear_canvas)
+
 root.mainloop()

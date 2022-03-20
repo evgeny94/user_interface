@@ -70,6 +70,12 @@ canvas_san = Canvas()
 o1, o2 = 580, 675
 R = 450
 
+# curve points
+global points_san
+global temp_arc_san
+points_san = []
+temp_arc_san = None
+
 #for finding sansun
 global finding_chance
 
@@ -145,6 +151,7 @@ def draw_san(event):
 def clear_drawing_san():
     global canvas_san, line_san
     canvas_san.delete('line_san')
+    canvas_san.delete('manualArcSan')
 
 def done_san(event):
     canvas_san.itemconfigure('line_san', width=8)
@@ -156,6 +163,38 @@ def _create_circle_arc(self, x, y, r, **kwargs):
     return self.create_arc(x-r, y-r, x+r, y+r, **kwargs)
 Canvas.create_circle_arc = _create_circle_arc
 
+#########################################################################################
+def move_san(event):
+    global canvas_san, lasx, lasy
+    canvas_san.move('manualArcSan', event.x-lasx, event.y-lasy)
+    lasx, lasy = event.x, event.y
+
+def arc_san():
+    global myArc, canvas_san
+    x_arc_san = [point_san[0] for point_san in points_san]
+    y_arc_san = [point_san[1] for point_san in points_san]
+    # print('point_san[0], point_san[0]:', x_arc_san, 'x', y_arc_san)
+    # print('point_san[-1], point_san[-1]:', x_arc_san[-1], 'x', y_arc_san[-1])
+    myArc = canvas_san.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1], start=65, style=ARC,
+                                  width=8,
+                                   tags='manualArcSan')
+    return myArc
+
+def motion_san(event):
+    global temp_arc_san
+    if len(points_san) == 0:
+        canvas_san.delete('manualArcSan')
+    points_san.append([event.x, event.y])
+    if temp_arc_san != None:
+        canvas_san.delete(temp_arc_san)
+    temp_arc_san = arc_san()
+
+
+def on_click_release_san(event):
+    arc_san()
+    global points_san
+    points_san = []
+#########################################################################################
 
 # --------------- ## --------------- #
 def size_changed_san(event):
@@ -214,10 +253,14 @@ def leading_san_not_found(type):
     img_on_canvas_san = canvas_san.create_image(0, 0, image=new_image, anchor='nw')
 
     # Enable Drawing
-    canvas_san.bind("<Button-1>", get_xy_san)
-    canvas_san.bind("<B1-Motion>", draw_san)
-    canvas_san.bind("<B1-ButtonRelease>", done_san)
-
+    # canvas_san.bind("<Button-1>", get_xy_san)
+    # canvas_san.bind("<B1-Motion>", draw_san)
+    # canvas_san.bind("<B1-ButtonRelease>", done_san)
+    #
+    canvas_san.bind("<B1-Motion>", motion_san)
+    canvas_san.bind("<ButtonRelease-1>", on_click_release_san)
+    Sansan_Window.bind("<Button-3>", get_xy_san)
+    Sansan_Window.bind("<B3-Motion>", move_san)
     # Exit button
     quit_button = Button(bottom_frame, text="Save and Continue", command=lambda : end_sansan_window(type))
     quit_button.grid(row=0, column=0, padx=5, pady=5, sticky="e")
