@@ -1,4 +1,4 @@
-import random
+import random, math
 from tkinter import *
 from PIL import ImageTk, Image
 from tkinter import messagebox
@@ -67,6 +67,8 @@ width_pre_san, heigth_pre_san, cnt_san = 0, 0, 0
 resized_image = palm_img.resize((screen_width, screen_height), Image.ANTIALIAS)
 new_image = ImageTk.PhotoImage(resized_image)
 canvas_san = Canvas()
+o1, o2 = 580, 675
+R = 450
 
 #for finding sansun
 global finding_chance
@@ -146,6 +148,14 @@ def clear_drawing_san():
 
 def done_san(event):
     canvas_san.itemconfigure('line_san', width=8)
+
+def _create_circle_arc(self, x, y, r, **kwargs):
+    if "start" in kwargs and "end" in kwargs:
+        kwargs["extent"] = kwargs["end"] - kwargs["start"]
+        del kwargs["end"]
+    return self.create_arc(x-r, y-r, x+r, y+r, **kwargs)
+Canvas.create_circle_arc = _create_circle_arc
+
 
 # --------------- ## --------------- #
 def size_changed_san(event):
@@ -403,14 +413,37 @@ def did_we_funod_leading_sansun():
 
 def redraw_line():
     global canvas
+    width, heigth = canvas.winfo_width(), canvas.winfo_height()
     if len(canvas.coords("currentline")) != 0:
-        width, heigth = canvas.winfo_width(), canvas.winfo_height()
         x1, y1, x2, y2 = canvas.coords("currentline")[0], canvas.coords("currentline")[1],\
                          canvas.coords("currentline")[2], canvas.coords("currentline")[3]
+
         x1_new, y1_new, x2_new, y2_new = float(round((x1/width_pre_4_line)*width)), float(round((y1/height_pre_4_line)*heigth)),\
                                          float(round((x2/width_pre_4_line)*width)), float(round((y2/height_pre_4_line)*heigth))
 
         canvas.coords('currentline', x1_new, y1_new, x2_new, y2_new)
+        print("currentline:" + str(canvas.coords('currentline')))
+    else:
+        pass
+
+def redraw_arc():
+    global canvas, R, o1, o2
+    width, heigth = canvas.winfo_width(), canvas.winfo_height()
+    print("width, heigth:" + str(width), str(heigth))
+    if width_pre_4_line > 1 and height_pre_4_line > 1:
+        x1_arc, y1_arc = o1, o2 + R
+        print("x1_arc, y1_arc:" + str(o1), str(o2 + R))
+        o1, o2 = float(round((o1 / width_pre_4_line) * width)), \
+                 float(round((o2 / height_pre_4_line) * heigth))
+        print("o1_new, o2_new:" + str(o1), str(o2))
+        x1_arc_new, y1_arc_new = float(round((x1_arc / width_pre_4_line) * width)), \
+                                 float(round((y1_arc / height_pre_4_line) * heigth))
+        print("x1_arc_new, y1_arc_new:" + str(x1_arc_new), str(y1_arc_new))
+        R = float(round(math.sqrt((x1_arc_new - o1) ** 2 + (y1_arc_new - o2) ** 2)))
+        canvas.delete('currentArc')
+        print("R:" + str(R))
+        camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="white", width=8,
+                                              start=90 - 27, end=90 + 65, tags='currentArc')
     else:
         pass
 
@@ -435,7 +468,7 @@ def size(event):
     new_image = ImageTk.PhotoImage(resized_image)
     canvas.itemconfig(img_on_canvas, image=new_image)
     redraw_line()
-    # canvas.bind("<Configure>", redraw_line)
+    redraw_arc()
 
 root.bind('<Configure>', size_changed)   # Hook window size changes
 
@@ -451,6 +484,8 @@ Grid.columnconfigure(root, index=0, weight=2)
 canvas = Canvas(frame_left)
 canvas.pack(anchor='nw', fill='both', expand=1)
 img_on_canvas = canvas.create_image(0, 0, image=new_image, anchor='nw')
+camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="white", width=6,
+                         start=90-27, end=90+65, tags='currentArc')
 did_we_funod_leading_sansun()
 
 ##--------------------------Right Side-------------------------##
