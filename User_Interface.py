@@ -24,11 +24,11 @@ root.geometry(geometry)
 
 ## --------------- Frames --------------- ##
 # Frame Creation Left
-frame_left = LabelFrame(root, text="Picture", labelanchor='n')
+frame_left = LabelFrame(root, text="Picture", labelanchor='n', bg='white')
 frame_left.grid(row=0, column=0, sticky="nsew")
 
 # Frame Creation Right
-frame_right = LabelFrame(root, text="Information Section")
+frame_right = LabelFrame(root, text="Information Section", bg='white')
 frame_right.grid(row=0, column=1, sticky="nsew")
 
 # Frame Configuration Right
@@ -38,20 +38,20 @@ frame_right.rowconfigure(index=2, weight=1)
 frame_right.rowconfigure(index=3, weight=0)
 
 # Right Top 1 Frame
-top1_right_frame = LabelFrame(frame_right, text="Assessmention Section", labelanchor='n')
+top1_right_frame = LabelFrame(frame_right, text="Assessmention Section", labelanchor='n', bg='white')
 top1_right_frame.grid(row=0, column=0, sticky="nsew")
 
 # Right Top 2 Frame
-top2_right_frame = LabelFrame(frame_right, text="Cutting Option Section", labelanchor='n')
+top2_right_frame = LabelFrame(frame_right, text="Cutting Option Section", labelanchor='n', bg='white')
 top2_right_frame.grid(row=1, column=0, sticky="nsew")
 
 # Right Top 3 Frame
-top3_right_frame = LabelFrame(frame_right, labelanchor='n')
-# top3_right_frame = LabelFrame(frame_right, text="Trajectory Length Section") try
+top3_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white')
+# top3_right_frame = LabelFrame(frame_right, text="Trajectory Length Section")
 top3_right_frame.grid(row=2, column=0, sticky="nsew")
 
 # Right Top 4 Frame
-top4_right_frame = LabelFrame(frame_right, labelanchor='n')
+top4_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white')
 #top4_right_frame = LabelFrame(frame_right, text="Final Confirmation") try
 top4_right_frame.grid(row=3, column=0, sticky="nsew")
 
@@ -73,8 +73,11 @@ R = 450
 # curve points
 global points_san
 global temp_arc_san
+global released_san
+released_san = False
 points_san = []
 temp_arc_san = None
+found = False
 
 #for finding sansun
 global finding_chance
@@ -85,15 +88,20 @@ global finding_chance
 
 def Hide_2_last_frames():
     top3_right_frame['text'] = ""
-    L_length_range_label.grid_forget()
+    # L_length_range_label_text.place_forget()
+    # L_length_range_label.place_forget()
+    L_length_range_label_text.pack_forget()
+    L_length_range_label.pack_forget()
     top4_right_frame['text'] = ""
     final_confirmation.pack_forget()
 
 def Show_2_last_frames():
     top3_right_frame['text'] = "Trajectory Length Section"
-    L_length_range_label.grid(row=0, column=0, pady=10)
+    L_length_range_label_text.pack(pady=10)
+    L_length_range_label.pack(pady=10)
     top4_right_frame['text'] = "Final Confirmation"
     final_confirmation.pack(pady=10)
+    final_confirmation_helper.pack_forget()
 
 # --------------- Main Image Drawing ---------------
 def get_xy(event):
@@ -108,8 +116,10 @@ def clear_drawing():
     global canvas
     canvas.delete('currentline')
     Hide_2_last_frames()
-    L_length_range_label['text'] = "The distance that the robot will pass will appear here\n after pressing on the submit button."
     assessment_afterCut_label['text'] = ""
+    assessment_afterCut_num_label['text'] = ""
+    assessment_afterCut_num_label['relief'] = FLAT
+    assessment_afterCut_num_label['bg'] = 'white'
     final_confirmation['state'] = DISABLED
 
 def doneStroke(event):
@@ -123,21 +133,18 @@ def create_random_line():
                      random.randint(373, 425), random.randint(565, 665)
     line = canvas.create_line(x1, y1, x2, y2, width=8, tags='randomcurrentline')
 
-def end_sansan_window(type):
+def end_sansan_window():
+    global myArc
+    x_arc_san = [point_san[0] for point_san in points_san]
+    y_arc_san = [point_san[1] for point_san in points_san]
+    myArc = canvas.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1], start=63,
+                            extent=92,
+                            style=ARC,
+                            outline="white",
+                            width=8,
+                            tags='manualArcSan')
     Sansan_Window.destroy()
-    Show_2_last_frames()
-    if type == "numeric input":
-        assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(
-            int(ge.get()) + random.randint(-50, 50))
-    else:
-        assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(
-            int(random.randint(3000, 5000) / 2.5 + random.randint(-50, 50)))
 
-    L_length_range_label['text'] = "The distance that the robot will pass is: " + str(
-        range_calculator()) + " Centimeters"
-
-    # Enabling Cut Button
-    final_confirmation['state'] = NORMAL
 # --------------- Sansan Drawing ---------------
 def get_xy_san(event):
     global lasx, lasy
@@ -173,17 +180,20 @@ def arc_san():
     global myArc, canvas_san
     x_arc_san = [point_san[0] for point_san in points_san]
     y_arc_san = [point_san[1] for point_san in points_san]
-    # print('point_san[0], point_san[0]:', x_arc_san, 'x', y_arc_san)
-    # print('point_san[-1], point_san[-1]:', x_arc_san[-1], 'x', y_arc_san[-1])
-    myArc = canvas_san.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1], start=65, style=ARC,
-                                  width=8,
-                                   tags='manualArcSan')
+    myArc = canvas_san.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1], start=63,
+                                extent=92,
+                                style=ARC,
+                                outline="white",
+                                width=8,
+                                tags='manualArcSan')
     return myArc
 
 def motion_san(event):
-    global temp_arc_san
-    if len(points_san) == 0:
+    global temp_arc_san, points_san, released_san
+    if released_san == True:
+        points_san = []
         canvas_san.delete('manualArcSan')
+        released_san = False
     points_san.append([event.x, event.y])
     if temp_arc_san != None:
         canvas_san.delete(temp_arc_san)
@@ -191,9 +201,9 @@ def motion_san(event):
 
 
 def on_click_release_san(event):
+    global released_san
     arc_san()
-    global points_san
-    points_san = []
+    released_san = True
 #########################################################################################
 
 # --------------- ## --------------- #
@@ -218,7 +228,7 @@ def size_san(event):
     canvas_san.itemconfig(img_on_canvas_san, image=new_image_san)
 
 # In case the Leading Sansan not found
-def leading_san_not_found(type):
+def manual_sansan_drawing():
     global canvas_san, final_confirmation, Sansan_Window, img_on_canvas_san
     # Disabling Cut Button
     final_confirmation['state'] = DISABLED
@@ -262,27 +272,24 @@ def leading_san_not_found(type):
     Sansan_Window.bind("<Button-3>", get_xy_san)
     Sansan_Window.bind("<B3-Motion>", move_san)
     # Exit button
-    quit_button = Button(bottom_frame, text="Save and Continue", command=lambda : end_sansan_window(type))
+    quit_button = Button(bottom_frame, text="Save and Continue", command=end_sansan_window)
     quit_button.grid(row=0, column=0, padx=5, pady=5, sticky="e")
 
     # Clear button
     clear_button = Button(bottom_frame, text="Clear", command=clear_drawing_san)
     clear_button.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
-    Sansan_Window.bind('<Configure>', size_changed_san)  # Hook window size changes
-
-
-
-
+    # Hook window size changes
+    Sansan_Window.bind('<Configure>', size_changed_san)
 
 def myDelete():
     selectedRadio.grid_forget()
+    selectedRadioValue.grid_forget()
 
 def clicked(value):
-    global selectedRadio, ge, b_submit, b_clear, b_clear_draw, final_confirmation, assessment_afterCut_label
+    global selectedRadio, selectedRadioValue, ge, b_submit, b_clear, b_clear_draw, final_confirmation, assessment_afterCut_label, assessment_afterCut_num_label
 
     myDelete()
-    L_length_range_label['text'] = "The distance that the robot will pass will appear here\n after pressing on the submit button."
     final_confirmation['state'] = DISABLED
     if value == "Input of amount":
         # Clear and Disable Drawing
@@ -309,8 +316,12 @@ def clicked(value):
         # Clear Drawing Button DISABLED
         b_clear_draw['state'] = DISABLED
     else:
-        # Forget previous assessment
+        # Forget previous assessment and drawings
         assessment_afterCut_label['text'] = ""
+        assessment_afterCut_num_label['text'] = ""
+        assessment_afterCut_num_label['relief'] = FLAT
+        assessment_afterCut_num_label['bg'] = 'white'
+        canvas.delete('randomcurrentline')
 
         # Enable Drawing
         canvas.bind("<Button-1>", get_xy)
@@ -337,37 +348,45 @@ def clicked(value):
         b_clear_draw['state'] = NORMAL
 
     # Selected String From Radio Buttons
-    selectedRadio['text'] = "Option Selected: " + str(value)
-    selectedRadio.grid(row=6, column=0, columnspan=2)
+    selectedRadio['text'] = "Option Selected: "
+    selectedRadio.grid(row=7, column=0, columnspan=2)
+    selectedRadioValue['text'] = str(value)
+    selectedRadioValue.grid(row=8, column=0, columnspan=2)
+
 
 def range_calculator():
     return random.randint(50, 70)
 
 def clear_entry():
-    global assessment_afterCut_label, L_length_range_label, num_clicked, final_confirmation
+    global assessment_afterCut_label, assessment_afterCut_num_label, L_length_range_label_text, L_length_range_label, num_clicked, final_confirmation
 
     ge.delete(0, END)
     canvas.delete('randomcurrentline')
     num_clicked = 0
     Hide_2_last_frames()
     assessment_afterCut_label['text'] = ""
-    L_length_range_label['state'] = NORMAL
-    L_length_range_label['text'] = "The distance that the robot will pass will appear here\n after pressing on the submit button."
+    assessment_afterCut_num_label['text'] = ""
+    assessment_afterCut_num_label['relief'] = FLAT
+    assessment_afterCut_num_label['bg'] = 'white'
 
     # Disabling Cut Button
     final_confirmation['state'] = DISABLED
 
 def submit_restart():
-    global assessment_afterCut_label, L_length_range_label, final_confirmation
+    global assessment_afterCut_label, assessment_afterCut_num_label, L_length_range_label_text, L_length_range_label, final_confirmation
 
     assessment_afterCut_label['text'] = ""
+    assessment_afterCut_num_label['text'] = ""
+    assessment_afterCut_num_label['relief'] = FLAT
+    assessment_afterCut_num_label['bg'] = 'white'
+    L_length_range_label_text['state'] = NORMAL
     L_length_range_label['state'] = NORMAL
     canvas.delete('randomcurrentline')
     # Disabling Cut Button
     final_confirmation['state'] = DISABLED
 
 def submit_entry():
-    global ge, new_image, L_length_range_label, assessment_afterCut_label, num_clicked, final_confirmation
+    global ge, new_image, L_length_range_label_text, assessment_afterCut_label, assessment_afterCut_num_label, num_clicked, final_confirmation
 
     valid = ge.get().isdigit()
     # Number of clicks on submit for deleting previous grids
@@ -375,48 +394,33 @@ def submit_entry():
     if valid == True:
         if int(ge.get()) < assessment_before:
             if num_clicked == 1:
-                found_respond = messagebox.askyesno("Manual decision about the <Leading Sansan>",
-                                                    "Has the computational system found the <Leading Sansan>?")
-                # Leading Sansan found
-                if found_respond == 1:
-                    Show_2_last_frames()
-                    assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(
-                        int(ge.get()) + random.randint(-50, 50))
+                Show_2_last_frames()
+                assessment_afterCut_label['text'] = "Dates Assessment After Cutting: "
+                assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-50, 50))
+                assessment_afterCut_num_label['relief'] = GROOVE
+                assessment_afterCut_num_label['bg'] = None
+                L_length_range_label_text['text'] = "The distance that the robot will pass is:"
+                L_length_range_label['text'] = str(range_calculator()) + " Centimeters"
 
-                    L_length_range_label['text'] = "The distance that the robot will pass is: " + str(range_calculator()) + " Centimeters"
+                # Enabling Cut Button
+                final_confirmation['state'] = NORMAL
 
-                    # Enabling Cut Button
-                    final_confirmation['state'] = NORMAL
-
-                    # Random Line
-                    create_random_line()
-
-                # Leading Sansan not found
-                else:
-                    leading_san_not_found("numeric input")
+                # Random Line
+                create_random_line()
             # Already clicked
             else:
                 submit_restart()
-                found_respond = messagebox.askyesno("Manual decision about the <Leading Sansan>",
-                                                    "Has the computational system found the <Leading Sansan>?")
-                # Leading Sansan found
-                if found_respond == 1:
-                    Show_2_last_frames()
-                    assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(
-                        int(ge.get()) + random.randint(-50, 50))
-
-                    L_length_range_label['text'] = "The distance that the robot will pass is: " + str(
-                        range_calculator()) + " Centimeters"
-
-                    # Enabling Cut Button
-                    final_confirmation['state'] = NORMAL
-
-                    # Random Line
-                    create_random_line()
-
-                # Leading Sansan not found
-                else:
-                    leading_san_not_found("numeric input")
+                Show_2_last_frames()
+                assessment_afterCut_label['text'] = "Dates Assessment After Cutting: "
+                assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-50, 50))
+                assessment_afterCut_num_label['relief'] = GROOVE
+                assessment_afterCut_num_label['bg'] = None
+                L_length_range_label_text['text'] = "The distance that the robot will pass is:"
+                L_length_range_label['text'] = str(range_calculator()) + " Centimeters"
+                # Enabling Cut Button
+                final_confirmation['state'] = NORMAL
+                # Random Line
+                create_random_line()
         else:
             clear_entry()
             messagebox.showerror("Entry Box Error", "The number is greater than the initial assessment!\nPlease try again.")
@@ -430,29 +434,23 @@ def confirmation_click():
     # if confirmation_respond == 1:
 
 def done_drawing():
-    found_respond = messagebox.askyesno("Manual decision about the <Leading Sansan>",
-                                        "Has the computational system found the <Leading Sansan>?")
-    # Leading Sansan found
-    if found_respond == 1:
-        Show_2_last_frames()
-        assessment_afterCut_label['text'] = "Dates Assessment After Cutting: " + str(int(random.randint(3000, 5000)/2.5 + random.randint(-50, 50)))
+    Show_2_last_frames()
+    assessment_afterCut_label['text'] = "Dates Assessment After Cutting: "
+    assessment_afterCut_num_label['text'] = str(int(random.randint(3000, 5000)/2.5 + random.randint(-50, 50)))
+    assessment_afterCut_num_label['relief'] = GROOVE
+    assessment_afterCut_num_label['bg'] = None
+    L_length_range_label_text['text'] = "The distance that the robot will pass is:"
+    L_length_range_label['text'] = str(range_calculator()) + " Centimeters"
+    # Enabling Cut Button
+    final_confirmation['state'] = NORMAL
 
-        L_length_range_label['text'] = "The distance that the robot will pass is: " + str(
-            range_calculator()) + " Centimeters"
-
-        # Enabling Cut Button
-        final_confirmation['state'] = NORMAL
-
-    # Leading Sansan not found
+def found_leading_sansun():
+    # Found
+    if random.uniform(0, 1) <= 0.5:
+        return True
+    # Not Found
     else:
-        leading_san_not_found("marking")
-
-def did_we_funod_leading_sansun():
-    global finding_chance
-    finding_chance = random.uniform(0,1)
-    #we didnt find leding sansun
-    if finding_chance <=0.5:
-        return
+        return False
 
 def redraw_line():
     global canvas
@@ -466,29 +464,59 @@ def redraw_line():
 
         canvas.coords('currentline', x1_new, y1_new, x2_new, y2_new)
         print("currentline:" + str(canvas.coords('currentline')))
+
+    elif len(canvas.coords("randomcurrentline")) != 0:
+        x1, y1, x2, y2 = canvas.coords("randomcurrentline")[0], canvas.coords("randomcurrentline")[1],\
+                         canvas.coords("randomcurrentline")[2], canvas.coords("randomcurrentline")[3]
+
+        x1_new, y1_new, x2_new, y2_new = float(round((x1/width_pre_4_line)*width)), float(round((y1/height_pre_4_line)*heigth)),\
+                                         float(round((x2/width_pre_4_line)*width)), float(round((y2/height_pre_4_line)*heigth))
+
+        canvas.coords('randomcurrentline', x1_new, y1_new, x2_new, y2_new)
     else:
         pass
 
 def redraw_arc():
-    global canvas, R, o1, o2
+    global canvas, R, o1, o2, found
+    print(found)
     width, heigth = canvas.winfo_width(), canvas.winfo_height()
-    print("width, heigth:" + str(width), str(heigth))
-    if width_pre_4_line > 1 and height_pre_4_line > 1:
-        x1_arc, y1_arc = o1, o2 + R
-        print("x1_arc, y1_arc:" + str(o1), str(o2 + R))
-        o1, o2 = float(round((o1 / width_pre_4_line) * width)), \
-                 float(round((o2 / height_pre_4_line) * heigth))
-        print("o1_new, o2_new:" + str(o1), str(o2))
-        x1_arc_new, y1_arc_new = float(round((x1_arc / width_pre_4_line) * width)), \
-                                 float(round((y1_arc / height_pre_4_line) * heigth))
-        print("x1_arc_new, y1_arc_new:" + str(x1_arc_new), str(y1_arc_new))
-        R = float(round(math.sqrt((x1_arc_new - o1) ** 2 + (y1_arc_new - o2) ** 2)))
-        canvas.delete('currentArc')
-        print("R:" + str(R))
-        camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="white", width=8,
-                                              start=90 - 27, end=90 + 65, tags='currentArc')
+    if found == True:
+        print("width, heigth:" + str(width), str(heigth))
+        if width_pre_4_line > 1 and height_pre_4_line > 1:
+            x1_arc, y1_arc = o1, o2 + R
+            print("x1_arc, y1_arc:" + str(o1), str(o2 + R))
+            o1, o2 = float(round((o1 / width_pre_4_line) * width)), \
+                     float(round((o2 / height_pre_4_line) * heigth))
+            print("o1_new, o2_new:" + str(o1), str(o2))
+            x1_arc_new, y1_arc_new = float(round((x1_arc / width_pre_4_line) * width)), \
+                                     float(round((y1_arc / height_pre_4_line) * heigth))
+            print("x1_arc_new, y1_arc_new:" + str(x1_arc_new), str(y1_arc_new))
+            R = float(round(math.sqrt((x1_arc_new - o1) ** 2 + (y1_arc_new - o2) ** 2)))
+            canvas.delete('currentArc')
+            print("R:" + str(R))
+            camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="white", width=8,
+                                                  start=90 - 27, end=90 + 65, tags='currentArc')
+        else:
+            pass
     else:
-        pass
+        if len(points_san) > 0:
+            x_arc_san = [point_san[0] for point_san in points_san]
+            y_arc_san = [point_san[1] for point_san in points_san]
+            x_arc_san_0, y_arc_san_0 = x_arc_san[0], y_arc_san[0]
+            x_arc_san_0, y_arc_san_0 = float(round((x_arc_san_0 / width_pre_4_line) * width)), \
+                                       float(round((y_arc_san_0 / height_pre_4_line) * heigth))
+            x_arc_san_last, y_arc_san_last = x_arc_san[-1], y_arc_san[-1]
+            x_arc_san_last, y_arc_san_last = float(round((x_arc_san_last / width_pre_4_line) * width)), \
+                                             float(round((y_arc_san_last / height_pre_4_line) * heigth))
+            canvas.delete('manualArcSan')
+            myArc = canvas.create_arc(x_arc_san_0, y_arc_san_0, x_arc_san_last, y_arc_san_last, start=63,
+                                      extent=92,
+                                      style=ARC,
+                                      outline="white",
+                                      width=8,
+                                      tags='manualArcSan')
+        else:
+            pass
 
 def size_changed(event):
     global width_pre, heigth_pre, cnt, width_pre_4_line, height_pre_4_line
@@ -513,9 +541,47 @@ def size(event):
     redraw_line()
     redraw_arc()
 
-root.bind('<Configure>', size_changed)   # Hook window size changes
+def start_sansan_configuration():
+    global found
+    found = found_leading_sansun()
+    if found == True:
+        camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="white", width=8,
+                                              start=90 - 27, end=90 + 65, tags='currentArc')
+        messagebox.showinfo("Information regards the <Leading Sansan>",
+                            "The computational system found an optional <Leading Sansan>")
+        # Asking if it is a good leading sansan
+        found_satisfying = messagebox.askyesno("Manual decision about the <Leading Sansan>",
+                                            "Has the computational system found a satisfying <Leading Sansan>?")
+        if found_satisfying == 1:
+            pass
+        else:
+            found = False
+            canvas.delete('currentArc')
+            manual_sansan_drawing()
+
+    else:
+        messagebox.showinfo("Information regards the <Leading Sansan>",
+                            "The computational system not succeeded \n"
+                            "to find a <Leading Sansan>\n\nPlease draw one manually.")
+        manual_sansan_drawing()
+
+    # Redraw Leading Sansan
+    b_redraw = Button(top1_right_frame, text="Redraw Leading Sansan", command=redraw_leading_sansan, anchor=CENTER)
+    b_redraw.grid(row=4, column=0, columnspan=2)
+
+
+
+def redraw_leading_sansan():
+    canvas.delete('currentArc')
+    canvas.delete('manualArcSan')
+    manual_sansan_drawing()
+
+
+
 
 ##------------##-------------- MAIN -------------##------------##
+# Hook window size changes
+root.bind('<Configure>', size_changed)
 # Grid Configurations
 Grid.rowconfigure(root, index=0, weight=2)
 Grid.columnconfigure(root, index=0, weight=2)
@@ -527,66 +593,71 @@ Grid.columnconfigure(root, index=0, weight=2)
 canvas = Canvas(frame_left)
 canvas.pack(anchor='nw', fill='both', expand=1)
 img_on_canvas = canvas.create_image(0, 0, image=new_image, anchor='nw')
-camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="white", width=6,
-                         start=90-27, end=90+65, tags='currentArc')
-did_we_funod_leading_sansun()
 
 ##--------------------------Right Side-------------------------##
 ##--------------------------Right Top 1 Frame-------------------------##
 
-assessment_before = random.randint(3000, 5000)
-assessment_label = Label(top1_right_frame, text="Dates Assessment Before Cutting: " + str(assessment_before))
-assessment_label.grid(row=0, column=0, sticky="w", pady=10)
+assessment_label = Label(top1_right_frame, text="Dates Assessment Before Cutting: ", font='sans 10', bg='white')
+assessment_label.grid(row=0, column=0, pady=10)
 
-assessment_afterCut_label = Label(top1_right_frame, text="")
+assessment_before = random.randint(3000, 5000)
+assessment_before_label = Label(top1_right_frame, text=str(assessment_before), font='sans 10 bold', bg='white')
+assessment_before_label.grid(row=0, column=1, pady=10)
+
+assessment_afterCut_label = Label(top1_right_frame, text="", font='sans 10', bg='white')
 assessment_afterCut_label.grid(row=1, column=0, sticky="w", pady=5)
+assessment_afterCut_num_label = Label(top1_right_frame, text="", font='sans 10 bold', bg='white')
+assessment_afterCut_num_label.grid(row=1, column=1, sticky="w", pady=5)
 
 ##--------------------------Right Top 2 Frame-------------------------##
 
-option_label = Label(top2_right_frame, text="Choose an option for operation:")
+option_label = Label(top2_right_frame, text="Choose an option for operation:", bg='white')
 option_label.grid(row=1, column=0, sticky="w", pady=10)
 
 # Radio Buttons
 r = StringVar()
 r.set("None")
 
-Radiobutton(top2_right_frame, text="Manual marking on the image", variable=r, value="Manual marking", command=lambda : clicked(r.get())).grid(row=2, column=0, sticky="w")
-Radiobutton(top2_right_frame, text="Enter input for the amount that will remain", variable=r, value="Input of amount", command=lambda : clicked(r.get())).grid(row=4, column=0, sticky="w")
+Radiobutton(top2_right_frame, text="Manual marking on the image", variable=r, value="Manual marking", command=lambda : clicked(r.get()), bg='white').grid(row=2, column=0, sticky="w")
+Radiobutton(top2_right_frame, text="Enter input for the amount that will remain", variable=r, value="Input of amount", command=lambda : clicked(r.get()), bg='white').grid(row=4, column=0, sticky="w")
 
 # Completed Drawing Button DISABLED
 b_done_draw = Button(top2_right_frame, text="Continue", command=done_drawing, state=DISABLED)
-b_done_draw.grid(row=3, column=0, padx=50, pady=10, sticky="w")
+b_done_draw.grid(row=3, column=0, padx=60, pady=10, sticky="w")
 
 # Clear Drawing Button DISABLED
 b_clear_draw = Button(top2_right_frame, text="Clear Drawing", command=clear_drawing, state=DISABLED)
-b_clear_draw.grid(row=3, column=0, padx=50, pady=10, sticky="e", columnspan=2)
+b_clear_draw.grid(row=3, column=0, padx=40, pady=10, sticky="e")
 
 # Input Box DISABLED
-ge = Entry(top2_right_frame, width=28, borderwidth=2, state=DISABLED)
-ge.grid(row=5, column=0, sticky="w", padx=5, pady=10)
+ge = Entry(top2_right_frame, width=15, borderwidth=2, state=DISABLED)
+ge.grid(row=5, column=0, padx=5, pady=10)
 
 # Submit Button DISABLED
 b_submit = Button(top2_right_frame, text="Submit", command=submit_entry, state=DISABLED)
-b_submit.grid(row=5, column=0, sticky="e", padx=10, pady=10)
+b_submit.grid(row=6, column=0, padx=75, pady=5, sticky="w")
 
 # Clear Entry Button DISABLED
 b_clear = Button(top2_right_frame, text="Clear", command=clear_entry, state=DISABLED)
-b_clear.grid(row=5, column=1, sticky="w")
+b_clear.grid(row=6, column=0, padx=85, pady=10, sticky="e")
 
 # Selected String From Radio Buttons
-selectedRadio = Label(top2_right_frame, text="Option Selected: " + str(r.get()))
-selectedRadio.grid(row=6, column=0, columnspan=2)
+selectedRadio = Label(top2_right_frame, text="Option Selected: ", font='sans 10', bg='white')
+selectedRadio.grid(row=7, column=0, pady=5)
+selectedRadioValue = Label(top2_right_frame, text=str(r.get()), font='sans 12 bold', bg='white')
+selectedRadioValue.grid(row=8, column=0)
 
 ##--------------------------Right Top 3 Frame-------------------------##
 
-L_length_range_label = Label(top3_right_frame,
-                                       text="The distance that the robot will pass will appear here\n after pressing on the submit button.",
-                                       justify=LEFT, font='sans 8 bold')
-# L_length_range_label.grid(row=0, column=0, pady=10)
+L_length_range_label_text = Label(top3_right_frame, font='sans 10 bold', bg='white')
+L_length_range_label = Label(top3_right_frame, padx=10, pady=10, font='sans 12 bold'
+                             , bg='white', relief=GROOVE)
+
 
 ##--------------------------Right Top 4 Frame-------------------------##
-
-final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10, font='sans 16 bold', state=DISABLED)
-# final_confirmation.pack(pady=10)
-
+final_confirmation_helper = Label(top4_right_frame)
+final_confirmation_helper.pack(pady=20)
+final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10,
+                            font='sans 12 bold', state=DISABLED)
+start_sansan_configuration()
 root.mainloop()

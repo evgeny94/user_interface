@@ -1,19 +1,23 @@
 from tkinter import *
-from PIL import ImageTk, Image
+from tkinter.font import Font
 
 
 root = Tk()
-root.title('Frame')
-root.iconbitmap('images/icon.ico')
+root.title('Example 2 fonts')
+root.geometry('{}x{}'.format(500, 500))
 
-frame = LabelFrame(root, text="This is my Frame...", padx=50, pady=50)
-frame.pack(padx=10, pady=10)
+#Fonts
+big_font = Font(family='Helvetica', size=12, weight='bold')
+small_font = Font(family='Helvetica', size=8)
 
-myLabel = Label(frame, text="My Label is Here")
-myLabel.pack()
 
-b = Button(frame, text="Click Here")
-b.pack()
+container_frame3= Frame(root, highlightbackground="gray80", highlightcolor="gray80", highlightthickness=1,bd=0,bg='red')
+container_frame3.grid(row=0,sticky="nsew")
+t = Text(container_frame3, font='sans 50 bold')
+datalabel= Label(container_frame3, text="{}".format('21.15 %\n\n'),width=12,font=big_font,justify=CENTER,bg='blue')
+datalabel.grid(row=0, column=0)
+datalabel= Label(container_frame3, text='Mbps', font=small_font)
+datalabel.grid(row=0, column=0)
 
 
 root.mainloop()
