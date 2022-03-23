@@ -24,36 +24,34 @@ root.geometry(geometry)
 
 ## --------------- Frames --------------- ##
 # Frame Creation Left
-frame_left = LabelFrame(root, text="Picture", labelanchor='n', bg='white')
+frame_left = LabelFrame(root, text="Picture", labelanchor='n', bg='white', font='sans 10 bold')
 frame_left.grid(row=0, column=0, sticky="nsew")
 
 # Frame Creation Right
-frame_right = LabelFrame(root, text="Information Section", bg='white')
+frame_right = LabelFrame(root, text="Information", labelanchor='n', bg='white', font='sans 11 bold')
 frame_right.grid(row=0, column=1, sticky="nsew")
 
 # Frame Configuration Right
-frame_right.rowconfigure(index=0, weight=1)
+frame_right.rowconfigure(index=0, weight=0)
 frame_right.rowconfigure(index=1, weight=1)
 frame_right.rowconfigure(index=2, weight=1)
 frame_right.rowconfigure(index=3, weight=0)
 
 # Right Top 1 Frame
-top1_right_frame = LabelFrame(frame_right, text="Assessmention Section", labelanchor='n', bg='white')
-top1_right_frame.grid(row=0, column=0, sticky="nsew")
+top1_right_frame = LabelFrame(frame_right, text="Assessmention", labelanchor='n', bg='white')
+# top1_right_frame.grid(row=0, column=0, sticky="nsew")
 
 # Right Top 2 Frame
-top2_right_frame = LabelFrame(frame_right, text="Cutting Option Section", labelanchor='n', bg='white')
-top2_right_frame.grid(row=1, column=0, sticky="nsew")
+top2_right_frame = LabelFrame(frame_right, text="Operations", labelanchor='n', bg='white')
+# top2_right_frame.grid(row=1, column=0, sticky="nsew")
 
 # Right Top 3 Frame
 top3_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white')
-# top3_right_frame = LabelFrame(frame_right, text="Trajectory Length Section")
-top3_right_frame.grid(row=2, column=0, sticky="nsew")
+# top3_right_frame.grid(row=2, column=0, sticky="nsew")
 
 # Right Top 4 Frame
 top4_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white')
-#top4_right_frame = LabelFrame(frame_right, text="Final Confirmation") try
-top4_right_frame.grid(row=3, column=0, sticky="nsew")
+# top4_right_frame.grid(row=3, column=0, sticky="nsew")
 
 ## --------------- Variables & Image --------------- ##
 # For the submit button
@@ -97,7 +95,7 @@ def Hide_2_last_frames():
     final_confirmation.pack_forget()
 
 def Show_2_last_frames():
-    top3_right_frame['text'] = "Trajectory Length Section"
+    top3_right_frame['text'] = "Trajectory Length"
     L_length_range_label_text.pack(pady=10)
     L_length_range_label.pack(pady=10)
     top4_right_frame['text'] = "Final Confirmation"
@@ -134,7 +132,7 @@ def create_random_line():
                      random.randint(373, 425), random.randint(565, 665)
     line = canvas.create_line(x1, y1, x2, y2, width=8, tags='randomcurrentline')
 
-def end_sansan_window():
+def end_spikelet_window():
     global myArc
     width, height = new_image.width(), new_image.height()
     width_pre_4_san, height_pre_4_san = new_image_san.width(), new_image_san.height()
@@ -153,9 +151,9 @@ def end_sansan_window():
                               outline="#4B0082",
                               width=8,
                               tags='manualArcSan')
-    Sansan_Window.destroy()
+    Spikelet_Window.destroy()
 
-# --------------- Sansan Drawing ---------------
+# --------------- Spiklet Drawing ---------------
 def get_xy_san(event):
     global lasx, lasy
     lasx, lasy = event.x, event.y
@@ -237,28 +235,28 @@ def size_san(event):
     new_image_san = ImageTk.PhotoImage(resized_image_san)
     canvas_san.itemconfig(img_on_canvas_san, image=new_image_san)
 
-# In case the Leading Sansan not found
-def manual_sansan_drawing():
-    global canvas_san, final_confirmation, Sansan_Window, img_on_canvas_san
+# In case the Leading Spikelet not found
+def manual_spikelet_drawing():
+    global canvas_san, final_confirmation, Spikelet_Window, img_on_canvas_san
     # Disabling Cut Button
     final_confirmation['state'] = DISABLED
 
-    # Open new window for drawing the sansan
-    Sansan_Window = Toplevel()
-    Sansan_Window.title('Marking The Leading Sansan Manually')
+    # Open new window for drawing the spikelet
+    Spikelet_Window = Toplevel()
+    Spikelet_Window.title('Marking The Leading Spikelet Manually')
 
     # Top Frame
     blank_space = "_"
-    top_frame = LabelFrame(Sansan_Window, text="Picture", labelanchor='n', bg="white")
+    top_frame = LabelFrame(Spikelet_Window, text="Picture", labelanchor='n', bg="white")
     top_frame.grid(row=0, column=0, sticky="nsew")
 
     # Bottom Frame
-    bottom_frame = LabelFrame(Sansan_Window, text="Buttons", labelanchor='n', bg="white")
+    bottom_frame = LabelFrame(Spikelet_Window, text="Buttons", labelanchor='n', bg="white")
     bottom_frame.grid(row=1, column=0, sticky="nsew")
 
     # Grid configuration
-    Grid.rowconfigure(Sansan_Window, index=0, weight=2)
-    Grid.columnconfigure(Sansan_Window, index=0, weight=2)
+    Grid.rowconfigure(Spikelet_Window, index=0, weight=2)
+    Grid.columnconfigure(Spikelet_Window, index=0, weight=2)
 
     # Frame configuration
     top_frame.rowconfigure(index=0, weight=2)
@@ -279,10 +277,10 @@ def manual_sansan_drawing():
     #
     canvas_san.bind("<B1-Motion>", motion_san)
     canvas_san.bind("<ButtonRelease-1>", on_click_release_san)
-    Sansan_Window.bind("<Button-3>", get_xy_san)
-    Sansan_Window.bind("<B3-Motion>", move_san)
+    Spikelet_Window.bind("<Button-3>", get_xy_san)
+    Spikelet_Window.bind("<B3-Motion>", move_san)
     # Exit button
-    quit_button = Button(bottom_frame, text="Save and Continue", command=end_sansan_window)
+    quit_button = Button(bottom_frame, text="Save and Continue", command=end_spikelet_window)
     quit_button.grid(row=0, column=0, padx=5, pady=5, sticky="e")
 
     # Clear button
@@ -290,7 +288,7 @@ def manual_sansan_drawing():
     clear_button.grid(row=0, column=1, padx=5, pady=5, sticky="w")
 
     # Hook window size changes
-    Sansan_Window.bind('<Configure>', size_changed_san)
+    Spikelet_Window.bind('<Configure>', size_changed_san)
 
 def myDelete():
     selectedRadio.grid_forget()
@@ -433,7 +431,7 @@ def submit_entry():
                 create_random_line()
         else:
             clear_entry()
-            messagebox.showerror("Entry Box Error", "The number is greater than the initial assessment!\nPlease try again.")
+            messagebox.showerror("Entry Box Error", "The number is equal or greater than the initial assessment!\nPlease try again.")
     else:
         clear_entry()
         messagebox.showerror("Entry Box Error", "This Entry Box may contain only digits and positive numbers!\nPlease try again.")
@@ -551,42 +549,59 @@ def size(event):
     redraw_line()
     redraw_arc()
 
-def start_sansan_configuration():
+def start_spikelet_configuration():
     global found
     found = found_leading_sansun()
     if found == True:
         camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
                                               start=90 - 27, end=90 + 65, tags='currentArc')
-        messagebox.showinfo("Information regards the <Leading Sansan>",
-                            "The computational system found an optional <Leading Sansan>")
-        # Asking if it is a good leading sansan
-        found_satisfying = messagebox.askyesno("Manual decision about the <Leading Sansan>",
-                                            "Has the computational system found a satisfying <Leading Sansan>?")
+        messagebox.showinfo("Information regards the <Leading Spikelet>",
+                            "The computational system found an optional <Leading Spikelet>")
+        # Asking if it is a good leading spikelet
+        found_satisfying = messagebox.askyesno("Manual decision about the <Leading Spikelet>",
+                                            "Has the computational system found a satisfying <Leading Spikelet>?")
         if found_satisfying == 1:
             pass
         else:
             found = False
             canvas.delete('currentArc')
-            manual_sansan_drawing()
+            manual_spikelet_drawing()
 
     else:
-        messagebox.showinfo("Information regards the <Leading Sansan>",
+        messagebox.showinfo("Information regards the <Leading Spikelet>",
                             "The computational system not succeeded \n"
-                            "to find a <Leading Sansan>\n\nPlease draw one manually.")
-        manual_sansan_drawing()
+                            "to find a <Leading Spikelet>\n\nPlease draw one manually.")
+        manual_spikelet_drawing()
 
-    # Redraw Leading Sansan
-    b_redraw = Button(top2_right_frame, text="Redraw Leading Sansan", command=redraw_leading_sansan, anchor=CENTER)
+    # Redraw Leading Spikelet
+    b_redraw = Button(top2_right_frame, text="Redraw Leading Spikelet", command=redraw_leading_spikelet, anchor=CENTER)
     b_redraw.grid(row=9, column=0, pady=10)
 
+def start_user_interface():
+    b_start_interface.pack_forget()
+    start_label.pack_forget()
+    # Right Top 1 Frame
+    top1_right_frame.grid(row=0, column=0, sticky="nsew")
+
+    # Right Top 2 Frame
+    top2_right_frame.grid(row=1, column=0, sticky="nsew")
+
+    # Right Top 3 Frame
+    top3_right_frame.grid(row=2, column=0, sticky="nsew")
+
+    # Right Top 4 Frame
+    top4_right_frame.grid(row=3, column=0, sticky="nsew")
+
+    start_spikelet_configuration()
 
 
-def redraw_leading_sansan():
+
+def redraw_leading_spikelet():
     canvas.delete('currentArc')
     canvas.delete('manualArcSan')
     clear_drawing()
     clear_entry()
-    manual_sansan_drawing()
+    manual_spikelet_drawing()
 
 
 
@@ -597,6 +612,7 @@ root.bind('<Configure>', size_changed)
 # Grid Configurations
 Grid.rowconfigure(root, index=0, weight=2)
 Grid.columnconfigure(root, index=0, weight=2)
+Grid.columnconfigure(top2_right_frame, index=0, weight=1)
 #Grid.rowconfigure(root, index=1, weight=1)
 
 
@@ -623,19 +639,19 @@ assessment_afterCut_num_label.grid(row=1, column=1, sticky="w", pady=5)
 
 ##--------------------------Right Top 2 Frame-------------------------##
 
-option_label = Label(top2_right_frame, text="Choose an option for operation:", bg='white')
+option_label = Label(top2_right_frame, text="Choose mode of operation:", bg='white')
 option_label.grid(row=1, column=0, sticky="w", pady=10)
 
 # Radio Buttons
 r = StringVar()
 r.set("None")
 
-Radiobutton(top2_right_frame, text="Manual marking on the image", variable=r, value="Manual marking", command=lambda : clicked(r.get()), bg='white').grid(row=2, column=0, sticky="w")
-Radiobutton(top2_right_frame, text="Enter input for the amount that will remain", variable=r, value="Input of amount", command=lambda : clicked(r.get()), bg='white').grid(row=4, column=0, sticky="w")
+Radiobutton(top2_right_frame, text=" Manual marking", variable=r, value="Manual marking", command=lambda : clicked(r.get()), bg='white').grid(row=2, column=0, sticky="w")
+Radiobutton(top2_right_frame, text=" Input of amount that will remain", variable=r, value="Input of amount", command=lambda : clicked(r.get()), bg='white').grid(row=4, column=0, sticky="w")
 
 # Completed Drawing Button DISABLED
 b_done_draw = Button(top2_right_frame, text="Continue", command=done_drawing, state=DISABLED)
-b_done_draw.grid(row=3, column=0, padx=60, pady=10, sticky="w")
+b_done_draw.grid(row=3, column=0, padx=40, pady=10, sticky="w")
 
 # Clear Drawing Button DISABLED
 b_clear_draw = Button(top2_right_frame, text="Clear Drawing", command=clear_drawing, state=DISABLED)
@@ -647,11 +663,11 @@ ge.grid(row=5, column=0, padx=5, pady=10)
 
 # Submit Button DISABLED
 b_submit = Button(top2_right_frame, text="Submit", command=submit_entry, state=DISABLED)
-b_submit.grid(row=6, column=0, padx=75, pady=5, sticky="w")
+b_submit.grid(row=6, column=0, padx=50, pady=5, sticky="w")
 
 # Clear Entry Button DISABLED
 b_clear = Button(top2_right_frame, text="Clear", command=clear_entry, state=DISABLED)
-b_clear.grid(row=6, column=0, padx=85, pady=10, sticky="e")
+b_clear.grid(row=6, column=0, padx=50, pady=10, sticky="e")
 
 # Selected String From Radio Buttons
 selectedRadio = Label(top2_right_frame, text="Option Selected: ", font='sans 10', bg='white')
@@ -671,5 +687,12 @@ final_confirmation_helper = Label(top4_right_frame, bg='white')
 final_confirmation_helper.pack(pady=20)
 final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10,
                             font='sans 12 bold', bg="#FF0000", fg="white", state=DISABLED)
-start_sansan_configuration()
+start_label = Label(frame_right, text="Welcome To\n\nDate Thinning User-Interface."
+                    , font='sans 10 bold', bg='white')
+start_label.pack(padx=29, pady=(200, 20), anchor=CENTER)
+b_start_interface = Button(frame_right, text="Start", command=start_user_interface, padx=10,
+                            font='sans 12 bold', bg="#228B22", fg="white")
+b_start_interface.pack(pady=20, anchor=CENTER)
+
+
 root.mainloop()
