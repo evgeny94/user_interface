@@ -69,6 +69,7 @@ new_image = ImageTk.PhotoImage(resized_image)
 canvas_san = Canvas()
 o1, o2 = 580, 675
 R = 450
+global new_image_san
 
 # curve points
 global points_san
@@ -135,14 +136,23 @@ def create_random_line():
 
 def end_sansan_window():
     global myArc
+    width, height = new_image.width(), new_image.height()
+    width_pre_4_san, height_pre_4_san = new_image_san.width(), new_image_san.height()
     x_arc_san = [point_san[0] for point_san in points_san]
     y_arc_san = [point_san[1] for point_san in points_san]
-    myArc = canvas.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1], start=63,
-                            extent=92,
-                            style=ARC,
-                            outline="white",
-                            width=8,
-                            tags='manualArcSan')
+    x_arc_san_0, y_arc_san_0 = x_arc_san[0], y_arc_san[0]
+    x_arc_san_0, y_arc_san_0 = float(round((x_arc_san_0 / width_pre_4_san) * width)), \
+                               float(round((y_arc_san_0 / height_pre_4_san) * height))
+    x_arc_san_last, y_arc_san_last = x_arc_san[-1], y_arc_san[-1]
+    x_arc_san_last, y_arc_san_last = float(round((x_arc_san_last / width_pre_4_san) * width)), \
+                                     float(round((y_arc_san_last / height_pre_4_san) * height))
+    canvas.delete('manualArcSan')
+    myArc = canvas.create_arc(x_arc_san_0, y_arc_san_0, x_arc_san_last, y_arc_san_last, start=63,
+                              extent=92,
+                              style=ARC,
+                              outline="#4B0082",
+                              width=8,
+                              tags='manualArcSan')
     Sansan_Window.destroy()
 
 # --------------- Sansan Drawing ---------------
@@ -183,7 +193,7 @@ def arc_san():
     myArc = canvas_san.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1], start=63,
                                 extent=92,
                                 style=ARC,
-                                outline="white",
+                                outline="#4B0082",
                                 width=8,
                                 tags='manualArcSan')
     return myArc
@@ -239,11 +249,11 @@ def manual_sansan_drawing():
 
     # Top Frame
     blank_space = "_"
-    top_frame = LabelFrame(Sansan_Window, text="Picture", labelanchor='n')
+    top_frame = LabelFrame(Sansan_Window, text="Picture", labelanchor='n', bg="white")
     top_frame.grid(row=0, column=0, sticky="nsew")
 
     # Bottom Frame
-    bottom_frame = LabelFrame(Sansan_Window, text="Buttons", labelanchor='n')
+    bottom_frame = LabelFrame(Sansan_Window, text="Buttons", labelanchor='n', bg="white")
     bottom_frame.grid(row=1, column=0, sticky="nsew")
 
     # Grid configuration
@@ -258,7 +268,7 @@ def manual_sansan_drawing():
     bottom_frame.columnconfigure(index=1, weight=1)
 
     # Canvas
-    canvas_san = Canvas(top_frame)
+    canvas_san = Canvas(top_frame, bg="white")
     canvas_san.pack(anchor='nw', fill='both', expand=1)
     img_on_canvas_san = canvas_san.create_image(0, 0, image=new_image, anchor='nw')
 
@@ -494,7 +504,7 @@ def redraw_arc():
             R = float(round(math.sqrt((x1_arc_new - o1) ** 2 + (y1_arc_new - o2) ** 2)))
             canvas.delete('currentArc')
             print("R:" + str(R))
-            camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="white", width=8,
+            camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
                                                   start=90 - 27, end=90 + 65, tags='currentArc')
         else:
             pass
@@ -512,7 +522,7 @@ def redraw_arc():
             myArc = canvas.create_arc(x_arc_san_0, y_arc_san_0, x_arc_san_last, y_arc_san_last, start=63,
                                       extent=92,
                                       style=ARC,
-                                      outline="white",
+                                      outline="#4B0082",
                                       width=8,
                                       tags='manualArcSan')
         else:
@@ -545,7 +555,7 @@ def start_sansan_configuration():
     global found
     found = found_leading_sansun()
     if found == True:
-        camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="white", width=8,
+        camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
                                               start=90 - 27, end=90 + 65, tags='currentArc')
         messagebox.showinfo("Information regards the <Leading Sansan>",
                             "The computational system found an optional <Leading Sansan>")
@@ -566,14 +576,16 @@ def start_sansan_configuration():
         manual_sansan_drawing()
 
     # Redraw Leading Sansan
-    b_redraw = Button(top1_right_frame, text="Redraw Leading Sansan", command=redraw_leading_sansan, anchor=CENTER)
-    b_redraw.grid(row=4, column=0, columnspan=2)
+    b_redraw = Button(top2_right_frame, text="Redraw Leading Sansan", command=redraw_leading_sansan, anchor=CENTER)
+    b_redraw.grid(row=9, column=0, pady=10)
 
 
 
 def redraw_leading_sansan():
     canvas.delete('currentArc')
     canvas.delete('manualArcSan')
+    clear_drawing()
+    clear_entry()
     manual_sansan_drawing()
 
 
@@ -606,7 +618,7 @@ assessment_before_label.grid(row=0, column=1, pady=10)
 
 assessment_afterCut_label = Label(top1_right_frame, text="", font='sans 10', bg='white')
 assessment_afterCut_label.grid(row=1, column=0, sticky="w", pady=5)
-assessment_afterCut_num_label = Label(top1_right_frame, text="", font='sans 10 bold', bg='white')
+assessment_afterCut_num_label = Label(top1_right_frame, text="", font='sans 12 bold', bg='white')
 assessment_afterCut_num_label.grid(row=1, column=1, sticky="w", pady=5)
 
 ##--------------------------Right Top 2 Frame-------------------------##
@@ -655,9 +667,9 @@ L_length_range_label = Label(top3_right_frame, padx=10, pady=10, font='sans 12 b
 
 
 ##--------------------------Right Top 4 Frame-------------------------##
-final_confirmation_helper = Label(top4_right_frame)
+final_confirmation_helper = Label(top4_right_frame, bg='white')
 final_confirmation_helper.pack(pady=20)
 final_confirmation = Button(top4_right_frame, text="Cut", command=confirmation_click, padx=10,
-                            font='sans 12 bold', state=DISABLED)
+                            font='sans 12 bold', bg="#FF0000", fg="white", state=DISABLED)
 start_sansan_configuration()
 root.mainloop()
