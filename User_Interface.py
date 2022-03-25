@@ -81,6 +81,8 @@ found = False
 #for finding sansun
 global finding_chance
 
+#final confirmation
+global final_confirmation
 ## --------------- Functions --------------- ##
 
 #-----------------show/hide functions-----------------------
@@ -89,15 +91,16 @@ def Hide_2_last_frames():
     top3_right_frame['text'] = ""
     # L_length_range_label_text.place_forget()
     # L_length_range_label.place_forget()
-    L_length_range_label_text.pack_forget()
-    L_length_range_label.pack_forget()
+    L_length_range_label_text.grid_forget()
+    L_length_range_label.grid_forget()
+    assessment_afterCut_label['text'] = ""
     top4_right_frame['text'] = ""
     final_confirmation.pack_forget()
 
 def Show_2_last_frames():
-    top3_right_frame['text'] = "Trajectory Length"
-    L_length_range_label_text.pack(pady=10)
-    L_length_range_label.pack(pady=10)
+    top3_right_frame['text'] = "Results Section"
+    L_length_range_label_text.grid(row=3, column=0, pady=5, sticky="e")
+    L_length_range_label.grid(row=4, column=0, pady=5)
     top4_right_frame['text'] = "Final Confirmation"
     final_confirmation.pack(pady=10)
     final_confirmation_helper.pack_forget()
@@ -106,7 +109,7 @@ def Show_2_last_frames():
 def get_xy(event):
     global firstx, firsty, line
     firstx, firsty = event.x, event.y
-    line = canvas.create_line(firstx, firsty, firstx, firsty, width=8, tags='currentline')
+    line = canvas.create_line(firstx, firsty, firstx, firsty, fill="#00FFFF", width=8, tags='currentline')
 
 def draw(event):
     canvas.coords('currentline', firstx, firsty, event.x, event.y)
@@ -295,8 +298,9 @@ def myDelete():
     selectedRadioValue.grid_forget()
 
 def clicked(value):
-    global selectedRadio, selectedRadioValue, ge, b_submit, b_clear, b_clear_draw, final_confirmation, assessment_afterCut_label, assessment_afterCut_num_label
+    global selectedRadio, selectedRadioValue, ge, b_submit, b_clear, b_clear_draw, final_confirmation, assessment_afterCut_label, assessment_afterCut_num_label, r_value
 
+    r_value = value
     myDelete()
     final_confirmation['state'] = DISABLED
     if value == "Input of amount":
@@ -313,16 +317,16 @@ def clicked(value):
         ge['state'] = NORMAL
 
         # Submit Button
-        b_submit['state'] = NORMAL
+        # b_submit['state'] = NORMAL
 
         # Clear Entry Button
-        b_clear['state'] = NORMAL
+        # b_clear['state'] = NORMAL
 
         # Completed Drawing Button DISABLED
-        b_done_draw['state'] = DISABLED
+        # b_done_draw['state'] = DISABLED
 
         # Clear Drawing Button DISABLED
-        b_clear_draw['state'] = DISABLED
+        # b_clear_draw['state'] = DISABLED
     else:
         # Forget previous assessment and drawings
         assessment_afterCut_label['text'] = ""
@@ -344,16 +348,16 @@ def clicked(value):
         ge['state'] = DISABLED
 
         # Submit Button DISABLED
-        b_submit['state'] = DISABLED
+        # b_submit['state'] = DISABLED
 
         # Clear Entry Button DISABLED
-        b_clear['state'] = DISABLED
+        # b_clear['state'] = DISABLED
 
         # Completed Drawing Button DISABLED
-        b_done_draw['state'] = NORMAL
+        # b_done_draw['state'] = NORMAL
 
         # Clear Drawing Button DISABLED
-        b_clear_draw['state'] = NORMAL
+        # b_clear_draw['state'] = NORMAL
 
     # Selected String From Radio Buttons
     selectedRadio['text'] = "Option Selected: "
@@ -503,7 +507,7 @@ def redraw_arc():
             canvas.delete('currentArc')
             print("R:" + str(R))
             camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
-                                                  start=90 - 27, end=90 + 65, tags='currentArc')
+                                                  start=90 - 27, end=90 + 65, tags='currentArc') #what happend here?
         else:
             pass
     else:
@@ -574,8 +578,8 @@ def start_spikelet_configuration():
         manual_spikelet_drawing()
 
     # Redraw Leading Spikelet
-    b_redraw = Button(top2_right_frame, text="Redraw Leading Spikelet", command=redraw_leading_spikelet, anchor=CENTER)
-    b_redraw.grid(row=9, column=0, pady=10)
+    b_redraw = Button(top1_right_frame, text="Redraw Leading Spikelet", command=redraw_leading_spikelet, anchor=CENTER)
+    b_redraw.grid(row=2, column=0, pady=10 ) #, sticky="w"
 
 def start_user_interface():
     b_start_interface.pack_forget()
@@ -605,6 +609,21 @@ def redraw_leading_spikelet():
 
 
 
+def univarsal_continue():
+    global r_value
+    if r_value == "Input of amount":
+        submit_entry()
+    else:
+        done_drawing()
+
+
+def univarsal_clear():
+    global r_value
+    if r_value == "Input of amount":
+        clear_entry()
+    else:
+        clear_drawing()
+
 
 ##------------##-------------- MAIN -------------##------------##
 # Hook window size changes
@@ -632,10 +651,7 @@ assessment_before = random.randint(3000, 5000)
 assessment_before_label = Label(top1_right_frame, text=str(assessment_before), font='sans 10 bold', bg='white')
 assessment_before_label.grid(row=0, column=1, pady=10)
 
-assessment_afterCut_label = Label(top1_right_frame, text="", font='sans 10', bg='white')
-assessment_afterCut_label.grid(row=1, column=0, sticky="w", pady=5)
-assessment_afterCut_num_label = Label(top1_right_frame, text="", font='sans 12 bold', bg='white')
-assessment_afterCut_num_label.grid(row=1, column=1, sticky="w", pady=5)
+
 
 ##--------------------------Right Top 2 Frame-------------------------##
 
@@ -650,24 +666,34 @@ Radiobutton(top2_right_frame, text=" Manual marking", variable=r, value="Manual 
 Radiobutton(top2_right_frame, text=" Input of amount that will remain", variable=r, value="Input of amount", command=lambda : clicked(r.get()), bg='white').grid(row=4, column=0, sticky="w")
 
 # Completed Drawing Button DISABLED
-b_done_draw = Button(top2_right_frame, text="Continue", command=done_drawing, state=DISABLED)
-b_done_draw.grid(row=3, column=0, padx=40, pady=10, sticky="w")
+# b_done_draw = Button(top2_right_frame, text="Continue", command=done_drawing, state=DISABLED)
+# b_done_draw.grid(row=3, column=0, padx=40, pady=10, sticky="w")
 
 # Clear Drawing Button DISABLED
-b_clear_draw = Button(top2_right_frame, text="Clear Drawing", command=clear_drawing, state=DISABLED)
-b_clear_draw.grid(row=3, column=0, padx=40, pady=10, sticky="e")
+# b_clear_draw = Button(top2_right_frame, text="Clear Drawing", command=clear_drawing, state=DISABLED)
+# b_clear_draw.grid(row=3, column=0, padx=40, pady=10, sticky="e")
 
+# marking explain
+marking_explain = Label(top2_right_frame, text="If you choose Manual marking, drow on\n"
+                                               " the picture in the left side of the screen\n"
+                                               " where is the line you want the mashine\n"
+                                               " to cut the thinnig spot", font='sans 10', bg='white')
+marking_explain.grid(row=3, column=0,pady=10, sticky='w')
+
+# marking explain
+input_explain = Label(top2_right_frame, text="Write A number: ", font='sans 10', bg='white')
+input_explain.grid(row=5, column=0, padx=0,pady=10, sticky='w')
 # Input Box DISABLED
 ge = Entry(top2_right_frame, width=15, borderwidth=2, state=DISABLED)
-ge.grid(row=5, column=0, padx=5, pady=10)
+ge.grid(row=5, column=0,pady=10, sticky="e")
 
-# Submit Button DISABLED
-b_submit = Button(top2_right_frame, text="Submit", command=submit_entry, state=DISABLED)
-b_submit.grid(row=6, column=0, padx=50, pady=5, sticky="w")
+# # Submit Button DISABLED
+# b_submit = Button(top2_right_frame, text="Submit", command=submit_entry, state=DISABLED)
+# b_submit.grid(row=6, column=0, padx=50, pady=5, sticky="w")
 
 # Clear Entry Button DISABLED
-b_clear = Button(top2_right_frame, text="Clear", command=clear_entry, state=DISABLED)
-b_clear.grid(row=6, column=0, padx=50, pady=10, sticky="e")
+# b_clear = Button(top2_right_frame, text="Clear", command=clear_entry, state=DISABLED)
+# b_clear.grid(row=6, column=0, padx=50, pady=10, sticky="e")
 
 # Selected String From Radio Buttons
 selectedRadio = Label(top2_right_frame, text="Option Selected: ", font='sans 10', bg='white')
@@ -675,11 +701,24 @@ selectedRadio.grid(row=7, column=0, pady=5)
 selectedRadioValue = Label(top2_right_frame, text=str(r.get()), font='sans 12 bold', bg='white')
 selectedRadioValue.grid(row=8, column=0)
 
+# Univarsal Continue button
+b_submit = Button(top2_right_frame, text="Continue", command=univarsal_continue)
+b_submit.grid(row=9, column=0, padx=50, pady=5, sticky="w")
+
+# Univarsal Clear button
+b_clear = Button(top2_right_frame, text="Clear", command=univarsal_clear)
+b_clear.grid(row=9, column=0, padx=50, pady=10, sticky="e")
+
+
 ##--------------------------Right Top 3 Frame-------------------------##
 
 L_length_range_label_text = Label(top3_right_frame, font='sans 10 bold', bg='white')
 L_length_range_label = Label(top3_right_frame, padx=10, pady=10, font='sans 12 bold'
                              , bg='white', relief=GROOVE)
+assessment_afterCut_label = Label(top3_right_frame, text="", font='sans 10', bg='white')
+assessment_afterCut_label.grid(row=0, column=0, sticky="w", pady=5)
+assessment_afterCut_num_label = Label(top3_right_frame, text="", font='sans 12 bold', bg='white')
+assessment_afterCut_num_label.grid(row=0, column=1, sticky="w", pady=5)
 
 
 ##--------------------------Right Top 4 Frame-------------------------##
