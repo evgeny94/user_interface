@@ -36,6 +36,7 @@ frame_right.rowconfigure(index=0, weight=0)
 frame_right.rowconfigure(index=1, weight=1)
 frame_right.rowconfigure(index=2, weight=1)
 frame_right.rowconfigure(index=3, weight=0)
+# frame_right.columnconfigure(index=0, weight=1)
 
 # Right Top 1 Frame
 top1_right_frame = LabelFrame(frame_right, text="Assessmention", labelanchor='n', bg='white')
@@ -99,13 +100,23 @@ def Hide_2_last_frames():
 
 def Show_2_last_frames():
     top3_right_frame['text'] = "Results Section"
-    L_length_range_label_text.grid(row=3, column=0, pady=5, sticky="e")
-    L_length_range_label.grid(row=4, column=0, pady=5)
+    L_length_range_label_text.grid(row=3, column=0, pady=5, sticky="nsew")
+    L_length_range_label.grid(row=4, column=0, pady=5, sticky="nsew")
+    assessment_afterCut_label.grid(row=0, column=0, sticky="w", pady=5)
+    assessment_afterCut_num_label.grid(row=1, column=0, padx=5, pady=5)
     top4_right_frame['text'] = "Final Confirmation"
     final_confirmation.pack(pady=10)
     final_confirmation_helper.pack_forget()
 
 # --------------- Main Image Drawing ---------------
+def create_squre():
+    global robot_start_squre
+    robot_start_label = Label(canvas, text="The Robot\n"
+                                           "Starts Here", font='sans 10 bold' ,bg="black", fg="#00FFFF")
+    robot_start_label.place(relx = 0.75, rely = 0.3)
+    robot_start_squre = canvas.create_rectangle(1100-50,300-50,1150-20,350+50,outline = "#00FFFF", width=6, tags='startsqure')
+    # robot_start_squre.place(relx = 0.75, rely = 0.3)
+
 def get_xy(event):
     global firstx, firsty, line
     firstx, firsty = event.x, event.y
@@ -133,7 +144,7 @@ def create_random_line():
     global line
     x1, y1, x2, y2 = random.randint(70, 105), random.randint(92, 148),\
                      random.randint(373, 425), random.randint(565, 665)
-    line = canvas.create_line(x1, y1, x2, y2, width=8, tags='randomcurrentline')
+    line = canvas.create_line(x1, y1, x2, y2,fill="#00FFFF" , width=8, tags='randomcurrentline')
 
 def end_spikelet_window():
     global myArc
@@ -411,7 +422,8 @@ def submit_entry():
                 assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-50, 50))
                 assessment_afterCut_num_label['relief'] = GROOVE
                 assessment_afterCut_num_label['bg'] = None
-                L_length_range_label_text['text'] = "The distance that the robot will pass is:"
+                L_length_range_label_text['text'] = "The distance that\n" \
+                                                    " the robot will pass is:"
                 L_length_range_label['text'] = str(range_calculator()) + " Centimeters"
 
                 # Enabling Cut Button
@@ -427,7 +439,8 @@ def submit_entry():
                 assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-50, 50))
                 assessment_afterCut_num_label['relief'] = GROOVE
                 assessment_afterCut_num_label['bg'] = None
-                L_length_range_label_text['text'] = "The distance that the robot will pass is:"
+                L_length_range_label_text['text'] = "The distance that\n" \
+                                                    " the robot will pass is:"
                 L_length_range_label['text'] = str(range_calculator()) + " Centimeters"
                 # Enabling Cut Button
                 final_confirmation['state'] = NORMAL
@@ -442,8 +455,10 @@ def submit_entry():
 
 def confirmation_click():
     confirmation_respond = messagebox.askyesno("Final Confirmation", "Are you sure you want to do the cut? There is no way back from here.")
-
-    # if confirmation_respond == 1:
+    if confirmation_respond == 1:
+        root.destroy()
+    else:
+        return
 
 def done_drawing():
     Show_2_last_frames()
@@ -451,7 +466,7 @@ def done_drawing():
     assessment_afterCut_num_label['text'] = str(int(random.randint(3000, 5000)/2.5 + random.randint(-50, 50)))
     assessment_afterCut_num_label['relief'] = GROOVE
     assessment_afterCut_num_label['bg'] = None
-    L_length_range_label_text['text'] = "The distance that the robot will pass is:"
+    L_length_range_label_text['text'] = "The distance that\n the robot will pass is:"
     L_length_range_label['text'] = str(range_calculator()) + " Centimeters"
     # Enabling Cut Button
     final_confirmation['state'] = NORMAL
@@ -556,6 +571,7 @@ def size(event):
 def start_spikelet_configuration():
     global found
     found = found_leading_sansun()
+    create_squre()
     if found == True:
         camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
                                               start=90 - 27, end=90 + 65, tags='currentArc')
@@ -713,12 +729,13 @@ b_clear.grid(row=9, column=0, padx=50, pady=10, sticky="e")
 ##--------------------------Right Top 3 Frame-------------------------##
 
 L_length_range_label_text = Label(top3_right_frame, font='sans 10 bold', bg='white')
-L_length_range_label = Label(top3_right_frame, padx=10, pady=10, font='sans 12 bold'
+L_length_range_label = Label(top3_right_frame, padx=5, pady=5, font='sans 12 bold'
                              , bg='white', relief=GROOVE)
-assessment_afterCut_label = Label(top3_right_frame, text="", font='sans 10', bg='white')
-assessment_afterCut_label.grid(row=0, column=0, sticky="w", pady=5)
-assessment_afterCut_num_label = Label(top3_right_frame, text="", font='sans 12 bold', bg='white')
-assessment_afterCut_num_label.grid(row=0, column=1, sticky="w", pady=5)
+assessment_afterCut_label = Label(top3_right_frame, text="", font='sans 10 bold', bg='white')
+# assessment_afterCut_label.grid(row=0, column=0, sticky="w", pady=5)
+assessment_afterCut_num_label = Label(top3_right_frame,padx=5, pady=5, text="", font='sans 12 bold', bg='white'
+                                      , relief=GROOVE)
+# assessment_afterCut_num_label.grid(row=1, column=0,padx=5, pady=5)
 
 
 ##--------------------------Right Top 4 Frame-------------------------##
