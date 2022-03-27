@@ -18,13 +18,11 @@ screen_width1 = root.winfo_screenwidth()
 screen_height1 = root.winfo_screenheight()
 print("root: " + str(screen_width1) + ", " + str(screen_height1))
 
-geometry = str(screen_width) + "x" + str(screen_height)
-
-root.geometry(geometry)
+root.state('zoomed')
 
 ## --------------- Frames --------------- ##
 # Frame Creation Left
-frame_left = LabelFrame(root, text="Picture", labelanchor='n', bg='white', font='sans 10 bold')
+frame_left = LabelFrame(root, text="Picture", labelanchor='n', bg='white', font='sans 11 bold')
 frame_left.grid(row=0, column=0, sticky="nsew")
 
 # Frame Creation Right
@@ -36,7 +34,6 @@ frame_right.rowconfigure(index=0, weight=0)
 frame_right.rowconfigure(index=1, weight=1)
 frame_right.rowconfigure(index=2, weight=1)
 frame_right.rowconfigure(index=3, weight=0)
-# frame_right.columnconfigure(index=0, weight=1)
 
 # Right Top 1 Frame
 top1_right_frame = LabelFrame(frame_right, text="Assessmention", labelanchor='n', bg='white')
@@ -49,6 +46,7 @@ top2_right_frame = LabelFrame(frame_right, text="Operations", labelanchor='n', b
 # Right Top 3 Frame
 top3_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white')
 # top3_right_frame.grid(row=2, column=0, sticky="nsew")
+top3_right_frame.columnconfigure(index=0, weight=1)
 
 # Right Top 4 Frame
 top4_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white')
@@ -66,8 +64,12 @@ width_pre_san, heigth_pre_san, cnt_san = 0, 0, 0
 resized_image = palm_img.resize((screen_width, screen_height), Image.ANTIALIAS)
 new_image = ImageTk.PhotoImage(resized_image)
 canvas_san = Canvas()
-o1, o2 = 580, 675
-R = 450
+o1, o2 = 680, 720
+R = 500
+
+# Rectangle
+rec_x1, rec_y1, rec_x2, rec_y2 = 900, 200, 930, 350
+
 global new_image_san
 
 # curve points
@@ -100,22 +102,21 @@ def Hide_2_last_frames():
 
 def Show_2_last_frames():
     top3_right_frame['text'] = "Results Section"
-    L_length_range_label_text.grid(row=3, column=0, pady=5, sticky="nsew")
-    L_length_range_label.grid(row=4, column=0, pady=5, sticky="nsew")
-    assessment_afterCut_label.grid(row=0, column=0, sticky="w", pady=5)
-    assessment_afterCut_num_label.grid(row=1, column=0, padx=5, pady=5)
+    L_length_range_label_text.grid(row=3, column=0, pady=5, sticky="nsew", columnspan=2)
+    L_length_range_label.grid(row=4, column=0, pady=5, sticky="nsew", columnspan=2)
+    assessment_afterCut_label.grid(row=0, column=0, sticky="nsew", pady=5, columnspan=2)
+    assessment_afterCut_num_label.grid(row=1, column=0, sticky="nsew", padx=5, pady=5, columnspan=2)
     top4_right_frame['text'] = "Final Confirmation"
     final_confirmation.pack(pady=10)
     final_confirmation_helper.pack_forget()
 
 # --------------- Main Image Drawing ---------------
-def create_squre():
-    global robot_start_squre
+def create_square():
+    global robot_start_square
     robot_start_label = Label(canvas, text="The Robot\n"
-                                           "Starts Here", font='sans 10 bold' ,bg="black", fg="#00FFFF")
-    robot_start_label.place(relx = 0.75, rely = 0.3)
-    robot_start_squre = canvas.create_rectangle(1100-50,300-50,1150-20,350+50,outline = "#00FFFF", width=6, tags='startsqure')
-    # robot_start_squre.place(relx = 0.75, rely = 0.3)
+                                           "Starts Here", font='sans 10 bold', bg="black", fg="#00FFFF")
+    robot_start_label.place(x=940, y=197)
+    robot_start_square = canvas.create_rectangle(rec_x1, rec_y1, rec_x2, rec_y2, outline="#00FFFF", width=6, tags='startsqaure')
 
 def get_xy(event):
     global firstx, firsty, line
@@ -144,12 +145,12 @@ def create_random_line():
     global line
     x1, y1, x2, y2 = random.randint(70, 105), random.randint(92, 148),\
                      random.randint(373, 425), random.randint(565, 665)
-    line = canvas.create_line(x1, y1, x2, y2,fill="#00FFFF" , width=8, tags='randomcurrentline')
+    line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
 
 def end_spikelet_window():
     global myArc
-    width, height = new_image.width(), new_image.height()
-    width_pre_4_san, height_pre_4_san = new_image_san.width(), new_image_san.height()
+    width, height = canvas.winfo_width(), canvas.winfo_height()
+    width_pre_4_san, height_pre_4_san = canvas_san.winfo_width(), canvas_san.winfo_height()
     x_arc_san = [point_san[0] for point_san in points_san]
     y_arc_san = [point_san[1] for point_san in points_san]
     x_arc_san_0, y_arc_san_0 = x_arc_san[0], y_arc_san[0]
@@ -158,13 +159,23 @@ def end_spikelet_window():
     x_arc_san_last, y_arc_san_last = x_arc_san[-1], y_arc_san[-1]
     x_arc_san_last, y_arc_san_last = float(round((x_arc_san_last / width_pre_4_san) * width)), \
                                      float(round((y_arc_san_last / height_pre_4_san) * height))
-    canvas.delete('manualArcSan')
+    # canvas.delete('manualArcSan')
+    print("x_arc_san_0, y_arc_san_0, x_arc_san_last, y_arc_san_last: " + str(x_arc_san_0), str(y_arc_san_0)
+          , str(x_arc_san_last), str(y_arc_san_last))
     myArc = canvas.create_arc(x_arc_san_0, y_arc_san_0, x_arc_san_last, y_arc_san_last, start=63,
                               extent=92,
                               style=ARC,
                               outline="#4B0082",
                               width=8,
                               tags='manualArcSan')
+    print(canvas_san.coords('manualArcSan'))
+    coord0, coord1, coord2, coord3 = int(canvas_san.coords('manualArcSan')[0]), int(canvas_san.coords('manualArcSan')[1]), \
+                                     int(canvas_san.coords('manualArcSan')[2]), int(canvas_san.coords('manualArcSan')[3])
+    coord0, coord1, coord2, coord3 = float(round((coord0 / width_pre_4_san) * width)), \
+                                     float(round((coord1 / height_pre_4_san) * height)), \
+                                     float(round((coord2 / width_pre_4_san) * width)), \
+                                     float(round((coord3 / height_pre_4_san) * height))
+    canvas.coords('manualArcSan', coord0, coord1, coord2, coord3)
     Spikelet_Window.destroy()
 
 # --------------- Spiklet Drawing ---------------
@@ -303,16 +314,12 @@ def manual_spikelet_drawing():
 
     # Hook window size changes
     Spikelet_Window.bind('<Configure>', size_changed_san)
-
-def myDelete():
-    selectedRadio.grid_forget()
-    selectedRadioValue.grid_forget()
+    Spikelet_Window.state('zoomed')
 
 def clicked(value):
-    global selectedRadio, selectedRadioValue, ge, b_submit, b_clear, b_clear_draw, final_confirmation, assessment_afterCut_label, assessment_afterCut_num_label, r_value
+    global ge, b_submit, b_clear, b_clear_draw, final_confirmation, assessment_afterCut_label, assessment_afterCut_num_label, r_value, b_radio1, b_radio2
 
     r_value = value
-    myDelete()
     final_confirmation['state'] = DISABLED
     if value == "Input of amount":
         # Clear and Disable Drawing
@@ -327,6 +334,10 @@ def clicked(value):
         # Entry
         ge['state'] = NORMAL
 
+        b_radio1['bg'], b_radio2['bg'] = 'white', '#CAFF70'
+        marking_explain['bg'], input_explain['bg'] = 'white', '#CAFF70'
+        b_radio1['relief'], b_radio2['relief'] = FLAT, RIDGE
+        marking_explain['relief'], input_explain['relief'] = FLAT, RIDGE
         # Submit Button
         # b_submit['state'] = NORMAL
 
@@ -358,6 +369,10 @@ def clicked(value):
         ge.delete(0,END)
         ge['state'] = DISABLED
 
+        b_radio1['bg'], b_radio2['bg'] = '#CAFF70', 'white'
+        marking_explain['bg'], input_explain['bg'] = '#CAFF70', 'white'
+        b_radio1['relief'], b_radio2['relief'] = RIDGE, FLAT
+        marking_explain['relief'], input_explain['relief'] = RIDGE, FLAT
         # Submit Button DISABLED
         # b_submit['state'] = DISABLED
 
@@ -369,12 +384,6 @@ def clicked(value):
 
         # Clear Drawing Button DISABLED
         # b_clear_draw['state'] = NORMAL
-
-    # Selected String From Radio Buttons
-    selectedRadio['text'] = "Option Selected: "
-    selectedRadio.grid(row=7, column=0, columnspan=2)
-    selectedRadioValue['text'] = str(value)
-    selectedRadioValue.grid(row=8, column=0, columnspan=2)
 
 
 def range_calculator():
@@ -422,9 +431,8 @@ def submit_entry():
                 assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-50, 50))
                 assessment_afterCut_num_label['relief'] = GROOVE
                 assessment_afterCut_num_label['bg'] = None
-                L_length_range_label_text['text'] = "The distance that\n" \
-                                                    " the robot will pass is:"
-                L_length_range_label['text'] = str(range_calculator()) + " Centimeters"
+                L_length_range_label_text['text'] = "Track Length:"
+                L_length_range_label['text'] = str(range_calculator()) + " cm"
 
                 # Enabling Cut Button
                 final_confirmation['state'] = NORMAL
@@ -439,9 +447,8 @@ def submit_entry():
                 assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-50, 50))
                 assessment_afterCut_num_label['relief'] = GROOVE
                 assessment_afterCut_num_label['bg'] = None
-                L_length_range_label_text['text'] = "The distance that\n" \
-                                                    " the robot will pass is:"
-                L_length_range_label['text'] = str(range_calculator()) + " Centimeters"
+                L_length_range_label_text['text'] = "Track Length:"
+                L_length_range_label['text'] = str(range_calculator()) + " cm"
                 # Enabling Cut Button
                 final_confirmation['state'] = NORMAL
                 # Random Line
@@ -466,8 +473,8 @@ def done_drawing():
     assessment_afterCut_num_label['text'] = str(int(random.randint(3000, 5000)/2.5 + random.randint(-50, 50)))
     assessment_afterCut_num_label['relief'] = GROOVE
     assessment_afterCut_num_label['bg'] = None
-    L_length_range_label_text['text'] = "The distance that\n the robot will pass is:"
-    L_length_range_label['text'] = str(range_calculator()) + " Centimeters"
+    L_length_range_label_text['text'] = "Track Length:"
+    L_length_range_label['text'] = str(range_calculator()) + " cm"
     # Enabling Cut Button
     final_confirmation['state'] = NORMAL
 
@@ -502,6 +509,20 @@ def redraw_line():
         canvas.coords('randomcurrentline', x1_new, y1_new, x2_new, y2_new)
     else:
         pass
+
+# def redraw_rectangle():
+#     global canvas, rec_x1, rec_y1, rec_x2, rec_y2
+#     width, heigth = canvas.winfo_width(), canvas.winfo_height()
+#     print("startsqaure.coords: " + str(canvas.coords('startsqaure')))
+#     if cnt > 1 and len(canvas.coords("startsqaure")) != 0:
+#         new_rec_x1, new_rec_y1, new_rec_x2, new_rec_y2 = float(round((rec_x1 / width_pre_4_line) * width)), float(
+#         round((rec_y1 / height_pre_4_line) * heigth)), \
+#                                      float(round((rec_x2 / width_pre_4_line) * width)), float(
+#         round((rec_y2 / height_pre_4_line) * heigth))
+#         canvas.coords('startsqaure', new_rec_x1, new_rec_y1, new_rec_x2, new_rec_y2)
+#         print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
+#     else:
+#         pass
 
 def redraw_arc():
     global canvas, R, o1, o2, found
@@ -567,19 +588,19 @@ def size(event):
     canvas.itemconfig(img_on_canvas, image=new_image)
     redraw_line()
     redraw_arc()
+    # redraw_rectangle()
 
 def start_spikelet_configuration():
     global found
     found = found_leading_sansun()
-    create_squre()
+    create_square()
     if found == True:
         camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
                                               start=90 - 27, end=90 + 65, tags='currentArc')
-        messagebox.showinfo("Information regards the <Leading Spikelet>",
-                            "The computational system found an optional <Leading Spikelet>")
         # Asking if it is a good leading spikelet
         found_satisfying = messagebox.askyesno("Manual decision about the <Leading Spikelet>",
-                                            "Has the computational system found a satisfying <Leading Spikelet>?")
+                                            "<Leading Spikelet> has been found.\n\n"
+                                            "'Yes' to continue, 'No' for Manual Redraw")
         if found_satisfying == 1:
             pass
         else:
@@ -589,13 +610,13 @@ def start_spikelet_configuration():
 
     else:
         messagebox.showinfo("Information regards the <Leading Spikelet>",
-                            "The computational system not succeeded \n"
-                            "to find a <Leading Spikelet>\n\nPlease draw one manually.")
+                            "<Leading Spikelet> has not been found."
+                            "\n\nPlease draw one manually.")
         manual_spikelet_drawing()
 
     # Redraw Leading Spikelet
-    b_redraw = Button(top1_right_frame, text="Redraw Leading Spikelet", command=redraw_leading_spikelet, anchor=CENTER)
-    b_redraw.grid(row=2, column=0, pady=10 ) #, sticky="w"
+    b_redraw = Button(top2_right_frame, text="Redraw Leading Spikelet", command=redraw_leading_spikelet, anchor=CENTER)
+    b_redraw.grid(row=0, column=0, pady=10, columnspan=2) #, sticky="w"
 
 def start_user_interface():
     b_start_interface.pack_forget()
@@ -660,11 +681,11 @@ img_on_canvas = canvas.create_image(0, 0, image=new_image, anchor='nw')
 ##--------------------------Right Side-------------------------##
 ##--------------------------Right Top 1 Frame-------------------------##
 
-assessment_label = Label(top1_right_frame, text="Dates Assessment Before Cutting: ", font='sans 10', bg='white')
+assessment_label = Label(top1_right_frame, text="Dates Assessment: ", font='sans 10', bg='white')
 assessment_label.grid(row=0, column=0, pady=10)
 
 assessment_before = random.randint(3000, 5000)
-assessment_before_label = Label(top1_right_frame, text=str(assessment_before), font='sans 10 bold', bg='white')
+assessment_before_label = Label(top1_right_frame, text=str(assessment_before), font='sans 11 bold', bg='white')
 assessment_before_label.grid(row=0, column=1, pady=10)
 
 
@@ -678,8 +699,11 @@ option_label.grid(row=1, column=0, sticky="w", pady=10)
 r = StringVar()
 r.set("None")
 
-Radiobutton(top2_right_frame, text=" Manual marking", variable=r, value="Manual marking", command=lambda : clicked(r.get()), bg='white').grid(row=2, column=0, sticky="w")
-Radiobutton(top2_right_frame, text=" Input of amount that will remain", variable=r, value="Input of amount", command=lambda : clicked(r.get()), bg='white').grid(row=4, column=0, sticky="w")
+b_radio1 = Radiobutton(top2_right_frame, text=" Manual marking", variable=r, value="Manual marking", command=lambda : clicked(r.get()), bg='white')
+b_radio2 = Radiobutton(top2_right_frame, text=" Input of amount that will remain", variable=r, value="Input of amount", command=lambda : clicked(r.get()), bg='white')
+
+b_radio1.grid(row=2, column=0, sticky="w")
+b_radio2.grid(row=4, column=0, sticky="w")
 
 # Completed Drawing Button DISABLED
 # b_done_draw = Button(top2_right_frame, text="Continue", command=done_drawing, state=DISABLED)
@@ -690,18 +714,16 @@ Radiobutton(top2_right_frame, text=" Input of amount that will remain", variable
 # b_clear_draw.grid(row=3, column=0, padx=40, pady=10, sticky="e")
 
 # marking explain
-marking_explain = Label(top2_right_frame, text="If you choose Manual marking, drow on\n"
-                                               " the picture in the left side of the screen\n"
-                                               " where is the line you want the mashine\n"
-                                               " to cut the thinnig spot", font='sans 10', bg='white')
-marking_explain.grid(row=3, column=0,pady=10, sticky='w')
+marking_explain = Label(top2_right_frame, text="Draw a line, using the left mouse button.",
+                        font='sans 10', bg='white')
+marking_explain.grid(row=3, column=0, pady=10, sticky='nsew')
 
 # marking explain
-input_explain = Label(top2_right_frame, text="Write A number: ", font='sans 10', bg='white')
-input_explain.grid(row=5, column=0, padx=0,pady=10, sticky='w')
+input_explain = Label(top2_right_frame, text="Write a number: ", font='sans 10', bg='white')
+input_explain.grid(row=5, column=0, padx=15, pady=10, sticky='w')
 # Input Box DISABLED
 ge = Entry(top2_right_frame, width=15, borderwidth=2, state=DISABLED)
-ge.grid(row=5, column=0,pady=10, sticky="e")
+ge.grid(row=5, column=0, padx=10, pady=15, sticky="e")
 
 # # Submit Button DISABLED
 # b_submit = Button(top2_right_frame, text="Submit", command=submit_entry, state=DISABLED)
@@ -711,19 +733,13 @@ ge.grid(row=5, column=0,pady=10, sticky="e")
 # b_clear = Button(top2_right_frame, text="Clear", command=clear_entry, state=DISABLED)
 # b_clear.grid(row=6, column=0, padx=50, pady=10, sticky="e")
 
-# Selected String From Radio Buttons
-selectedRadio = Label(top2_right_frame, text="Option Selected: ", font='sans 10', bg='white')
-selectedRadio.grid(row=7, column=0, pady=5)
-selectedRadioValue = Label(top2_right_frame, text=str(r.get()), font='sans 12 bold', bg='white')
-selectedRadioValue.grid(row=8, column=0)
-
 # Univarsal Continue button
 b_submit = Button(top2_right_frame, text="Continue", command=univarsal_continue)
-b_submit.grid(row=9, column=0, padx=50, pady=5, sticky="w")
+b_submit.grid(row=6, column=0, padx=50, pady=5, sticky="w")
 
 # Univarsal Clear button
 b_clear = Button(top2_right_frame, text="Clear", command=univarsal_clear)
-b_clear.grid(row=9, column=0, padx=50, pady=10, sticky="e")
+b_clear.grid(row=6, column=0, padx=50, pady=10, sticky="e")
 
 
 ##--------------------------Right Top 3 Frame-------------------------##
@@ -733,7 +749,7 @@ L_length_range_label = Label(top3_right_frame, padx=5, pady=5, font='sans 12 bol
                              , bg='white', relief=GROOVE)
 assessment_afterCut_label = Label(top3_right_frame, text="", font='sans 10 bold', bg='white')
 # assessment_afterCut_label.grid(row=0, column=0, sticky="w", pady=5)
-assessment_afterCut_num_label = Label(top3_right_frame,padx=5, pady=5, text="", font='sans 12 bold', bg='white'
+assessment_afterCut_num_label = Label(top3_right_frame, padx=5, pady=5, text="", font='sans 12 bold', bg='white'
                                       , relief=GROOVE)
 # assessment_afterCut_num_label.grid(row=1, column=0,padx=5, pady=5)
 
