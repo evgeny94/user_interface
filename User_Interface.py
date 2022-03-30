@@ -36,21 +36,17 @@ frame_right.rowconfigure(index=2, weight=1)
 frame_right.rowconfigure(index=3, weight=0)
 
 # Right Top 1 Frame
-top1_right_frame = LabelFrame(frame_right, text="Assessmention", labelanchor='n', bg='white')
-# top1_right_frame.grid(row=0, column=0, sticky="nsew")
+top1_right_frame = LabelFrame(frame_right, text="Assessment", labelanchor='n', bg='white')
 
 # Right Top 2 Frame
 top2_right_frame = LabelFrame(frame_right, text="Operations", labelanchor='n', bg='white')
-# top2_right_frame.grid(row=1, column=0, sticky="nsew")
 
 # Right Top 3 Frame
 top3_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white')
-# top3_right_frame.grid(row=2, column=0, sticky="nsew")
 top3_right_frame.columnconfigure(index=0, weight=1)
 
 # Right Top 4 Frame
 top4_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white')
-# top4_right_frame.grid(row=3, column=0, sticky="nsew")
 
 ## --------------- Variables & Image --------------- ##
 # For the submit button
@@ -92,8 +88,6 @@ global final_confirmation
 
 def Hide_2_last_frames():
     top3_right_frame['text'] = ""
-    # L_length_range_label_text.place_forget()
-    # L_length_range_label.place_forget()
     L_length_range_label_text.grid_forget()
     L_length_range_label.grid_forget()
     assessment_afterCut_label['text'] = ""
@@ -101,11 +95,11 @@ def Hide_2_last_frames():
     final_confirmation.pack_forget()
 
 def Show_2_last_frames():
-    top3_right_frame['text'] = "Results Section"
-    L_length_range_label_text.grid(row=3, column=0, pady=5, sticky="nsew", columnspan=2)
-    L_length_range_label.grid(row=4, column=0, pady=5, sticky="nsew", columnspan=2)
+    top3_right_frame['text'] = "Outcome"
     assessment_afterCut_label.grid(row=0, column=0, sticky="nsew", pady=5, columnspan=2)
-    assessment_afterCut_num_label.grid(row=1, column=0, sticky="nsew", padx=5, pady=5, columnspan=2)
+    assessment_afterCut_num_label.grid(row=1, column=0, sticky="nsew", padx=50, pady=5, columnspan=2)
+    L_length_range_label_text.grid(row=3, column=0, pady=5, sticky="nsew", columnspan=2)
+    L_length_range_label.grid(row=4, column=0, padx=28, pady=5, sticky="nsew", columnspan=2)
     top4_right_frame['text'] = "Final Confirmation"
     final_confirmation.pack(pady=10)
     final_confirmation_helper.pack_forget()
@@ -135,11 +129,14 @@ def clear_drawing():
     assessment_afterCut_num_label['relief'] = FLAT
     assessment_afterCut_num_label['bg'] = 'white'
     final_confirmation['state'] = DISABLED
+    b_submit['state'] = DISABLED
+    b_redraw['state'] = NORMAL
 
 def doneStroke(event):
     global line
     line = canvas.itemconfigure('currentline', width=8)
     print('Canvas coords:' + str(canvas.coords('currentline')))
+    b_submit['state'] = NORMAL
 
 def create_random_line():
     global line
@@ -159,7 +156,6 @@ def end_spikelet_window():
     x_arc_san_last, y_arc_san_last = x_arc_san[-1], y_arc_san[-1]
     x_arc_san_last, y_arc_san_last = float(round((x_arc_san_last / width_pre_4_san) * width)), \
                                      float(round((y_arc_san_last / height_pre_4_san) * height))
-    # canvas.delete('manualArcSan')
     print("x_arc_san_0, y_arc_san_0, x_arc_san_last, y_arc_san_last: " + str(x_arc_san_0), str(y_arc_san_0)
           , str(x_arc_san_last), str(y_arc_san_last))
     myArc = canvas.create_arc(x_arc_san_0, y_arc_san_0, x_arc_san_last, y_arc_san_last, start=63,
@@ -183,18 +179,11 @@ def get_xy_san(event):
     global lasx, lasy
     lasx, lasy = event.x, event.y
 
-def draw_san(event):
-    global lasx, lasy, line_san
-    line_san = canvas_san.create_line((lasx, lasy, event.x, event.y), width=8, tags='line_san')
-    lasx, lasy = event.x, event.y
-
 def clear_drawing_san():
     global canvas_san, line_san
     canvas_san.delete('line_san')
     canvas_san.delete('manualArcSan')
-
-def done_san(event):
-    canvas_san.itemconfigure('line_san', width=8)
+    quit_button['state'] = DISABLED
 
 def _create_circle_arc(self, x, y, r, **kwargs):
     if "start" in kwargs and "end" in kwargs:
@@ -237,6 +226,7 @@ def on_click_release_san(event):
     global released_san
     arc_san()
     released_san = True
+    quit_button['state'] = NORMAL
 #########################################################################################
 
 # --------------- ## --------------- #
@@ -262,16 +252,15 @@ def size_san(event):
 
 # In case the Leading Spikelet not found
 def manual_spikelet_drawing():
-    global canvas_san, final_confirmation, Spikelet_Window, img_on_canvas_san
+    global canvas_san, final_confirmation, Spikelet_Window, img_on_canvas_san, quit_button
     # Disabling Cut Button
     final_confirmation['state'] = DISABLED
 
     # Open new window for drawing the spikelet
     Spikelet_Window = Toplevel()
     Spikelet_Window.title('Marking The Leading Spikelet Manually')
-
+    Spikelet_Window.attributes('-fullscreen', True)
     # Top Frame
-    blank_space = "_"
     top_frame = LabelFrame(Spikelet_Window, text="Picture", labelanchor='n', bg="white")
     top_frame.grid(row=0, column=0, sticky="nsew")
 
@@ -296,16 +285,12 @@ def manual_spikelet_drawing():
     img_on_canvas_san = canvas_san.create_image(0, 0, image=new_image, anchor='nw')
 
     # Enable Drawing
-    # canvas_san.bind("<Button-1>", get_xy_san)
-    # canvas_san.bind("<B1-Motion>", draw_san)
-    # canvas_san.bind("<B1-ButtonRelease>", done_san)
-    #
     canvas_san.bind("<B1-Motion>", motion_san)
     canvas_san.bind("<ButtonRelease-1>", on_click_release_san)
     Spikelet_Window.bind("<Button-3>", get_xy_san)
     Spikelet_Window.bind("<B3-Motion>", move_san)
     # Exit button
-    quit_button = Button(bottom_frame, text="Save and Continue", command=end_spikelet_window)
+    quit_button = Button(bottom_frame, text="Save and Continue", command=end_spikelet_window, state=DISABLED)
     quit_button.grid(row=0, column=0, padx=5, pady=5, sticky="e")
 
     # Clear button
@@ -321,6 +306,7 @@ def clicked(value):
 
     r_value = value
     final_confirmation['state'] = DISABLED
+    b_clear['state'] = NORMAL
     if value == "Input of amount":
         # Clear and Disable Drawing
         clear_drawing()
@@ -338,17 +324,9 @@ def clicked(value):
         marking_explain['bg'], input_explain['bg'] = 'white', '#CAFF70'
         b_radio1['relief'], b_radio2['relief'] = FLAT, RIDGE
         marking_explain['relief'], input_explain['relief'] = FLAT, RIDGE
-        # Submit Button
-        # b_submit['state'] = NORMAL
 
-        # Clear Entry Button
-        # b_clear['state'] = NORMAL
+        b_submit['state'] = NORMAL
 
-        # Completed Drawing Button DISABLED
-        # b_done_draw['state'] = DISABLED
-
-        # Clear Drawing Button DISABLED
-        # b_clear_draw['state'] = DISABLED
     else:
         # Forget previous assessment and drawings
         assessment_afterCut_label['text'] = ""
@@ -373,18 +351,8 @@ def clicked(value):
         marking_explain['bg'], input_explain['bg'] = '#CAFF70', 'white'
         b_radio1['relief'], b_radio2['relief'] = RIDGE, FLAT
         marking_explain['relief'], input_explain['relief'] = RIDGE, FLAT
-        # Submit Button DISABLED
-        # b_submit['state'] = DISABLED
 
-        # Clear Entry Button DISABLED
-        # b_clear['state'] = DISABLED
-
-        # Completed Drawing Button DISABLED
-        # b_done_draw['state'] = NORMAL
-
-        # Clear Drawing Button DISABLED
-        # b_clear_draw['state'] = NORMAL
-
+        b_submit['state'] = DISABLED
 
 def range_calculator():
     return random.randint(50, 70)
@@ -400,12 +368,14 @@ def clear_entry():
     assessment_afterCut_num_label['text'] = ""
     assessment_afterCut_num_label['relief'] = FLAT
     assessment_afterCut_num_label['bg'] = 'white'
+    b_submit['state'] = NORMAL
+    b_redraw['state'] = NORMAL
 
     # Disabling Cut Button
     final_confirmation['state'] = DISABLED
 
 def submit_restart():
-    global assessment_afterCut_label, assessment_afterCut_num_label, L_length_range_label_text, L_length_range_label, final_confirmation
+    global assessment_afterCut_label, assessment_afterCut_num_label, L_length_range_label_text, L_length_range_label, final_confirmation, b_submit
 
     assessment_afterCut_label['text'] = ""
     assessment_afterCut_num_label['text'] = ""
@@ -413,12 +383,14 @@ def submit_restart():
     assessment_afterCut_num_label['bg'] = 'white'
     L_length_range_label_text['state'] = NORMAL
     L_length_range_label['state'] = NORMAL
+    b_submit['state'] = NORMAL
+    b_redraw['state'] = NORMAL
     canvas.delete('randomcurrentline')
     # Disabling Cut Button
     final_confirmation['state'] = DISABLED
 
 def submit_entry():
-    global ge, new_image, L_length_range_label_text, assessment_afterCut_label, assessment_afterCut_num_label, num_clicked, final_confirmation
+    global ge, new_image, L_length_range_label_text, assessment_afterCut_label, assessment_afterCut_num_label, num_clicked, final_confirmation, b_submit
 
     valid = ge.get().isdigit()
     # Number of clicks on submit for deleting previous grids
@@ -427,11 +399,11 @@ def submit_entry():
         if int(ge.get()) < assessment_before:
             if num_clicked == 1:
                 Show_2_last_frames()
-                assessment_afterCut_label['text'] = "Dates Assessment After Cutting: "
+                assessment_afterCut_label['text'] = "Fruitlets After Cutting:"
                 assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-50, 50))
                 assessment_afterCut_num_label['relief'] = GROOVE
                 assessment_afterCut_num_label['bg'] = None
-                L_length_range_label_text['text'] = "Track Length:"
+                L_length_range_label_text['text'] = "Spikelets Remaining Length:"
                 L_length_range_label['text'] = str(range_calculator()) + " cm"
 
                 # Enabling Cut Button
@@ -439,26 +411,34 @@ def submit_entry():
 
                 # Random Line
                 create_random_line()
+                b_submit['state'] = DISABLED
+                b_redraw['state'] = DISABLED
             # Already clicked
             else:
                 submit_restart()
                 Show_2_last_frames()
-                assessment_afterCut_label['text'] = "Dates Assessment After Cutting: "
+                assessment_afterCut_label['text'] = "Fruitlets After Cutting:"
                 assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-50, 50))
                 assessment_afterCut_num_label['relief'] = GROOVE
                 assessment_afterCut_num_label['bg'] = None
-                L_length_range_label_text['text'] = "Track Length:"
+                L_length_range_label_text['text'] = "Spikelets Remaining Length:"
                 L_length_range_label['text'] = str(range_calculator()) + " cm"
                 # Enabling Cut Button
                 final_confirmation['state'] = NORMAL
                 # Random Line
                 create_random_line()
+                b_submit['state'] = DISABLED
+                b_redraw['state'] = DISABLED
         else:
             clear_entry()
             messagebox.showerror("Entry Box Error", "The number is equal or greater than the initial assessment!\nPlease try again.")
     else:
-        clear_entry()
-        messagebox.showerror("Entry Box Error", "This Entry Box may contain only digits and positive numbers!\nPlease try again.")
+        if ge.get() == "":
+            messagebox.showerror("Entry Box Error",
+                                 "The Entry Box is empty!\nPlease fill it in first.")
+        else:
+            clear_entry()
+            messagebox.showerror("Entry Box Error", "This Entry Box may contain only digits and positive numbers!\nPlease try again.")
 
 def confirmation_click():
     confirmation_respond = messagebox.askyesno("Final Confirmation", "Are you sure you want to do the cut? There is no way back from here.")
@@ -469,14 +449,16 @@ def confirmation_click():
 
 def done_drawing():
     Show_2_last_frames()
-    assessment_afterCut_label['text'] = "Dates Assessment After Cutting: "
+    assessment_afterCut_label['text'] = "Fruitlets After Cutting:"
     assessment_afterCut_num_label['text'] = str(int(random.randint(3000, 5000)/2.5 + random.randint(-50, 50)))
     assessment_afterCut_num_label['relief'] = GROOVE
     assessment_afterCut_num_label['bg'] = None
-    L_length_range_label_text['text'] = "Track Length:"
+    L_length_range_label_text['text'] = "Spikelets Remaining Length:"
     L_length_range_label['text'] = str(range_calculator()) + " cm"
     # Enabling Cut Button
     final_confirmation['state'] = NORMAL
+    b_submit['state'] = DISABLED
+    b_redraw['state'] = DISABLED
 
 def found_leading_sansun():
     # Found
@@ -591,7 +573,7 @@ def size(event):
     # redraw_rectangle()
 
 def start_spikelet_configuration():
-    global found
+    global found, b_redraw
     found = found_leading_sansun()
     create_square()
     if found == True:
@@ -600,7 +582,7 @@ def start_spikelet_configuration():
         # Asking if it is a good leading spikelet
         found_satisfying = messagebox.askyesno("Manual decision about the <Leading Spikelet>",
                                             "<Leading Spikelet> has been found.\n\n"
-                                            "'Yes' to continue, 'No' for Manual Redraw")
+                                            "Yes - Continue\nNo - Manual Spikelet Redraw")
         if found_satisfying == 1:
             pass
         else:
@@ -623,7 +605,7 @@ def start_user_interface():
     start_label.pack_forget()
     # Right Top 1 Frame
     top1_right_frame.grid(row=0, column=0, sticky="nsew")
-
+    top1_right_frame.grid_columnconfigure(index=0, weight=1)
     # Right Top 2 Frame
     top2_right_frame.grid(row=1, column=0, sticky="nsew")
 
@@ -632,6 +614,8 @@ def start_user_interface():
 
     # Right Top 4 Frame
     top4_right_frame.grid(row=3, column=0, sticky="nsew")
+
+
 
     start_spikelet_configuration()
 
@@ -681,14 +665,12 @@ img_on_canvas = canvas.create_image(0, 0, image=new_image, anchor='nw')
 ##--------------------------Right Side-------------------------##
 ##--------------------------Right Top 1 Frame-------------------------##
 
-assessment_label = Label(top1_right_frame, text="Dates Assessment: ", font='sans 10', bg='white')
-assessment_label.grid(row=0, column=0, pady=10)
+assessment_label = Label(top1_right_frame, text="Fruitlets:", font='sans 11', bg='white')
+assessment_label.grid(row=0, column=0, padx=5, pady=10, sticky='w')
 
 assessment_before = random.randint(3000, 5000)
 assessment_before_label = Label(top1_right_frame, text=str(assessment_before), font='sans 11 bold', bg='white')
-assessment_before_label.grid(row=0, column=1, pady=10)
-
-
+assessment_before_label.grid(row=0, column=1, padx=10, pady=10)
 
 ##--------------------------Right Top 2 Frame-------------------------##
 
@@ -705,14 +687,6 @@ b_radio2 = Radiobutton(top2_right_frame, text=" Input of amount that will remain
 b_radio1.grid(row=2, column=0, sticky="w")
 b_radio2.grid(row=4, column=0, sticky="w")
 
-# Completed Drawing Button DISABLED
-# b_done_draw = Button(top2_right_frame, text="Continue", command=done_drawing, state=DISABLED)
-# b_done_draw.grid(row=3, column=0, padx=40, pady=10, sticky="w")
-
-# Clear Drawing Button DISABLED
-# b_clear_draw = Button(top2_right_frame, text="Clear Drawing", command=clear_drawing, state=DISABLED)
-# b_clear_draw.grid(row=3, column=0, padx=40, pady=10, sticky="e")
-
 # marking explain
 marking_explain = Label(top2_right_frame, text="Draw a line, using the left mouse button.",
                         font='sans 10', bg='white')
@@ -725,34 +699,23 @@ input_explain.grid(row=5, column=0, padx=15, pady=10, sticky='w')
 ge = Entry(top2_right_frame, width=15, borderwidth=2, state=DISABLED)
 ge.grid(row=5, column=0, padx=10, pady=15, sticky="e")
 
-# # Submit Button DISABLED
-# b_submit = Button(top2_right_frame, text="Submit", command=submit_entry, state=DISABLED)
-# b_submit.grid(row=6, column=0, padx=50, pady=5, sticky="w")
-
-# Clear Entry Button DISABLED
-# b_clear = Button(top2_right_frame, text="Clear", command=clear_entry, state=DISABLED)
-# b_clear.grid(row=6, column=0, padx=50, pady=10, sticky="e")
-
 # Univarsal Continue button
-b_submit = Button(top2_right_frame, text="Continue", command=univarsal_continue)
+b_submit = Button(top2_right_frame, text="Continue", command=univarsal_continue, state=DISABLED)
 b_submit.grid(row=6, column=0, padx=50, pady=5, sticky="w")
 
 # Univarsal Clear button
-b_clear = Button(top2_right_frame, text="Clear", command=univarsal_clear)
+b_clear = Button(top2_right_frame, text="Clear", command=univarsal_clear, state=DISABLED)
 b_clear.grid(row=6, column=0, padx=50, pady=10, sticky="e")
-
 
 ##--------------------------Right Top 3 Frame-------------------------##
 
-L_length_range_label_text = Label(top3_right_frame, font='sans 10 bold', bg='white')
-L_length_range_label = Label(top3_right_frame, padx=5, pady=5, font='sans 12 bold'
-                             , bg='white', relief=GROOVE)
 assessment_afterCut_label = Label(top3_right_frame, text="", font='sans 10 bold', bg='white')
-# assessment_afterCut_label.grid(row=0, column=0, sticky="w", pady=5)
 assessment_afterCut_num_label = Label(top3_right_frame, padx=5, pady=5, text="", font='sans 12 bold', bg='white'
                                       , relief=GROOVE)
-# assessment_afterCut_num_label.grid(row=1, column=0,padx=5, pady=5)
 
+L_length_range_label_text = Label(top3_right_frame, text="", font='sans 10 bold', bg='white')
+L_length_range_label = Label(top3_right_frame, padx=5, pady=5, font='sans 12 bold', bg='white'
+                             , relief=GROOVE)
 
 ##--------------------------Right Top 4 Frame-------------------------##
 final_confirmation_helper = Label(top4_right_frame, bg='white')
