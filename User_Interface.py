@@ -131,6 +131,9 @@ def clear_drawing():
     final_confirmation['state'] = DISABLED
     b_submit['state'] = DISABLED
     b_redraw['state'] = NORMAL
+    canvas.bind("<Button-1>", get_xy)
+    canvas.bind("<B1-Motion>", draw)
+    canvas.bind("<B1-ButtonRelease>", doneStroke)
 
 def doneStroke(event):
     global line
@@ -138,11 +141,24 @@ def doneStroke(event):
     print('Canvas coords:' + str(canvas.coords('currentline')))
     b_submit['state'] = NORMAL
 
-def create_random_line():
+def create_random_line(assessment):
     global line
-    x1, y1, x2, y2 = random.randint(70, 105), random.randint(92, 148),\
-                     random.randint(373, 425), random.randint(565, 665)
-    line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+
+    blocks = round(assessment_before / 3)
+    print(blocks)
+    if assessment > 0 and assessment < blocks:
+        x1, y1, x2, y2 = random.randint(187, 235), random.randint(56, 124), \
+                         random.randint(427, 511), random.randint(483, 560)
+        line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+    elif assessment >= blocks and assessment < 2*blocks:
+        x1, y1, x2, y2 = random.randint(70, 105), random.randint(92, 148), \
+                         random.randint(373, 425), random.randint(565, 665)
+        line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+    else:
+        x1, y1, x2, y2 = random.randint(14, 97), random.randint(242, 350), \
+                         random.randint(389, 430), random.randint(655, 742)
+        line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+
 
 def end_spikelet_window():
     global myArc
@@ -276,8 +292,6 @@ def manual_spikelet_drawing():
     top_frame.rowconfigure(index=0, weight=2)
     top_frame.columnconfigure(index=0, weight=2)
     bottom_frame.rowconfigure(index=0, weight=1)
-    bottom_frame.columnconfigure(index=0, weight=1)
-    bottom_frame.columnconfigure(index=1, weight=1)
 
     # Canvas
     canvas_san = Canvas(top_frame, bg="white")
@@ -289,13 +303,20 @@ def manual_spikelet_drawing():
     canvas_san.bind("<ButtonRelease-1>", on_click_release_san)
     Spikelet_Window.bind("<Button-3>", get_xy_san)
     Spikelet_Window.bind("<B3-Motion>", move_san)
+
+    # Explain Functionality
+    exp_label_san_win = Label(bottom_frame, text="Using Mouse : Left button - Draw | Right button - Move Drawing", bg="#CAFF70", relief=RIDGE)
+    exp_label_san_win.grid(row=0, column=0, padx=(5, 310), pady=5, sticky="w")
+
     # Exit button
     quit_button = Button(bottom_frame, text="Save and Continue", command=end_spikelet_window, state=DISABLED)
-    quit_button.grid(row=0, column=0, padx=5, pady=5, sticky="e")
+    quit_button.grid(row=0, column=1, pady=5, sticky="e")
+    quit_button.place(relx=0.425)
 
     # Clear button
     clear_button = Button(bottom_frame, text="Clear", command=clear_drawing_san)
-    clear_button.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+    clear_button.grid(row=0, column=2, padx=5, pady=5, sticky="w")
+    clear_button.place(relx=0.51)
 
     # Hook window size changes
     Spikelet_Window.bind('<Configure>', size_changed_san)
@@ -410,7 +431,7 @@ def submit_entry():
                 final_confirmation['state'] = NORMAL
 
                 # Random Line
-                create_random_line()
+                create_random_line(int(ge.get()))
                 b_submit['state'] = DISABLED
                 b_redraw['state'] = DISABLED
             # Already clicked
@@ -426,7 +447,7 @@ def submit_entry():
                 # Enabling Cut Button
                 final_confirmation['state'] = NORMAL
                 # Random Line
-                create_random_line()
+                create_random_line(int(ge.get()))
                 b_submit['state'] = DISABLED
                 b_redraw['state'] = DISABLED
         else:
@@ -459,6 +480,9 @@ def done_drawing():
     final_confirmation['state'] = NORMAL
     b_submit['state'] = DISABLED
     b_redraw['state'] = DISABLED
+    canvas.bind("<Button-1>", 'none')
+    canvas.bind("<B1-Motion>", 'none')
+    canvas.bind("<B1-ButtonRelease>", 'none')
 
 def found_leading_sansun():
     # Found
