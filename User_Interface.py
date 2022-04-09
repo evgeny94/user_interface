@@ -59,13 +59,15 @@ width_pre, heigth_pre, cnt = 0, 0, 0
 width_pre_san, heigth_pre_san, cnt_san = 0, 0, 0
 resized_image = palm_img.resize((screen_width, screen_height), Image.ANTIALIAS)
 new_image = ImageTk.PhotoImage(resized_image)
+canvas = Canvas()
 canvas_san = Canvas()
 o1, o2 = 680, 720
 R = 500
 
 # Rectangle
-rec_x1, rec_y1, rec_x2, rec_y2 = 900, 200, 930, 350
-
+width, height = canvas.winfo_width(), canvas.winfo_height()
+rec_x1, rec_y1 = int(width)*0.7, int(height)*0.25
+rec_x2, rec_y2 = int(width)*0.72, int(height)*0.45
 global new_image_san
 
 # curve points
@@ -109,7 +111,7 @@ def create_square():
     global robot_start_square
     robot_start_label = Label(canvas, text="The Robot\n"
                                            "Starts Here", font='sans 10 bold', bg="black", fg="#00FFFF")
-    robot_start_label.place(x=940, y=197)
+    robot_start_label.place(relx=0.73, rely=0.25)
     robot_start_square = canvas.create_rectangle(rec_x1, rec_y1, rec_x2, rec_y2, outline="#00FFFF", width=6, tags='startsqaure')
 
 def get_xy(event):
@@ -324,7 +326,8 @@ def manual_spikelet_drawing():
 
 def clicked(value):
     global ge, b_submit, b_clear, b_clear_draw, final_confirmation, assessment_afterCut_label, assessment_afterCut_num_label, r_value, b_radio1, b_radio2
-
+    if len(canvas.coords('manualArcSan')) == 0 and len(canvas.coords('currentArc')) == 0:
+        start_spikelet_configuration()
     r_value = value
     final_confirmation['state'] = DISABLED
     b_clear['state'] = NORMAL
@@ -375,8 +378,28 @@ def clicked(value):
 
         b_submit['state'] = DISABLED
 
-def range_calculator():
-    return random.randint(50, 70)
+def range_calculator(str_opr, assessment):
+    blocks = round(assessment_before / 3)
+    if str_opr == 'number':
+        if assessment > 0 and assessment < blocks:
+            return random.randint(50, 60)
+        elif assessment >= blocks and assessment < 2 * blocks:
+            return random.randint(61, 70)
+        else:
+            return random.randint(71, 80)
+    else:
+        coord1, coord2, coord3, coord4 = assessment[0], assessment[1], assessment[2], assessment[3]
+        avg_x, avg_y = (coord1+coord3)/2, (coord2+coord4)/2
+        if avg_x <= 470 and avg_x > 360:
+            return random.randint(50, 60)
+        elif avg_x <= 360 and avg_x > 265:
+            return random.randint(61, 70)
+        elif avg_x <= 265 and avg_x >= 120:
+            return random.randint(71, 80)
+        else:
+            if avg_x > 470:
+                messagebox.showwarning("Drawing Error", "Draw only on the fruitlets zone.")
+                return None
 
 def clear_entry():
     global assessment_afterCut_label, assessment_afterCut_num_label, L_length_range_label_text, L_length_range_label, num_clicked, final_confirmation
@@ -425,7 +448,7 @@ def submit_entry():
                 assessment_afterCut_num_label['relief'] = GROOVE
                 assessment_afterCut_num_label['bg'] = None
                 L_length_range_label_text['text'] = "Spikelets Remaining Length:"
-                L_length_range_label['text'] = str(range_calculator()) + " cm"
+                L_length_range_label['text'] = str(range_calculator('number', int(ge.get()))) + " cm"
 
                 # Enabling Cut Button
                 final_confirmation['state'] = NORMAL
@@ -443,7 +466,7 @@ def submit_entry():
                 assessment_afterCut_num_label['relief'] = GROOVE
                 assessment_afterCut_num_label['bg'] = None
                 L_length_range_label_text['text'] = "Spikelets Remaining Length:"
-                L_length_range_label['text'] = str(range_calculator()) + " cm"
+                L_length_range_label['text'] = str(range_calculator('number', int(ge.get()))) + " cm"
                 # Enabling Cut Button
                 final_confirmation['state'] = NORMAL
                 # Random Line
@@ -475,7 +498,7 @@ def done_drawing():
     assessment_afterCut_num_label['relief'] = GROOVE
     assessment_afterCut_num_label['bg'] = None
     L_length_range_label_text['text'] = "Spikelets Remaining Length:"
-    L_length_range_label['text'] = str(range_calculator()) + " cm"
+    L_length_range_label['text'] = str(range_calculator('line', canvas.coords('currentline'))) + " cm"
     # Enabling Cut Button
     final_confirmation['state'] = NORMAL
     b_submit['state'] = DISABLED
@@ -516,23 +539,21 @@ def redraw_line():
     else:
         pass
 
-# def redraw_rectangle():
-#     global canvas, rec_x1, rec_y1, rec_x2, rec_y2
-#     width, heigth = canvas.winfo_width(), canvas.winfo_height()
-#     print("startsqaure.coords: " + str(canvas.coords('startsqaure')))
-#     if cnt > 1 and len(canvas.coords("startsqaure")) != 0:
-#         new_rec_x1, new_rec_y1, new_rec_x2, new_rec_y2 = float(round((rec_x1 / width_pre_4_line) * width)), float(
-#         round((rec_y1 / height_pre_4_line) * heigth)), \
-#                                      float(round((rec_x2 / width_pre_4_line) * width)), float(
-#         round((rec_y2 / height_pre_4_line) * heigth))
-#         canvas.coords('startsqaure', new_rec_x1, new_rec_y1, new_rec_x2, new_rec_y2)
-#         print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
-#     else:
-#         pass
+def redraw_rectangle():
+    global canvas, rec_x1, rec_y1, rec_x2, rec_y2
+    width, height = canvas.winfo_width(), canvas.winfo_height()
+
+    print("startsqaure.coords: " + str(canvas.coords('startsqaure')))
+    if cnt > 1 and len(canvas.coords("startsqaure")) != 0:
+        new_rec_x1, new_rec_y1 = int(width) * 0.7, int(height) * 0.25
+        new_rec_x2, new_rec_y2 = int(width)*0.72, int(height)*0.45
+        canvas.coords('startsqaure', new_rec_x1, new_rec_y1, new_rec_x2, new_rec_y2)
+        print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
+    else:
+        pass
 
 def redraw_arc():
     global canvas, R, o1, o2, found
-    print(found)
     width, heigth = canvas.winfo_width(), canvas.winfo_height()
     if found == True:
         print("width, heigth:" + str(width), str(heigth))
@@ -594,12 +615,11 @@ def size(event):
     canvas.itemconfig(img_on_canvas, image=new_image)
     redraw_line()
     redraw_arc()
-    # redraw_rectangle()
+    redraw_rectangle()
 
 def start_spikelet_configuration():
     global found, b_redraw
-    found = found_leading_sansun()
-    create_square()
+
     if found == True:
         camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
                                               start=90 - 27, end=90 + 65, tags='currentArc')
@@ -620,11 +640,9 @@ def start_spikelet_configuration():
                             "\n\nPlease draw one manually.")
         manual_spikelet_drawing()
 
-    # Redraw Leading Spikelet
-    b_redraw = Button(top2_right_frame, text="Redraw Leading Spikelet", command=redraw_leading_spikelet, anchor=CENTER)
-    b_redraw.grid(row=0, column=0, pady=10, columnspan=2) #, sticky="w"
 
 def start_user_interface():
+    global found, b_redraw
     b_start_interface.pack_forget()
     start_label.pack_forget()
     # Right Top 1 Frame
@@ -639,9 +657,20 @@ def start_user_interface():
     # Right Top 4 Frame
     top4_right_frame.grid(row=3, column=0, sticky="nsew")
 
+    # Does the calculating system found a leading spikelet
+    found = found_leading_sansun()
+
+    # Robot's Location
+    create_square()
+
+    # Redraw Leading Spikelet
+    b_redraw = Button(top2_right_frame, text="Redraw Leading Spikelet", command=redraw_leading_spikelet, anchor=CENTER)
+    b_redraw.grid(row=0, column=0, pady=10, columnspan=2)
 
 
-    start_spikelet_configuration()
+
+
+
 
 
 
