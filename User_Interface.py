@@ -53,21 +53,48 @@ top4_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white')
 num_clicked = 0
 
 # Image + Configurations
-palm_img = Image.open('images/palm.jpg')
-palm_img_san = Image.open('images/palm.jpg')
+img_selection = random.randint(1, 3)
+print(img_selection)
+if img_selection == 1:
+    palm_img = Image.open('images/palm1.jpg')
+    palm_img_san = Image.open('images/palm1.jpg')
+elif img_selection == 2:
+    palm_img = Image.open('images/palm3.JPG')
+    palm_img_san = Image.open('images/palm3.JPG')
+else:
+    palm_img = Image.open('images/palm4.png')
+    palm_img_san = Image.open('images/palm4.png')
+
+r_value = None
 width_pre, heigth_pre, cnt = 0, 0, 0
 width_pre_san, heigth_pre_san, cnt_san = 0, 0, 0
 resized_image = palm_img.resize((screen_width, screen_height), Image.ANTIALIAS)
 new_image = ImageTk.PhotoImage(resized_image)
 canvas = Canvas()
 canvas_san = Canvas()
-o1, o2 = 680, 720
-R = 500
+
 
 # Rectangle
 width, height = canvas.winfo_width(), canvas.winfo_height()
-rec_x1, rec_y1 = int(width)*0.7, int(height)*0.25
-rec_x2, rec_y2 = int(width)*0.72, int(height)*0.45
+if img_selection == 1:
+    rec_x1, rec_y1 = int(width)*0.7, int(height)*0.25
+    rec_x2, rec_y2 = int(width)*0.72, int(height)*0.45
+    rel_x, rel_y = 0.73, 0.25
+    o1, o2, R = 680, 720, 500
+    angle_start, angle_end = 63, 155
+elif img_selection == 2:
+    rec_x1, rec_y1 = int(width) * 0.82, int(height) * 0.52
+    rec_x2, rec_y2 = int(width) * 0.84, int(height) * 0.62
+    rel_x, rel_y = 0.85, 0.52
+    o1, o2, R = 410, 1490, 1230
+    angle_start, angle_end = 58, 104
+else:
+    rec_x1, rec_y1 = int(width)*0.84, int(height)*0.25
+    rec_x2, rec_y2 = int(width)*0.865, int(height)*0.38
+    rel_x, rel_y = 0.875, 0.25
+    o1, o2, R = 750, 870, 700
+    angle_start, angle_end = 63, 140
+
 global new_image_san
 
 # curve points
@@ -111,7 +138,7 @@ def create_square():
     global robot_start_square
     robot_start_label = Label(canvas, text="The Robot\n"
                                            "Starts Here", font='sans 10 bold', bg="black", fg="#00FFFF")
-    robot_start_label.place(relx=0.73, rely=0.25)
+    robot_start_label.place(relx=rel_x, rely=rel_y)
     robot_start_square = canvas.create_rectangle(rec_x1, rec_y1, rec_x2, rec_y2, outline="#00FFFF", width=6, tags='startsqaure')
 
 def get_xy(event):
@@ -148,18 +175,45 @@ def create_random_line(assessment):
 
     blocks = round(assessment_before / 3)
     print(blocks)
-    if assessment > 0 and assessment < blocks:
-        x1, y1, x2, y2 = random.randint(187, 235), random.randint(56, 124), \
-                         random.randint(427, 511), random.randint(483, 560)
-        line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
-    elif assessment >= blocks and assessment < 2*blocks:
-        x1, y1, x2, y2 = random.randint(70, 105), random.randint(92, 148), \
-                         random.randint(373, 425), random.randint(565, 665)
-        line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+    if img_selection == 1:
+        if assessment > 0 and assessment < blocks:
+            x1, y1, x2, y2 = random.randint(187, 235), random.randint(56, 124), \
+                             random.randint(427, 511), random.randint(483, 560)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        elif assessment >= blocks and assessment < 2*blocks:
+            x1, y1, x2, y2 = random.randint(70, 105), random.randint(92, 148), \
+                             random.randint(373, 425), random.randint(565, 665)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        else:
+            x1, y1, x2, y2 = random.randint(14, 97), random.randint(242, 350), \
+                             random.randint(389, 430), random.randint(655, 742)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+    elif img_selection == 2:
+        if assessment > 0 and assessment < blocks:
+            x1, y1, x2, y2 = random.randint(385, 460), random.randint(70, 95), \
+                             random.randint(430, 495), random.randint(550, 620)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        elif assessment >= blocks and assessment < 2*blocks:
+            x1, y1, x2, y2 = random.randint(250, 355), random.randint(75, 90), \
+                             random.randint(310, 430), random.randint(665, 720)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        else:
+            x1, y1, x2, y2 = random.randint(130, 245), random.randint(100, 114), \
+                             random.randint(310, 355), random.randint(690, 725)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
     else:
-        x1, y1, x2, y2 = random.randint(14, 97), random.randint(242, 350), \
-                         random.randint(389, 430), random.randint(655, 742)
-        line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        if assessment > 0 and assessment < blocks:
+            x1, y1, x2, y2 = random.randint(515, 615), random.randint(30, 35), \
+                             random.randint(660, 735), random.randint(485, 585)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        elif assessment >= blocks and assessment < 2*blocks:
+            x1, y1, x2, y2 = random.randint(380, 515), random.randint(30, 40), \
+                             random.randint(560, 660), random.randint(485, 770)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        else:
+            x1, y1, x2, y2 = random.randint(265, 370), random.randint(30, 70), \
+                             random.randint(450, 560), random.randint(500, 770)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
 
 
 def end_spikelet_window():
@@ -176,13 +230,30 @@ def end_spikelet_window():
                                      float(round((y_arc_san_last / height_pre_4_san) * height))
     print("x_arc_san_0, y_arc_san_0, x_arc_san_last, y_arc_san_last: " + str(x_arc_san_0), str(y_arc_san_0)
           , str(x_arc_san_last), str(y_arc_san_last))
-    myArc = canvas.create_arc(x_arc_san_0, y_arc_san_0, x_arc_san_last, y_arc_san_last, start=63,
-                              extent=92,
-                              style=ARC,
-                              outline="#4B0082",
-                              width=8,
-                              tags='manualArcSan')
-    print(canvas_san.coords('manualArcSan'))
+    if img_selection == 1:
+        myArc = canvas.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1],
+                                      start=63,
+                                      extent=92,
+                                      style=ARC,
+                                      outline="#4B0082",
+                                      width=8,
+                                      tags='manualArcSan')
+    elif img_selection == 2:
+        myArc = canvas.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1],
+                                      start=30,
+                                      extent=110,
+                                      style=ARC,
+                                      outline="#4B0082",
+                                      width=8,
+                                      tags='manualArcSan')
+    else:
+        myArc = canvas.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1],
+                                      start=63,
+                                      extent=92,
+                                      style=ARC,
+                                      outline="#4B0082",
+                                      width=8,
+                                      tags='manualArcSan')
     coord0, coord1, coord2, coord3 = int(canvas_san.coords('manualArcSan')[0]), int(canvas_san.coords('manualArcSan')[1]), \
                                      int(canvas_san.coords('manualArcSan')[2]), int(canvas_san.coords('manualArcSan')[3])
     coord0, coord1, coord2, coord3 = float(round((coord0 / width_pre_4_san) * width)), \
@@ -191,6 +262,11 @@ def end_spikelet_window():
                                      float(round((coord3 / height_pre_4_san) * height))
     canvas.coords('manualArcSan', coord0, coord1, coord2, coord3)
     Spikelet_Window.destroy()
+
+    if r_value == None:
+        canvas.bind("<Button-1>", 'none')
+        canvas.bind("<B1-Motion>", 'none')
+        canvas.bind("<B1-ButtonRelease>", 'none')
 
 # --------------- Spiklet Drawing ---------------
 def get_xy_san(event):
@@ -220,12 +296,30 @@ def arc_san():
     global myArc, canvas_san
     x_arc_san = [point_san[0] for point_san in points_san]
     y_arc_san = [point_san[1] for point_san in points_san]
-    myArc = canvas_san.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1], start=63,
-                                extent=92,
-                                style=ARC,
-                                outline="#4B0082",
-                                width=8,
-                                tags='manualArcSan')
+    if img_selection == 1:
+        myArc = canvas_san.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1],
+                                    start=63,
+                                    extent=92,
+                                    style=ARC,
+                                    outline="#4B0082",
+                                    width=8,
+                                    tags='manualArcSan')
+    elif img_selection == 2:
+        myArc = canvas_san.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1],
+                                      start=30,
+                                      extent=110,
+                                      style=ARC,
+                                      outline="#4B0082",
+                                      width=8,
+                                      tags='manualArcSan')
+    else:
+        myArc = canvas_san.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1],
+                                      start=63,
+                                      extent=92,
+                                      style=ARC,
+                                      outline="#4B0082",
+                                      width=8,
+                                      tags='manualArcSan')
     return myArc
 
 def motion_san(event):
@@ -270,7 +364,7 @@ def size_san(event):
 
 # In case the Leading Spikelet not found
 def manual_spikelet_drawing():
-    global canvas_san, final_confirmation, Spikelet_Window, img_on_canvas_san, quit_button
+    global canvas_san, final_confirmation, Spikelet_Window, img_on_canvas_san, quit_button, found
     # Disabling Cut Button
     final_confirmation['state'] = DISABLED
 
@@ -390,15 +484,32 @@ def range_calculator(str_opr, assessment):
     else:
         coord1, coord2, coord3, coord4 = assessment[0], assessment[1], assessment[2], assessment[3]
         avg_x, avg_y = (coord1+coord3)/2, (coord2+coord4)/2
-        if avg_x <= 470 and avg_x > 360:
-            return random.randint(50, 60)
-        elif avg_x <= 360 and avg_x > 265:
-            return random.randint(61, 70)
-        elif avg_x <= 265 and avg_x >= 120:
-            return random.randint(71, 80)
+        if img_selection == 1:
+            if avg_x <= 470 and avg_x > 360:
+                return random.randint(50, 60)
+            elif avg_x <= 360 and avg_x > 265:
+                return random.randint(61, 70)
+            elif avg_x <= 265 and avg_x >= 120:
+                return random.randint(71, 80)
+            else:
+                return None
+        elif img_selection == 2:
+            if avg_x <= 535 and avg_x > 430:
+                return random.randint(50, 60)
+            elif avg_x <= 430 and avg_x > 300:
+                return random.randint(61, 70)
+            elif avg_x <= 300 and avg_x >= 100:
+                return random.randint(71, 80)
+            else:
+                return None
         else:
-            if avg_x > 470:
-                messagebox.showwarning("Drawing Error", "Draw only on the fruitlets zone.")
+            if avg_x <= 680 and avg_x > 578:
+                return random.randint(50, 60)
+            elif avg_x <= 578 and avg_x > 466:
+                return random.randint(61, 70)
+            elif avg_x <= 466 and avg_x >= 365:
+                return random.randint(71, 80)
+            else:
                 return None
 
 def clear_entry():
@@ -491,21 +602,62 @@ def confirmation_click():
     else:
         return
 
+def afterCut_calculator(assessment):
+    coord1, coord2, coord3, coord4 = assessment[0], assessment[1], assessment[2], assessment[3]
+    avg_x, avg_y = (coord1 + coord3) / 2, (coord2 + coord4) / 2
+    blocks = round(assessment_before / 3)
+    if img_selection == 1:
+        if avg_x <= 470 and avg_x > 360:
+            return random.randint(0, blocks)
+        elif avg_x <= 360 and avg_x > 265:
+            return random.randint(blocks, blocks*2)
+        elif avg_x <= 265 and avg_x >= 120:
+            return random.randint(blocks*2, assessment_before)
+        else:
+            return None
+    elif img_selection == 2:
+        if avg_x <= 560 and avg_x > 430:
+            return random.randint(0, blocks)
+        elif avg_x <= 430 and avg_x > 280:
+            return random.randint(blocks, blocks*2)
+        elif avg_x <= 280 and avg_x >= 130:
+            return random.randint(blocks*2, assessment_before)
+        else:
+            return None
+    else:
+        if avg_x <= 680 and avg_x > 578:
+            return random.randint(0, blocks)
+        elif avg_x <= 578 and avg_x > 466:
+            return random.randint(blocks, blocks*2)
+        elif avg_x <= 466 and avg_x >= 365:
+            return random.randint(blocks*2, assessment_before)
+        else:
+            return None
+
 def done_drawing():
-    Show_2_last_frames()
-    assessment_afterCut_label['text'] = "Fruitlets After Cutting:"
-    assessment_afterCut_num_label['text'] = str(int(random.randint(3000, 5000)/2.5 + random.randint(-50, 50)))
-    assessment_afterCut_num_label['relief'] = GROOVE
-    assessment_afterCut_num_label['bg'] = None
-    L_length_range_label_text['text'] = "Spikelets Remaining Length:"
-    L_length_range_label['text'] = str(range_calculator('line', canvas.coords('currentline'))) + " cm"
-    # Enabling Cut Button
-    final_confirmation['state'] = NORMAL
-    b_submit['state'] = DISABLED
-    b_redraw['state'] = DISABLED
-    canvas.bind("<Button-1>", 'none')
-    canvas.bind("<B1-Motion>", 'none')
-    canvas.bind("<B1-ButtonRelease>", 'none')
+    global canvas
+
+    ans_afterCut_assessment = afterCut_calculator(canvas.coords('currentline'))
+    ans_afterCut_length = range_calculator('line', canvas.coords('currentline'))
+    if ans_afterCut_length != None and ans_afterCut_assessment != None:
+        assessment_afterCut_label['text'] = "Fruitlets After Cutting:"
+        assessment_afterCut_num_label['text'] = str(ans_afterCut_assessment)
+        assessment_afterCut_num_label['relief'] = GROOVE
+        assessment_afterCut_num_label['bg'] = None
+        L_length_range_label_text['text'] = "Spikelets Remaining Length:"
+        L_length_range_label['text'] = str(ans_afterCut_length) + " cm"
+        # Enabling Cut Button
+        final_confirmation['state'] = NORMAL
+        b_submit['state'] = DISABLED
+        b_redraw['state'] = DISABLED
+        canvas.bind("<Button-1>", 'none')
+        canvas.bind("<B1-Motion>", 'none')
+        canvas.bind("<B1-ButtonRelease>", 'none')
+        Show_2_last_frames()
+    else:
+        Hide_2_last_frames()
+        canvas.delete('currentline')
+        messagebox.showwarning("Drawing Error", "Draw only on the fruitlets zone.")
 
 def found_leading_sansun():
     # Found
@@ -545,10 +697,21 @@ def redraw_rectangle():
 
     print("startsqaure.coords: " + str(canvas.coords('startsqaure')))
     if cnt > 1 and len(canvas.coords("startsqaure")) != 0:
-        new_rec_x1, new_rec_y1 = int(width) * 0.7, int(height) * 0.25
-        new_rec_x2, new_rec_y2 = int(width)*0.72, int(height)*0.45
-        canvas.coords('startsqaure', new_rec_x1, new_rec_y1, new_rec_x2, new_rec_y2)
-        print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
+        if img_selection == 1:
+            new_rec_x1, new_rec_y1 = int(width) * 0.7, int(height) * 0.25
+            new_rec_x2, new_rec_y2 = int(width)*0.72, int(height)*0.45
+            canvas.coords('startsqaure', new_rec_x1, new_rec_y1, new_rec_x2, new_rec_y2)
+            print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
+        elif img_selection == 2:
+            new_rec_x1, new_rec_y1 = int(width) * 0.82, int(height) * 0.52
+            new_rec_x2, new_rec_y2 = int(width) * 0.84, int(height) * 0.62
+            canvas.coords('startsqaure', new_rec_x1, new_rec_y1, new_rec_x2, new_rec_y2)
+            print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
+        else:
+            new_rec_x1, new_rec_y1 = int(width) * 0.84, int(height) * 0.25
+            new_rec_x2, new_rec_y2 = int(width) * 0.865, int(height) * 0.38
+            canvas.coords('startsqaure', new_rec_x1, new_rec_y1, new_rec_x2, new_rec_y2)
+            print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
     else:
         pass
 
@@ -570,7 +733,7 @@ def redraw_arc():
             canvas.delete('currentArc')
             print("R:" + str(R))
             camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
-                                                  start=90 - 27, end=90 + 65, tags='currentArc') #what happend here?
+                                                  start=angle_start, end=angle_end, tags='currentArc') #what happend here?
         else:
             pass
     else:
@@ -584,12 +747,30 @@ def redraw_arc():
             x_arc_san_last, y_arc_san_last = float(round((x_arc_san_last / width_pre_4_line) * width)), \
                                              float(round((y_arc_san_last / height_pre_4_line) * heigth))
             canvas.delete('manualArcSan')
-            myArc = canvas.create_arc(x_arc_san_0, y_arc_san_0, x_arc_san_last, y_arc_san_last, start=63,
-                                      extent=92,
-                                      style=ARC,
-                                      outline="#4B0082",
-                                      width=8,
-                                      tags='manualArcSan')
+            if img_selection == 1:
+                myArc = canvas_san.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1],
+                                              start=63,
+                                              extent=92,
+                                              style=ARC,
+                                              outline="#4B0082",
+                                              width=8,
+                                              tags='manualArcSan')
+            elif img_selection == 2:
+                myArc = canvas_san.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1],
+                                              start=30,
+                                              extent=110,
+                                              style=ARC,
+                                              outline="#4B0082",
+                                              width=8,
+                                              tags='manualArcSan')
+            else:
+                myArc = canvas_san.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1],
+                                              start=63,
+                                              extent=92,
+                                              style=ARC,
+                                              outline="#4B0082",
+                                              width=8,
+                                              tags='manualArcSan')
         else:
             pass
 
@@ -622,17 +803,7 @@ def start_spikelet_configuration():
 
     if found == True:
         camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
-                                              start=90 - 27, end=90 + 65, tags='currentArc')
-        # Asking if it is a good leading spikelet
-        found_satisfying = messagebox.askyesno("Manual decision about the <Leading Spikelet>",
-                                            "<Leading Spikelet> has been found.\n\n"
-                                            "Yes - Continue\nNo - Manual Spikelet Redraw")
-        if found_satisfying == 1:
-            pass
-        else:
-            found = False
-            canvas.delete('currentArc')
-            manual_spikelet_drawing()
+                                              start=angle_start, end=angle_end, tags='currentArc')
 
     else:
         messagebox.showinfo("Information regards the <Leading Spikelet>",
@@ -667,13 +838,6 @@ def start_user_interface():
     b_redraw = Button(top2_right_frame, text="Redraw Leading Spikelet", command=redraw_leading_spikelet, anchor=CENTER)
     b_redraw.grid(row=0, column=0, pady=10, columnspan=2)
 
-
-
-
-
-
-
-
 def redraw_leading_spikelet():
     canvas.delete('currentArc')
     canvas.delete('manualArcSan')
@@ -697,7 +861,6 @@ def univarsal_clear():
         clear_entry()
     else:
         clear_drawing()
-
 
 ##------------##-------------- MAIN -------------##------------##
 # Hook window size changes
