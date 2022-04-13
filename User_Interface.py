@@ -36,17 +36,17 @@ frame_right.rowconfigure(index=2, weight=1)
 frame_right.rowconfigure(index=3, weight=0)
 
 # Right Top 1 Frame
-top1_right_frame = LabelFrame(frame_right, text="Assessment", labelanchor='n', bg='white')
+top1_right_frame = LabelFrame(frame_right, text="Assessment", labelanchor='n', bg='white', font='sans 10 bold')
 
 # Right Top 2 Frame
-top2_right_frame = LabelFrame(frame_right, text="Operations", labelanchor='n', bg='white')
+top2_right_frame = LabelFrame(frame_right, text="Operations", labelanchor='n', bg='white', font='sans 10 bold')
 
 # Right Top 3 Frame
-top3_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white')
+top3_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white', font='sans 10 bold')
 top3_right_frame.columnconfigure(index=0, weight=1)
 
 # Right Top 4 Frame
-top4_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white')
+top4_right_frame = LabelFrame(frame_right, labelanchor='n', bg='white', font='sans 10 bold')
 
 ## --------------- Variables & Image --------------- ##
 # For the submit button
@@ -129,7 +129,7 @@ def Show_2_last_frames():
     assessment_afterCut_num_label.grid(row=1, column=0, sticky="nsew", padx=50, pady=5, columnspan=2)
     L_length_range_label_text.grid(row=3, column=0, pady=5, sticky="nsew", columnspan=2)
     L_length_range_label.grid(row=4, column=0, padx=28, pady=5, sticky="nsew", columnspan=2)
-    top4_right_frame['text'] = "Final Confirmation"
+    top4_right_frame['text'] = "Final confirmation"
     final_confirmation.pack(pady=10)
     final_confirmation_helper.pack_forget()
 
@@ -364,7 +364,7 @@ def size_san(event):
 
 # In case the Leading Spikelet not found
 def manual_spikelet_drawing():
-    global canvas_san, final_confirmation, Spikelet_Window, img_on_canvas_san, quit_button, found
+    global canvas_san, final_confirmation, Spikelet_Window, img_on_canvas_san, quit_button, found, b_redraw, exp_label_san_win
     # Disabling Cut Button
     final_confirmation['state'] = DISABLED
 
@@ -373,21 +373,21 @@ def manual_spikelet_drawing():
     Spikelet_Window.title('Marking The Leading Spikelet Manually')
     Spikelet_Window.attributes('-fullscreen', True)
     # Top Frame
-    top_frame = LabelFrame(Spikelet_Window, text="Picture", labelanchor='n', bg="white")
-    top_frame.grid(row=0, column=0, sticky="nsew")
+    top_frame = LabelFrame(Spikelet_Window, text="Picture", labelanchor='n', bg="white", font='sans 10 bold')
+    top_frame.grid(row=1, column=0, sticky="nsew")
 
     # Bottom Frame
-    bottom_frame = LabelFrame(Spikelet_Window, text="Buttons", labelanchor='n', bg="white")
-    bottom_frame.grid(row=1, column=0, sticky="nsew")
+    bottom_frame = LabelFrame(Spikelet_Window, text="Buttons", labelanchor='n', bg="white", font='sans 10 bold')
+    bottom_frame.grid(row=0, column=0, sticky="nsew")
 
     # Grid configuration
-    Grid.rowconfigure(Spikelet_Window, index=0, weight=2)
+    Grid.rowconfigure(Spikelet_Window, index=1, weight=2)
     Grid.columnconfigure(Spikelet_Window, index=0, weight=2)
 
     # Frame configuration
-    top_frame.rowconfigure(index=0, weight=2)
-    top_frame.columnconfigure(index=0, weight=2)
-    bottom_frame.rowconfigure(index=0, weight=1)
+    bottom_frame.rowconfigure(index=0, weight=2)
+    bottom_frame.columnconfigure(index=0, weight=2)
+    top_frame.rowconfigure(index=0, weight=1)
 
     # Canvas
     canvas_san = Canvas(top_frame, bg="white")
@@ -401,8 +401,9 @@ def manual_spikelet_drawing():
     Spikelet_Window.bind("<B3-Motion>", move_san)
 
     # Explain Functionality
-    exp_label_san_win = Label(bottom_frame, text="Using Mouse : Left button - Draw | Right button - Move Drawing", bg="#CAFF70", relief=RIDGE)
+    exp_label_san_win = Label(bottom_frame, text="Using Mouse : Left button - Draw | Right button - Move Drawing", bg="#CAFF70", relief=RIDGE, font='sans 9 bold')
     exp_label_san_win.grid(row=0, column=0, padx=(5, 310), pady=5, sticky="w")
+
 
     # Exit button
     quit_button = Button(bottom_frame, text="Save and Continue", command=end_spikelet_window, state=DISABLED)
@@ -417,6 +418,17 @@ def manual_spikelet_drawing():
     # Hook window size changes
     Spikelet_Window.bind('<Configure>', size_changed_san)
     Spikelet_Window.state('zoomed')
+    b_redraw['text'] = "Redraw leading spikelet"
+    Spikelet_Window.after(1500, flash, 0)
+
+def flash(count):
+    if count%2 == 0:
+        exp_label_san_win.configure(background='green', foreground='white')
+    else:
+        exp_label_san_win.configure(background='#CAFF70', foreground='black')
+    count += 1
+    if (count < 6):
+        Spikelet_Window.after(700, flash, count)
 
 def clicked(value):
     global ge, b_submit, b_clear, b_clear_draw, final_confirmation, assessment_afterCut_label, assessment_afterCut_num_label, r_value, b_radio1, b_radio2
@@ -554,11 +566,11 @@ def submit_entry():
         if int(ge.get()) < assessment_before:
             if num_clicked == 1:
                 Show_2_last_frames()
-                assessment_afterCut_label['text'] = "Fruitlets After Cutting:"
+                assessment_afterCut_label['text'] = "Expected remaining fruitlets:"
                 assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-50, 50))
                 assessment_afterCut_num_label['relief'] = GROOVE
-                assessment_afterCut_num_label['bg'] = None
-                L_length_range_label_text['text'] = "Spikelets Remaining Length:"
+                assessment_afterCut_num_label['bg'] = '#CAFF70'
+                L_length_range_label_text['text'] = "Spikelets remaining length:"
                 L_length_range_label['text'] = str(range_calculator('number', int(ge.get()))) + " cm"
 
                 # Enabling Cut Button
@@ -572,11 +584,11 @@ def submit_entry():
             else:
                 submit_restart()
                 Show_2_last_frames()
-                assessment_afterCut_label['text'] = "Fruitlets After Cutting:"
+                assessment_afterCut_label['text'] = "Expected remaining fruitlets:"
                 assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-50, 50))
                 assessment_afterCut_num_label['relief'] = GROOVE
-                assessment_afterCut_num_label['bg'] = None
-                L_length_range_label_text['text'] = "Spikelets Remaining Length:"
+                assessment_afterCut_num_label['bg'] = '#CAFF70'
+                L_length_range_label_text['text'] = "Spikelets remaining length:"
                 L_length_range_label['text'] = str(range_calculator('number', int(ge.get()))) + " cm"
                 # Enabling Cut Button
                 final_confirmation['state'] = NORMAL
@@ -596,7 +608,7 @@ def submit_entry():
             messagebox.showerror("Entry Box Error", "This Entry Box may contain only digits and positive numbers!\nPlease try again.")
 
 def confirmation_click():
-    confirmation_respond = messagebox.askyesno("Final Confirmation", "Are you sure you want to do the cut? There is no way back from here.")
+    confirmation_respond = messagebox.askyesno("Final confirmation", "There is no way back from here.\n\nExecute cut?")
     if confirmation_respond == 1:
         root.destroy()
     else:
@@ -640,11 +652,11 @@ def done_drawing():
     ans_afterCut_assessment = afterCut_calculator(canvas.coords('currentline'))
     ans_afterCut_length = range_calculator('line', canvas.coords('currentline'))
     if ans_afterCut_length != None and ans_afterCut_assessment != None:
-        assessment_afterCut_label['text'] = "Fruitlets After Cutting:"
+        assessment_afterCut_label['text'] = "Expected remaining fruitlets:"
         assessment_afterCut_num_label['text'] = str(ans_afterCut_assessment)
         assessment_afterCut_num_label['relief'] = GROOVE
-        assessment_afterCut_num_label['bg'] = None
-        L_length_range_label_text['text'] = "Spikelets Remaining Length:"
+        assessment_afterCut_num_label['bg'] = '#CAFF70'
+        L_length_range_label_text['text'] = "Spikelets remaining length:"
         L_length_range_label['text'] = str(ans_afterCut_length) + " cm"
         # Enabling Cut Button
         final_confirmation['state'] = NORMAL
@@ -804,13 +816,11 @@ def start_spikelet_configuration():
     if found == True:
         camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
                                               start=angle_start, end=angle_end, tags='currentArc')
-
     else:
         messagebox.showinfo("Information regards the <Leading Spikelet>",
                             "<Leading Spikelet> has not been found."
                             "\n\nPlease draw one manually.")
         manual_spikelet_drawing()
-
 
 def start_user_interface():
     global found, b_redraw
@@ -835,7 +845,10 @@ def start_user_interface():
     create_square()
 
     # Redraw Leading Spikelet
-    b_redraw = Button(top2_right_frame, text="Redraw Leading Spikelet", command=redraw_leading_spikelet, anchor=CENTER)
+    if found == True:
+        b_redraw = Button(top2_right_frame, text="Redraw leading spikelet", command=redraw_leading_spikelet, anchor=CENTER)
+    else:
+        b_redraw = Button(top2_right_frame, text="Draw leading spikelet", command=redraw_leading_spikelet, anchor=CENTER)
     b_redraw.grid(row=0, column=0, pady=10, columnspan=2)
 
 def redraw_leading_spikelet():
@@ -909,7 +922,7 @@ marking_explain = Label(top2_right_frame, text="Draw a line, using the left mous
 marking_explain.grid(row=3, column=0, pady=10, sticky='nsew')
 
 # marking explain
-input_explain = Label(top2_right_frame, text="Write a number: ", font='sans 10', bg='white')
+input_explain = Label(top2_right_frame, text="Type in a number: ", font='sans 10', bg='white')
 input_explain.grid(row=5, column=0, padx=15, pady=10, sticky='w')
 # Input Box DISABLED
 ge = Entry(top2_right_frame, width=15, borderwidth=2, state=DISABLED)
@@ -930,7 +943,7 @@ assessment_afterCut_num_label = Label(top3_right_frame, padx=5, pady=5, text="",
                                       , relief=GROOVE)
 
 L_length_range_label_text = Label(top3_right_frame, text="", font='sans 10 bold', bg='white')
-L_length_range_label = Label(top3_right_frame, padx=5, pady=5, font='sans 12 bold', bg='white'
+L_length_range_label = Label(top3_right_frame, padx=5, pady=5, font='sans 12 bold', bg='#CAFF70'
                              , relief=GROOVE)
 
 ##--------------------------Right Top 4 Frame-------------------------##
