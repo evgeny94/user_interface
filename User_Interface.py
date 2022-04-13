@@ -73,7 +73,6 @@ new_image = ImageTk.PhotoImage(resized_image)
 canvas = Canvas()
 canvas_san = Canvas()
 
-
 # Rectangle
 width, height = canvas.winfo_width(), canvas.winfo_height()
 if img_selection == 1:
@@ -94,6 +93,20 @@ else:
     rel_x, rel_y = 0.875, 0.25
     o1, o2, R = 750, 870, 700
     angle_start, angle_end = 63, 140
+
+def update_parameters():
+    global border, zone
+    width, height = canvas.winfo_width(), canvas.winfo_height()
+    if img_selection == 1:
+        border = int(width) * 0.41
+        zone = border * 0.74
+    elif img_selection == 2:
+        border = int(width) * 0.46
+        zone = border * 0.76
+    else:
+        border = int(width) * 0.57
+        zone = border * 0.81
+    print("border, zone: "+ str(border), str(zone))
 
 global new_image_san
 
@@ -431,7 +444,7 @@ def flash(count):
         Spikelet_Window.after(700, flash, count)
 
 def clicked(value):
-    global ge, b_submit, b_clear, b_clear_draw, final_confirmation, assessment_afterCut_label, assessment_afterCut_num_label, r_value, b_radio1, b_radio2
+    global ge, b_submit, b_clear, b_clear_draw, final_confirmation, assessment_afterCut_label, assessment_afterCut_num_label, r_value, b_radio1, b_radio2, border_label, border
     if len(canvas.coords('manualArcSan')) == 0 and len(canvas.coords('currentArc')) == 0:
         start_spikelet_configuration()
     r_value = value
@@ -440,6 +453,8 @@ def clicked(value):
     if value == "Input of amount":
         # Clear and Disable Drawing
         clear_drawing()
+        canvas.delete('border_line')
+        border_label.destroy()
         canvas.bind("<Button-1>", 'none')
         canvas.bind("<B1-Motion>", 'none')
         canvas.bind("<B1-ButtonRelease>", 'none')
@@ -470,11 +485,19 @@ def clicked(value):
         canvas.bind("<B1-Motion>", draw)
         canvas.bind("<B1-ButtonRelease>", doneStroke)
 
+        # Border Line + Label
+        update_parameters()
+        print(border)
+        canvas.create_line(border, 0, border, canvas.winfo_height(), fill="black", dash=(50, 10), width=6, tags='border_line')
+        border_label = Label(canvas, text="Spikelets zone", font='sans 13 bold', bg='#CAFF70', relief=RIDGE)
+        border_label.place(x=zone, y=3)
+
+
         #Hide 2 last frames
         Hide_2_last_frames()
 
         # Entry DISABLED & Clear
-        ge.delete(0,END)
+        ge.delete(0, END)
         ge['state'] = DISABLED
 
         b_radio1['bg'], b_radio2['bg'] = '#CAFF70', 'white'
@@ -497,7 +520,7 @@ def range_calculator(str_opr, assessment):
         coord1, coord2, coord3, coord4 = assessment[0], assessment[1], assessment[2], assessment[3]
         avg_x, avg_y = (coord1+coord3)/2, (coord2+coord4)/2
         if img_selection == 1:
-            if avg_x <= 470 and avg_x > 360:
+            if avg_x <= border and avg_x > 360:
                 return random.randint(50, 60)
             elif avg_x <= 360 and avg_x > 265:
                 return random.randint(61, 70)
@@ -506,7 +529,7 @@ def range_calculator(str_opr, assessment):
             else:
                 return None
         elif img_selection == 2:
-            if avg_x <= 535 and avg_x > 430:
+            if avg_x <= border and avg_x > 430:
                 return random.randint(50, 60)
             elif avg_x <= 430 and avg_x > 300:
                 return random.randint(61, 70)
@@ -515,7 +538,7 @@ def range_calculator(str_opr, assessment):
             else:
                 return None
         else:
-            if avg_x <= 680 and avg_x > 578:
+            if avg_x <= border and avg_x > 578:
                 return random.randint(50, 60)
             elif avg_x <= 578 and avg_x > 466:
                 return random.randint(61, 70)
@@ -615,11 +638,12 @@ def confirmation_click():
         return
 
 def afterCut_calculator(assessment):
+    global border
     coord1, coord2, coord3, coord4 = assessment[0], assessment[1], assessment[2], assessment[3]
     avg_x, avg_y = (coord1 + coord3) / 2, (coord2 + coord4) / 2
     blocks = round(assessment_before / 3)
     if img_selection == 1:
-        if avg_x <= 470 and avg_x > 360:
+        if avg_x <= border and avg_x > 360:
             return random.randint(0, blocks)
         elif avg_x <= 360 and avg_x > 265:
             return random.randint(blocks, blocks*2)
@@ -628,7 +652,7 @@ def afterCut_calculator(assessment):
         else:
             return None
     elif img_selection == 2:
-        if avg_x <= 560 and avg_x > 430:
+        if avg_x <= border and avg_x > 430:
             return random.randint(0, blocks)
         elif avg_x <= 430 and avg_x > 280:
             return random.randint(blocks, blocks*2)
@@ -637,7 +661,7 @@ def afterCut_calculator(assessment):
         else:
             return None
     else:
-        if avg_x <= 680 and avg_x > 578:
+        if avg_x <= border and avg_x > 578:
             return random.randint(0, blocks)
         elif avg_x <= 578 and avg_x > 466:
             return random.randint(blocks, blocks*2)
