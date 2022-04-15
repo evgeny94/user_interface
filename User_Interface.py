@@ -79,34 +79,39 @@ if img_selection == 1:
     rec_x1, rec_y1 = int(width)*0.7, int(height)*0.25
     rec_x2, rec_y2 = int(width)*0.72, int(height)*0.45
     rel_x, rel_y = 0.73, 0.25
-    o1, o2, R = 680, 720, 500
+    o1, o2, R = round(int(width) * 0.532), round(int(height) * 0.924), round(int(height) * 0.642)
     angle_start, angle_end = 63, 155
 elif img_selection == 2:
     rec_x1, rec_y1 = int(width) * 0.82, int(height) * 0.52
     rec_x2, rec_y2 = int(width) * 0.84, int(height) * 0.62
     rel_x, rel_y = 0.85, 0.52
-    o1, o2, R = 410, 1490, 1230
+    o1, o2, R = round(int(width)*0.319), round(int(height)*1.913), round(int(height)*1.579)
     angle_start, angle_end = 58, 104
 else:
     rec_x1, rec_y1 = int(width)*0.84, int(height)*0.25
     rec_x2, rec_y2 = int(width)*0.865, int(height)*0.38
     rel_x, rel_y = 0.875, 0.25
-    o1, o2, R = 750, 870, 700
+    o1, o2, R = round(int(width)*0.584), round(int(height) * 1.117), round(int(height) * 0.899)
     angle_start, angle_end = 63, 140
 
 def update_parameters():
-    global border, zone
+    global border, zone, o1, o2, R
     width, height = canvas.winfo_width(), canvas.winfo_height()
     if img_selection == 1:
         border = int(width) * 0.41
         zone = border * 0.74
+        o1, o2, R = round(int(width) * 0.532), round(int(height) * 0.924), round(int(height) * 0.642)
     elif img_selection == 2:
         border = int(width) * 0.46
         zone = border * 0.76
+        o1, o2, R = round(int(width)*0.319), round(int(height)*1.913), round(int(height)*1.579)
     else:
         border = int(width) * 0.57
         zone = border * 0.81
+        o1, o2, R = round(int(width)*0.584), round(int(height) * 1.117), round(int(height) * 0.899)
+
     print("border, zone: "+ str(border), str(zone))
+    print("o1, o2, R = " + str(o1), str(o2), str(R))
 
 global new_image_san
 
@@ -489,7 +494,7 @@ def clicked(value):
         update_parameters()
         print(border)
         canvas.create_line(border, 0, border, canvas.winfo_height(), fill="black", dash=(50, 10), width=6, tags='border_line')
-        border_label = Label(canvas, text="Spikelets zone", font='sans 13 bold', bg='#CAFF70', relief=RIDGE)
+        border_label = Label(canvas, text="Fruitlets zone", font='sans 13 bold', bg='#CAFF70', relief=RIDGE)
         border_label.place(x=zone, y=3)
 
 
@@ -696,12 +701,13 @@ def done_drawing():
         messagebox.showwarning("Drawing Error", "Draw only on the fruitlets zone.")
 
 def found_leading_sansun():
-    # Found
-    if random.uniform(0, 1) <= 0.5:
-        return True
-    # Not Found
-    else:
-        return False
+    # # Found
+    # if random.uniform(0, 1) <= 0.5:
+    #     return True
+    # # Not Found
+    # else:
+    #     return False
+    return True
 
 def redraw_line():
     global canvas
@@ -757,17 +763,8 @@ def redraw_arc():
     if found == True:
         print("width, heigth:" + str(width), str(heigth))
         if width_pre_4_line > 1 and height_pre_4_line > 1:
-            x1_arc, y1_arc = o1, o2 + R
-            print("x1_arc, y1_arc:" + str(o1), str(o2 + R))
-            o1, o2 = float(round((o1 / width_pre_4_line) * width)), \
-                     float(round((o2 / height_pre_4_line) * heigth))
-            print("o1_new, o2_new:" + str(o1), str(o2))
-            x1_arc_new, y1_arc_new = float(round((x1_arc / width_pre_4_line) * width)), \
-                                     float(round((y1_arc / height_pre_4_line) * heigth))
-            print("x1_arc_new, y1_arc_new:" + str(x1_arc_new), str(y1_arc_new))
-            R = float(round(math.sqrt((x1_arc_new - o1) ** 2 + (y1_arc_new - o2) ** 2)))
             canvas.delete('currentArc')
-            print("R:" + str(R))
+            update_parameters()
             camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
                                                   start=angle_start, end=angle_end, tags='currentArc') #what happend here?
         else:
@@ -835,8 +832,9 @@ def size(event):
     redraw_rectangle()
 
 def start_spikelet_configuration():
-    global found, b_redraw
+    global found, b_redraw, o1, o2, R
 
+    update_parameters()
     if found == True:
         camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
                                               start=angle_start, end=angle_end, tags='currentArc')
@@ -850,6 +848,7 @@ def start_user_interface():
     global found, b_redraw
     b_start_interface.pack_forget()
     start_label.pack_forget()
+    update_parameters()
     # Right Top 1 Frame
     top1_right_frame.grid(row=0, column=0, sticky="nsew")
     top1_right_frame.grid_columnconfigure(index=0, weight=1)
