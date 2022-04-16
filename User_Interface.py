@@ -6,7 +6,7 @@ from tkinter import messagebox
 
 root = Tk()
 root.title('User Interface')
-root.iconbitmap('images/icon.ico')
+root.iconbitmap('../user_interface/images/icon.ico')
 
 
 ## --------------- Screen configurations --------------- ##
@@ -56,19 +56,19 @@ num_clicked = 0
 img_selection = random.randint(1, 3)
 print(img_selection)
 if img_selection == 1:
-    palm_img = Image.open('images/palm1.jpg')
-    palm_img_san = Image.open('images/palm1.jpg')
+    palm_img = Image.open('../user_interface/images/palm1.jpg')
+    palm_img_san = Image.open('../user_interface/images/palm1.jpg')
 elif img_selection == 2:
-    palm_img = Image.open('images/palm3.JPG')
-    palm_img_san = Image.open('images/palm3.JPG')
+    palm_img = Image.open('../user_interface/images/palm3.JPG')
+    palm_img_san = Image.open('../user_interface/images/palm3.JPG')
 else:
-    palm_img = Image.open('images/palm4.png')
-    palm_img_san = Image.open('images/palm4.png')
+    palm_img = Image.open('../user_interface/images/palm4.png')
+    palm_img_san = Image.open('../user_interface/images/palm4.png')
 
 r_value = None
 width_pre, heigth_pre, cnt = 0, 0, 0
 width_pre_san, heigth_pre_san, cnt_san = 0, 0, 0
-resized_image = palm_img.resize((screen_width, screen_height), Image.ANTIALIAS)
+resized_image = palm_img.resize((screen_width, screen_height), Image.Resampling.LANCZOS)
 new_image = ImageTk.PhotoImage(resized_image)
 canvas = Canvas()
 canvas_san = Canvas()
@@ -701,13 +701,12 @@ def done_drawing():
         messagebox.showwarning("Drawing Error", "Draw only on the fruitlets zone.")
 
 def found_leading_sansun():
-    # # Found
-    # if random.uniform(0, 1) <= 0.5:
-    #     return True
-    # # Not Found
-    # else:
-    #     return False
-    return True
+    # Found
+    if random.uniform(0, 1) <= 0.5:
+        return True
+    # Not Found
+    else:
+        return False
 
 def redraw_line():
     global canvas
@@ -824,7 +823,7 @@ def size(event):
     width, heigth = canvas.winfo_width(), canvas.winfo_height()
     print('Canvas size:', width, 'x', heigth)
 
-    resized_image = palm_img.resize((width, heigth), Image.ANTIALIAS)
+    resized_image = palm_img.resize((width, heigth), Image.Resampling.LANCZOS)
     new_image = ImageTk.PhotoImage(resized_image)
     canvas.itemconfig(img_on_canvas, image=new_image)
     redraw_line()
