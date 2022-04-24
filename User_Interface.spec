@@ -4,7 +4,7 @@
 block_cipher = None
 
 
-a = Analysis(['User_Interface.py'],
+a = Analysis(['C:\\Users\\Evgeny\\PycharmProjects\\user_interface\\User_Interface.py'],
              pathex=[],
              binaries=[],
              datas=[],
@@ -33,8 +33,8 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=True,
+          console=False,
           disable_windowed_traceback=False,
           target_arch=None,
           codesign_identity=None,
-          entitlements_file=None )
+          entitlements_file=None , icon='C:\\Users\\Evgeny\\PycharmProjects\\user_interface\\images\\icon.ico')

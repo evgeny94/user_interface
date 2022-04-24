@@ -2,11 +2,63 @@ import random, math
 from tkinter import *
 from PIL import ImageTk, Image
 from tkinter import messagebox
-
+import urllib.request
+import os
 
 root = Tk()
-root.title('User Interface')
-root.iconbitmap('../user_interface/images/icon.ico')
+# root.title('User Interface')
+root.resizable(False, False)
+# turns off title bar, geometry
+root.overrideredirect(True)
+
+path1 = "C:/Date thinning/user_interface/images"
+# Check whether the specified path exists or not
+isExist = os.path.exists(path1)
+print(isExist)
+if isExist:
+    pass
+else:
+    os.makedirs(path1, exist_ok=True)
+    urllib.request.urlretrieve(
+        'https://raw.githubusercontent.com/evgeny94/user_interface/master/images/icon.ico',
+        "C:/Date thinning/user_interface/images/icon.ico")
+    urllib.request.urlretrieve(
+        'https://raw.githubusercontent.com/evgeny94/user_interface/master/images/palm1.jpg',
+        "C:/Date thinning/user_interface/images/palm1.jpg")
+    urllib.request.urlretrieve(
+        'https://raw.githubusercontent.com/evgeny94/user_interface/master/images/palm3.JPG',
+        "C:/Date thinning/user_interface/images/palm3.JPG")
+    urllib.request.urlretrieve(
+        'https://raw.githubusercontent.com/evgeny94/user_interface/master/images/palm4.png',
+        "C:/Date thinning/user_interface/images/palm4.png")
+
+def check_ifExist_image(filename):
+    global palm_img, palm_img_san
+    try:
+        palm_img = Image.open(filename)
+        palm_img_san = Image.open(filename)
+        print("File accessible")
+        return True
+    except IOError:
+        print("File not accessible")
+        return False
+
+def check_ifExist_icon(filename):
+    global rib
+    try:
+        rib = root.iconbitmap(filename)
+        print("File accessible")
+        return True
+    except IOError:
+        print("File not accessible")
+        return False
+
+if check_ifExist_icon("C:/Date thinning/user_interface/images/icon.ico"):
+    print("getting here?")
+    pass
+else:
+    print("getting here?")
+    root.iconbitmap('C:/Date thinning/user_interface/images/icon.ico')
 
 
 ## --------------- Screen configurations --------------- ##
@@ -21,15 +73,26 @@ print("root: " + str(screen_width1) + ", " + str(screen_height1))
 root.state('zoomed')
 
 ## --------------- Frames --------------- ##
+# make a frame for the title bar
+title_bar = LabelFrame(root, bg='white', relief='raised', bd=2)
+title_bar.grid(row=0, column=1, sticky="e", padx=5)
+# put a close button on the title bar
+close_button = Button(title_bar, text=' X ', command=root.destroy, font='sans 10')
+close_button.pack(side=RIGHT)
+title_label = Label(root, text="Date Thinning - User Interface")
+title_label.grid(row=0, column=0, sticky="w", padx=5)
+
 # Frame Creation Left
 frame_left = LabelFrame(root, text="Picture", labelanchor='n', bg='white', font='sans 11 bold')
-frame_left.grid(row=0, column=0, sticky="nsew")
+frame_left.grid(row=1, column=0, sticky="nsew")
 
 # Frame Creation Right
 frame_right = LabelFrame(root, text="Information", labelanchor='n', bg='white', font='sans 11 bold')
-frame_right.grid(row=0, column=1, sticky="nsew")
+frame_right.grid(row=1, column=1, sticky="nsew")
 
 # Frame Configuration Right
+root.rowconfigure(index=0, weight=0)
+root.rowconfigure(index=1, weight=150)
 frame_right.rowconfigure(index=0, weight=0)
 frame_right.rowconfigure(index=1, weight=1)
 frame_right.rowconfigure(index=2, weight=1)
@@ -56,14 +119,23 @@ num_clicked = 0
 img_selection = random.randint(1, 3)
 print(img_selection)
 if img_selection == 1:
-    palm_img = Image.open('../user_interface/images/palm1.jpg')
-    palm_img_san = Image.open('../user_interface/images/palm1.jpg')
+    if check_ifExist_image("C:/Date thinning/user_interface/images/palm1.jpg"):
+        pass
+    else:
+        palm_img = Image.open('C:/Date thinning/user_interface/images/palm1.jpg')
+        palm_img_san = Image.open('C:/Date thinning/user_interface/images/palm1.jpg')
 elif img_selection == 2:
-    palm_img = Image.open('../user_interface/images/palm3.JPG')
-    palm_img_san = Image.open('../user_interface/images/palm3.JPG')
+    if check_ifExist_image("C:/Date thinning/user_interface/images/palm3.JPG"):
+        pass
+    else:
+        palm_img = Image.open('C:/Date thinning/user_interface/images/palm3.JPG')
+        palm_img_san = Image.open('C:/Date thinning/user_interface/images/palm3.JPG')
 else:
-    palm_img = Image.open('../user_interface/images/palm4.png')
-    palm_img_san = Image.open('../user_interface/images/palm4.png')
+    if check_ifExist_image("C:/Date thinning/user_interface/images/palm4.png"):
+        pass
+    else:
+        palm_img = Image.open('C:/Date thinning/user_interface/images/palm4.png')
+        palm_img_san = Image.open('C:/Date thinning/user_interface/images/palm4.png')
 
 r_value = None
 width_pre, heigth_pre, cnt = 0, 0, 0
@@ -72,6 +144,7 @@ resized_image = palm_img.resize((screen_width, screen_height), Image.Resampling.
 new_image = ImageTk.PhotoImage(resized_image)
 canvas = Canvas()
 canvas_san = Canvas()
+border_label = Label()
 
 # Rectangle
 width, height = canvas.winfo_width(), canvas.winfo_height()
@@ -376,7 +449,7 @@ def size_san(event):
     width_san, heigth_san = canvas_san.winfo_width(), canvas_san.winfo_height()
     print('Canvas size:', width_san, 'x', heigth_san)
 
-    resized_image_san = palm_img_san.resize((width_san, heigth_san), Image.ANTIALIAS)
+    resized_image_san = palm_img_san.resize((width_san, heigth_san), Image.Resampling.LANCZOS)
     new_image_san = ImageTk.PhotoImage(resized_image_san)
     canvas_san.itemconfig(img_on_canvas_san, image=new_image_san)
 
@@ -385,6 +458,7 @@ def manual_spikelet_drawing():
     global canvas_san, final_confirmation, Spikelet_Window, img_on_canvas_san, quit_button, found, b_redraw, exp_label_san_win
     # Disabling Cut Button
     final_confirmation['state'] = DISABLED
+    b_submit['state'] = DISABLED
 
     # Open new window for drawing the spikelet
     Spikelet_Window = Toplevel()
@@ -591,7 +665,11 @@ def submit_entry():
     # Number of clicks on submit for deleting previous grids
     # First time clicked
     if valid == True:
-        if int(ge.get()) < assessment_before:
+        if int(ge.get()) == 0:
+            clear_entry()
+            messagebox.showerror("Entry Box Error",
+                                     "Try a number greater than 0.")
+        elif int(ge.get()) < assessment_before:
             if num_clicked == 1:
                 Show_2_last_frames()
                 assessment_afterCut_label['text'] = "Expected remaining fruitlets:"
@@ -613,7 +691,7 @@ def submit_entry():
                 submit_restart()
                 Show_2_last_frames()
                 assessment_afterCut_label['text'] = "Expected remaining fruitlets:"
-                assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-50, 50))
+                assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(0, 75))
                 assessment_afterCut_num_label['relief'] = GROOVE
                 assessment_afterCut_num_label['bg'] = '#CAFF70'
                 L_length_range_label_text['text'] = "Spikelets remaining length:"
@@ -759,7 +837,7 @@ def redraw_rectangle():
 def redraw_arc():
     global canvas, R, o1, o2, found
     width, heigth = canvas.winfo_width(), canvas.winfo_height()
-    if found == True:
+    if found == True and len(points_san) == 0:
         print("width, heigth:" + str(width), str(heigth))
         if width_pre_4_line > 1 and height_pre_4_line > 1:
             canvas.delete('currentArc')
@@ -812,7 +890,7 @@ def size_changed(event):
     cnt = cnt + 1
     if cnt > 1 and (width_pre != width or heigth_pre != heigth):
         width_pre_4_line, height_pre_4_line = width_pre, heigth_pre
-        width_pre, heigth_pre = canvas.winfo_width(), canvas.winfo_height()
+        width_pre, heigth_pre = width, heigth
         size(event)
     else:
         pass
@@ -826,8 +904,8 @@ def size(event):
     resized_image = palm_img.resize((width, heigth), Image.Resampling.LANCZOS)
     new_image = ImageTk.PhotoImage(resized_image)
     canvas.itemconfig(img_on_canvas, image=new_image)
-    redraw_line()
-    redraw_arc()
+    # redraw_line()
+    # redraw_arc()
     redraw_rectangle()
 
 def start_spikelet_configuration():
@@ -835,8 +913,9 @@ def start_spikelet_configuration():
 
     update_parameters()
     if found == True:
-        camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
-                                              start=angle_start, end=angle_end, tags='currentArc')
+        # camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
+        #                                       start=angle_start, end=angle_end, tags='currentArc')
+        pass
     else:
         messagebox.showinfo("Information regards the <Leading Spikelet>",
                             "<Leading Spikelet> has not been found."
@@ -868,6 +947,8 @@ def start_user_interface():
 
     # Redraw Leading Spikelet
     if found == True:
+        camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
+                                              start=angle_start, end=angle_end, tags='currentArc')
         b_redraw = Button(top2_right_frame, text="Redraw leading spikelet", command=redraw_leading_spikelet, anchor=CENTER)
     else:
         b_redraw = Button(top2_right_frame, text="Draw leading spikelet", command=redraw_leading_spikelet, anchor=CENTER)
@@ -876,6 +957,7 @@ def start_user_interface():
 def redraw_leading_spikelet():
     canvas.delete('currentArc')
     canvas.delete('manualArcSan')
+    b_submit['state'] = DISABLED
     clear_drawing()
     clear_entry()
     manual_spikelet_drawing()
