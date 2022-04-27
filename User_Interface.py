@@ -141,7 +141,7 @@ else:
 r_value = None
 width_pre, heigth_pre, cnt = 0, 0, 0
 width_pre_san, heigth_pre_san, cnt_san = 0, 0, 0
-resized_image = palm_img.resize((screen_width, screen_height), Image.Resampling.LANCZOS)
+resized_image = palm_img.resize((screen_width, screen_height))#, Image.Resampling.LANCZOS)
 new_image = ImageTk.PhotoImage(resized_image)
 canvas = Canvas()
 canvas_san = Canvas()
@@ -202,7 +202,8 @@ found = False
 global finding_chance
 
 #final confirmation
-global final_confirmation
+global final_confirmation , Thin_Answer ,end_Confirmation_Window, Confirmation_Window
+
 ## --------------- Functions --------------- ##
 
 #-----------------show/hide functions-----------------------
@@ -271,46 +272,46 @@ def doneStroke(event):
 def create_random_line(assessment):
     global line
 
-    blocks = round(assessment_before / 3)
+    blocks = 400
     print(blocks)
     if img_selection == 1:
-        if assessment > 0 and assessment < blocks:
-            x1, y1, x2, y2 = random.randint(187, 235), random.randint(56, 124), \
-                             random.randint(427, 511), random.randint(483, 560)
+        if assessment > 0 and assessment <= blocks:
+            x1, y1, x2, y2 = random.randint(475, 525), random.randint(56, 124), \
+                             random.randint(475, 525), random.randint(750, 800)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
-        elif assessment >= blocks and assessment < 2*blocks:
-            x1, y1, x2, y2 = random.randint(70, 105), random.randint(92, 148), \
-                             random.randint(373, 425), random.randint(565, 665)
+        elif assessment > blocks and assessment <= 200+blocks:
+            x1, y1, x2, y2 = random.randint(275, 325), random.randint(92, 148), \
+                             random.randint(275, 325), random.randint(750, 800)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
         else:
-            x1, y1, x2, y2 = random.randint(14, 97), random.randint(242, 350), \
-                             random.randint(389, 430), random.randint(655, 742)
+            x1, y1, x2, y2 = random.randint(75, 125), random.randint(242, 350), \
+                             random.randint(75, 125), random.randint(800, 1000)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
     elif img_selection == 2:
-        if assessment > 0 and assessment < blocks:
-            x1, y1, x2, y2 = random.randint(385, 460), random.randint(70, 95), \
-                             random.randint(430, 495), random.randint(550, 620)
+        if assessment > 0 and assessment <= blocks:
+            x1, y1, x2, y2 = random.randint(625, 675), random.randint(56, 124), \
+                             random.randint(625, 675), random.randint(750, 800)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
-        elif assessment >= blocks and assessment < 2*blocks:
-            x1, y1, x2, y2 = random.randint(250, 355), random.randint(75, 90), \
-                             random.randint(310, 430), random.randint(665, 720)
+        elif assessment > blocks and assessment <= 200 + blocks:
+            x1, y1, x2, y2 = random.randint(525, 575), random.randint(92, 148), \
+                             random.randint(525, 575), random.randint(750, 800)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
         else:
-            x1, y1, x2, y2 = random.randint(130, 245), random.randint(100, 114), \
-                             random.randint(310, 355), random.randint(690, 725)
+            x1, y1, x2, y2 = random.randint(325, 475), random.randint(100, 200), \
+                             random.randint(325, 475), random.randint(800, 1000)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
     else:
-        if assessment > 0 and assessment < blocks:
-            x1, y1, x2, y2 = random.randint(515, 615), random.randint(30, 35), \
-                             random.randint(660, 735), random.randint(485, 585)
+        if assessment > 0 and assessment <= blocks:
+            x1, y1, x2, y2 = random.randint(750, 800), random.randint(56, 124), \
+                             random.randint(750, 800), random.randint(750, 800)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
-        elif assessment >= blocks and assessment < 2*blocks:
-            x1, y1, x2, y2 = random.randint(380, 515), random.randint(30, 40), \
-                             random.randint(560, 660), random.randint(485, 770)
+        elif assessment > blocks and assessment <= 200 + blocks:
+            x1, y1, x2, y2 = random.randint(650, 700), random.randint(92, 148), \
+                             random.randint(650, 700), random.randint(750, 800)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
         else:
-            x1, y1, x2, y2 = random.randint(265, 370), random.randint(30, 70), \
-                             random.randint(450, 560), random.randint(500, 770)
+            x1, y1, x2, y2 = random.randint(550, 600), random.randint(50, 100), \
+                             random.randint(550, 600), random.randint(800, 1000)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
 
 
@@ -365,6 +366,19 @@ def end_spikelet_window():
         canvas.bind("<Button-1>", 'none')
         canvas.bind("<B1-Motion>", 'none')
         canvas.bind("<B1-ButtonRelease>", 'none')
+
+
+
+def end_Confirmation_Window():
+    global Thin_Answer
+    Thin_Answer = 1
+    Confirmation_Window.destroy()
+
+def end_no_Confirmation_Window():
+    global Thin_Answer
+    Thin_Answer = 0
+    Confirmation_Window.destroy()
+
 
 # --------------- Spiklet Drawing ---------------
 def get_xy_san(event):
@@ -460,11 +474,11 @@ def size_san(event):
     width_san, heigth_san = canvas_san.winfo_width(), canvas_san.winfo_height()
     print('Canvas size:', width_san, 'x', heigth_san)
 
-    resized_image_san = palm_img_san.resize((width_san, heigth_san), Image.Resampling.LANCZOS)
+    resized_image_san = palm_img_san.resize((width_san, heigth_san))#, Image.Resampling.LANCZOS)
     new_image_san = ImageTk.PhotoImage(resized_image_san)
     canvas_san.itemconfig(img_on_canvas_san, image=new_image_san)
 
-# In case the Leading Spikelet not found
+# In case the Cluster Axis not found
 def manual_spikelet_drawing():
     global canvas_san, final_confirmation, Spikelet_Window, img_on_canvas_san, quit_button, found, b_redraw, exp_label_san_win
     # Disabling Cut Button
@@ -473,7 +487,7 @@ def manual_spikelet_drawing():
 
     # Open new window for drawing the spikelet
     Spikelet_Window = Toplevel()
-    Spikelet_Window.title('Marking The Leading Spikelet Manually')
+    Spikelet_Window.title('Marking The Cluster Axis Manually')
     Spikelet_Window.attributes('-fullscreen', True)
     # Left Frame
     left_main_frame = LabelFrame(Spikelet_Window, text="Picture", labelanchor='n', bg="white", font='sans 10 bold')
@@ -516,7 +530,7 @@ def manual_spikelet_drawing():
     Spikelet_Window.bind("<B3-Motion>", move_san)
 
     # Explain Functionality
-    mouse_use_label = Label(right_top_frame, text="Draw the leading spikelet \nusing your mouse:", bg="white", font='sans 13 bold')
+    mouse_use_label = Label(right_top_frame, text="Draw the Cluster Axis \nusing your mouse:", bg="white", font='sans 13 bold')
     mouse_use_label.grid(row=0, column=0, pady=5)
 
     separator = Separator(right_top_frame, orient='horizontal')
@@ -542,7 +556,7 @@ def manual_spikelet_drawing():
     # Hook window size changes
     Spikelet_Window.bind('<Configure>', size_changed_san)
     Spikelet_Window.state('zoomed')
-    b_redraw['text'] = "Redraw leading spikelet"
+    b_redraw['text'] = "Redraw Cluster Axis"
     Spikelet_Window.after(1500, flash, 0)
 
 def flash(count):
@@ -727,7 +741,7 @@ def submit_entry():
             clear_entry()
             messagebox.showerror("Entry Box Error",
                                      "Try a number greater than 0.")
-        elif int(ge.get()) < assessment_before:
+        elif int(ge.get()) <= 1200:
             if num_clicked == 1:
                 Show_2_last_frames()
                 assessment_afterCut_label['text'] = "Expected remaining fruitlets:"
@@ -772,7 +786,7 @@ def submit_entry():
                 root.bind('<Return>', 'none')
         else:
             clear_entry()
-            messagebox.showerror("Entry Box Error", "The number is equal or greater than the initial assessment!\nPlease try again.")
+            messagebox.showerror("Entry Box Error", "The number is equal or greater than the max rational number to get after thinnig!\nPlease try again.")
     else:
         if ge.get() == "":
             messagebox.showerror("Entry Box Error",
@@ -782,22 +796,29 @@ def submit_entry():
             messagebox.showerror("Entry Box Error", "This Entry Box may contain only digits and positive numbers!\nPlease try again.")
 
 def confirmation_click():
-    global assessment_afterCut_num_label, L_length_range_label
+    global assessment_afterCut_num_label, L_length_range_label , Thin_Answer ,end_Confirmation_Window, Confirmation_Window
     # Confirmation_Window = Toplevel(root)
     # Confirmation_Window.title('Final confirmation')
     # text_label1 = Label(Confirmation_Window, text="There is no way back from here.\n\n", font='sans 15 bold')
-    # text_label2 = Label(Confirmation_Window, text="Summary\n", font='sans 14 bold')
+    # text_label2 = Label(Confirmation_Window, text="Summary - \n", font='sans 14 bold')
     # text_label3 = Label(Confirmation_Window, text="Expected remaining fruitlets: " + str(assessment_afterCut_num_label) + "\n", font='sans 11 bold')
     # text_label4 = Label(Confirmation_Window, text="Spikelets remaining length: " + str(L_length_range_label) + "\n\n", font='sans 11 bold')
-    # text_label5 = Label(Confirmation_Window, text="Execute cut?"+ "\n\n", font='sans 12 bold')
+    # text_label5 = Label(Confirmation_Window, text="Execute cut?"+ "\n\n", font='sans 15 bold')
+    #
+    # # Exit button
+    # quit_button_confirmtion = Button(Confirmation_Window, text="Yes", command=end_Confirmation_Window,font='sans 11 bold')
+    # no_button_confirmtion = Button(Confirmation_Window, text="NO", command=end_Confirmation_Window,
+    #                                  font='sans 11 bold')
     # text_label1.pack()
     # text_label2.pack()
     # text_label3.pack()
     # text_label4.pack()
     # text_label5.pack()
-
+    # quit_button_confirmtion.pack()
+    # no_button_confirmtion.pack()
+    #
     confirmation_respond = messagebox.askyesno("Final confirmation", "There is no way back from here.\n\n"
-                                                                     "Execute cut?")
+                                                                      "Execute cut?")
     if confirmation_respond == 1:
         root.destroy()
     else:
@@ -867,7 +888,7 @@ def done_drawing():
         canvas.delete('currentline')
         messagebox.showwarning("Drawing Error", "Draw only on the fruitlets zone.")
 
-def found_leading_sansun():
+def found_Cluster_Axis():
     # Found
     if random.uniform(0, 1) <= 0.5:
         return True
@@ -990,7 +1011,7 @@ def size(event):
     width, heigth = canvas.winfo_width(), canvas.winfo_height()
     print('Canvas size:', width, 'x', heigth)
 
-    resized_image = palm_img.resize((width, heigth), Image.Resampling.LANCZOS)
+    resized_image = palm_img.resize((width, heigth))#, Image.Resampling.LANCZOS)
     new_image = ImageTk.PhotoImage(resized_image)
     canvas.itemconfig(img_on_canvas, image=new_image)
     # redraw_line()
@@ -1006,8 +1027,8 @@ def start_spikelet_configuration():
         #                                       start=angle_start, end=angle_end, tags='currentArc')
         pass
     else:
-        messagebox.showinfo("Information regards the <Leading Spikelet>",
-                            "<Leading Spikelet> has not been found."
+        messagebox.showinfo("Information regards the <Cluster Axis>",
+                            "<Cluster Axis> has not been found."
                             "\n\nPlease draw one manually.")
         manual_spikelet_drawing()
 
@@ -1028,22 +1049,22 @@ def start_user_interface():
     # Right Top 4 Frame
     top4_right_frame.grid(row=3, column=0, sticky="nsew")
 
-    # Does the calculating system found a leading spikelet
-    found = found_leading_sansun()
+    # Does the calculating system found a Cluster Axis
+    found = found_Cluster_Axis()
 
     # Robot's Location
     create_square()
 
-    # Redraw Leading Spikelet
+    # Redraw Cluster Axis
     if found == True:
         camvas_arc = canvas.create_circle_arc(o1, o2, R, style="arc", outline="#4B0082", width=8,
                                               start=angle_start, end=angle_end, tags='currentArc')
-        b_redraw = Button(top2_right_frame, text="Redraw leading spikelet", font='sans 11 bold', bg="#4B0082", fg="white", command=redraw_leading_spikelet, anchor=CENTER)
+        b_redraw = Button(top2_right_frame, text="Redraw Cluster Axis", font='sans 11 bold', bg="#4B0082", fg="white", command=redraw_Cluster_Axis, anchor=CENTER)
     else:
-        b_redraw = Button(top2_right_frame, text="Draw leading spikelet", font='sans 10 bold', bg="#4B0082", fg="white", command=redraw_leading_spikelet, anchor=CENTER)
+        b_redraw = Button(top2_right_frame, text="Draw Cluster Axis", font='sans 10 bold', bg="#4B0082", fg="white", command=redraw_Cluster_Axis, anchor=CENTER)
     b_redraw.grid(row=0, column=0, pady=10, columnspan=2)
 
-def redraw_leading_spikelet():
+def redraw_Cluster_Axis():
     canvas.delete('currentArc')
     canvas.delete('manualArcSan')
     b_submit['state'] = DISABLED
