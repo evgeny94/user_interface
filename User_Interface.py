@@ -7,7 +7,6 @@ import urllib.request
 import os
 
 root = Tk()
-# root.title('User Interface')
 root.resizable(False, False)
 # turns off title bar, geometry
 root.overrideredirect(True)
@@ -15,7 +14,6 @@ root.overrideredirect(True)
 path1 = "C:/Date thinning/user_interface/images"
 # Check whether the specified path exists or not
 isExist = os.path.exists(path1)
-print(isExist)
 if isExist:
     pass
 else:
@@ -55,21 +53,14 @@ def check_ifExist_icon(filename):
         return False
 
 if check_ifExist_icon("C:/Date thinning/user_interface/images/icon.ico"):
-    print("getting here?")
     pass
 else:
-    print("getting here?")
     root.iconbitmap('C:/Date thinning/user_interface/images/icon.ico')
 
 
 ## --------------- Screen configurations --------------- ##
 screen_width = int(int(root.winfo_screenwidth())*0.92)
 screen_height = int(int(root.winfo_screenheight())*0.9)
-print("root managed: " + str(screen_width) + ", " + str(screen_height))
-
-screen_width1 = root.winfo_screenwidth()
-screen_height1 = root.winfo_screenheight()
-print("root: " + str(screen_width1) + ", " + str(screen_height1))
 
 root.state('zoomed')
 
@@ -118,7 +109,7 @@ num_clicked = 0
 
 # Image + Configurations
 img_selection = random.randint(1, 3)
-print(img_selection)
+print("selected image: " + str(img_selection))
 if img_selection == 1:
     if check_ifExist_image("C:/Date thinning/user_interface/images/palm1.jpg"):
         pass
@@ -184,8 +175,8 @@ def update_parameters():
         zone = border * 0.81
         o1, o2, R = round(int(width)*0.584), round(int(height) * 1.117), round(int(height) * 0.899)
 
-    print("border, zone: "+ str(border), str(zone))
-    print("o1, o2, R = " + str(o1), str(o2), str(R))
+    # print("border, zone: "+ str(border), str(zone))
+    # print("o1, o2, R = " + str(o1), str(o2), str(R))
 
 global new_image_san
 
@@ -272,46 +263,82 @@ def doneStroke(event):
 def create_random_line(assessment):
     global line
 
-    blocks = 400
-    print(blocks)
     if img_selection == 1:
-        if assessment > 0 and assessment <= blocks:
-            x1, y1, x2, y2 = random.randint(475, 525), random.randint(56, 124), \
-                             random.randint(475, 525), random.randint(750, 800)
+        if assessment > 0 and assessment < 200:
+            x1, y1, x2, y2 = random.randint(466, 500), random.randint(80, 90), \
+                             random.randint(466, 500), random.randint(460, 500)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
-        elif assessment > blocks and assessment <= 200+blocks:
-            x1, y1, x2, y2 = random.randint(275, 325), random.randint(92, 148), \
-                             random.randint(275, 325), random.randint(750, 800)
+        elif assessment >= 200 and assessment < 400:
+            x1, y1, x2, y2 = random.randint(416, 465), random.randint(80, 90), \
+                             random.randint(416, 465), random.randint(460, 500)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        elif assessment >= 400 and assessment < 600:
+            x1, y1, x2, y2 = random.randint(368, 415), random.randint(80, 90), \
+                             random.randint(368, 415), random.randint(520, 530)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        elif assessment >= 600 and assessment < 800:
+            x1, y1, x2, y2 = random.randint(334, 367), random.randint(80, 90), \
+                             random.randint(334, 367), random.randint(530, 535)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        elif assessment >= 800 and assessment < 1000:
+            x1, y1, x2, y2 = random.randint(300, 333), random.randint(80, 90), \
+                             random.randint(300, 333), random.randint(535, 545)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
         else:
-            x1, y1, x2, y2 = random.randint(75, 125), random.randint(242, 350), \
-                             random.randint(75, 125), random.randint(800, 1000)
+            x1, y1, x2, y2 = random.randint(278, 301), random.randint(80, 90), \
+                             random.randint(278, 301), random.randint(545, 550)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+
     elif img_selection == 2:
-        if assessment > 0 and assessment <= blocks:
-            x1, y1, x2, y2 = random.randint(625, 675), random.randint(56, 124), \
-                             random.randint(625, 675), random.randint(750, 800)
+        if assessment > 0 and assessment < 200:
+            x1, y1, x2, y2 = random.randint(547, 580), random.randint(90, 95), \
+                             random.randint(547, 580), random.randint(600, 630)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
-        elif assessment > blocks and assessment <= 200 + blocks:
-            x1, y1, x2, y2 = random.randint(525, 575), random.randint(92, 148), \
-                             random.randint(525, 575), random.randint(750, 800)
+        elif assessment >= 200 and assessment < 400:
+            x1, y1, x2, y2 = random.randint(508, 548), random.randint(90, 95), \
+                             random.randint(508, 548), random.randint(600, 630)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        elif assessment >= 400 and assessment < 600:
+            x1, y1, x2, y2 = random.randint(478, 509), random.randint(90, 95), \
+                             random.randint(478, 509), random.randint(600, 630)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        elif assessment >= 600 and assessment < 800:
+            x1, y1, x2, y2 = random.randint(444, 479), random.randint(90, 95), \
+                             random.randint(444, 479), random.randint(600, 630)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        elif assessment >= 800 and assessment < 1000:
+            x1, y1, x2, y2 = random.randint(403, 445), random.randint(90, 95), \
+                             random.randint(403, 445), random.randint(600, 630)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
         else:
-            x1, y1, x2, y2 = random.randint(325, 475), random.randint(100, 200), \
-                             random.randint(325, 475), random.randint(800, 1000)
+            x1, y1, x2, y2 = random.randint(370, 404), random.randint(90, 95), \
+                             random.randint(370, 404), random.randint(600, 630)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+
     else:
-        if assessment > 0 and assessment <= blocks:
-            x1, y1, x2, y2 = random.randint(750, 800), random.randint(56, 124), \
-                             random.randint(750, 800), random.randint(750, 800)
+        if assessment > 0 and assessment < 200:
+            x1, y1, x2, y2 = random.randint(687, 720), random.randint(30, 35), \
+                             random.randint(687, 720), random.randint(480, 485)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
-        elif assessment > blocks and assessment <= 200 + blocks:
-            x1, y1, x2, y2 = random.randint(650, 700), random.randint(92, 148), \
-                             random.randint(650, 700), random.randint(750, 800)
+        elif assessment >= 200 and assessment < 400:
+            x1, y1, x2, y2 = random.randint(649, 686), random.randint(30, 35), \
+                             random.randint(649, 686), random.randint(480, 485)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        elif assessment >= 400 and assessment < 600:
+            x1, y1, x2, y2 = random.randint(605, 648), random.randint(30, 35), \
+                             random.randint(605, 648), random.randint(480, 485)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        elif assessment >= 600 and assessment < 800:
+            x1, y1, x2, y2 = random.randint(567, 604), random.randint(30, 35), \
+                             random.randint(567, 604), random.randint(480, 485)
+            line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
+        elif assessment >= 800 and assessment < 1000:
+            x1, y1, x2, y2 = random.randint(529, 566), random.randint(30, 35), \
+                             random.randint(529, 566), random.randint(480, 485)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
         else:
-            x1, y1, x2, y2 = random.randint(550, 600), random.randint(50, 100), \
-                             random.randint(550, 600), random.randint(800, 1000)
+            x1, y1, x2, y2 = random.randint(497, 528), random.randint(30, 35), \
+                             random.randint(497, 528), random.randint(480, 485)
             line = canvas.create_line(x1, y1, x2, y2, fill="#00FFFF", width=8, tags='randomcurrentline')
 
 
@@ -327,8 +354,8 @@ def end_spikelet_window():
     x_arc_san_last, y_arc_san_last = x_arc_san[-1], y_arc_san[-1]
     x_arc_san_last, y_arc_san_last = float(round((x_arc_san_last / width_pre_4_san) * width)), \
                                      float(round((y_arc_san_last / height_pre_4_san) * height))
-    print("x_arc_san_0, y_arc_san_0, x_arc_san_last, y_arc_san_last: " + str(x_arc_san_0), str(y_arc_san_0)
-          , str(x_arc_san_last), str(y_arc_san_last))
+    # print("x_arc_san_0, y_arc_san_0, x_arc_san_last, y_arc_san_last: " + str(x_arc_san_0), str(y_arc_san_0)
+    #       , str(x_arc_san_last), str(y_arc_san_last))
     if img_selection == 1:
         myArc = canvas.create_arc(x_arc_san[0], y_arc_san[0], x_arc_san[-1], y_arc_san[-1],
                                       start=63,
@@ -360,14 +387,13 @@ def end_spikelet_window():
                                      float(round((coord2 / width_pre_4_san) * width)), \
                                      float(round((coord3 / height_pre_4_san) * height))
     canvas.coords('manualArcSan', coord0, coord1, coord2, coord3)
+    univarsal_clear()
     Spikelet_Window.destroy()
 
     if r_value == None:
         canvas.bind("<Button-1>", 'none')
         canvas.bind("<B1-Motion>", 'none')
         canvas.bind("<B1-ButtonRelease>", 'none')
-
-
 
 def end_Confirmation_Window():
     global Thin_Answer
@@ -472,7 +498,7 @@ def size_san(event):
     global new_image_san, resized_image_san, canvas_san
 
     width_san, heigth_san = canvas_san.winfo_width(), canvas_san.winfo_height()
-    print('Canvas size:', width_san, 'x', heigth_san)
+    # print('Canvas size:', width_san, 'x', heigth_san)
 
     resized_image_san = palm_img_san.resize((width_san, heigth_san))#, Image.Resampling.LANCZOS)
     new_image_san = ImageTk.PhotoImage(resized_image_san)
@@ -530,19 +556,18 @@ def manual_spikelet_drawing():
     Spikelet_Window.bind("<B3-Motion>", move_san)
 
     # Explain Functionality
-    mouse_use_label = Label(right_top_frame, text="Draw the Cluster Axis \nusing your mouse:", bg="white", font='sans 13 bold')
+    global mouse_use_label
+    mouse_use_label = Label(right_top_frame, text="Please, draw the cluster axis.", bg="white", font='sans 13 bold')
     mouse_use_label.grid(row=0, column=0, pady=5)
 
     separator = Separator(right_top_frame, orient='horizontal')
     separator.grid(row=1, column=0, sticky='nsew')
     global exp_label_san_win_left, exp_label_san_win_right
-    exp_label_san_win_left = Label(right_top_frame, text="Left button - Draw", bg="#CAFF70",
-                                   relief=RIDGE, font='sans 11 bold')
-    exp_label_san_win_left.grid(row=2, column=0, padx=5, pady=5, sticky='w')
+    exp_label_san_win_left = Label(right_top_frame, text="Use left mouse button\nto draw", bg="#a68e9b", font='sans 11 bold')
+    exp_label_san_win_left.grid(row=2, column=0, padx=5, pady=5, sticky='nsew')
 
-    exp_label_san_win_right = Label(right_top_frame, text="Right button - Move Drawing", bg="#CAFF70",
-                                   relief=RIDGE, font='sans 11 bold')
-    exp_label_san_win_right.grid(row=3, column=0, padx=5, pady=5, sticky='w')
+    exp_label_san_win_right = Label(right_top_frame, text="Use right mouse button\nto move the drawing", bg="#a68e9b", font='sans 11 bold')
+    exp_label_san_win_right.grid(row=3, column=0, padx=5, pady=5, sticky='nsew')
 
 
     # Exit button
@@ -560,16 +585,18 @@ def manual_spikelet_drawing():
     Spikelet_Window.after(1500, flash, 0)
 
 def flash(count):
-    global exp_label_san_win_left, exp_label_san_win_right
+    global exp_label_san_win_left, exp_label_san_win_right, mouse_use_label
     if count%2 == 0:
-        exp_label_san_win_left.configure(background='green', foreground='white')
-        exp_label_san_win_right.configure(background='green', foreground='white')
+        mouse_use_label.configure(background='green', foreground='white')
+        # exp_label_san_win_left.configure(background='green', foreground='white')
+        # exp_label_san_win_right.configure(background='green', foreground='white')
     else:
-        exp_label_san_win_left.configure(background='#CAFF70', foreground='black')
-        exp_label_san_win_right.configure(background='#CAFF70', foreground='black')
+        mouse_use_label.configure(background='white', foreground='black')
+        # exp_label_san_win_left.configure(background='#a68e9b', foreground='black')
+        # exp_label_san_win_right.configure(background='#a68e9b', foreground='black')
     count += 1
-    if (count < 6):
-        Spikelet_Window.after(700, flash, count)
+    if (count < 8):
+        Spikelet_Window.after(500, flash, count)
 
 def clicked(value):
     global ge, b_submit, b_clear, b_redraw, b_clear_draw, final_confirmation, assessment_afterCut_label, assessment_afterCut_num_label, r_value, b_radio1, b_radio2, border_label, border
@@ -591,8 +618,8 @@ def clicked(value):
         root.bind("<Delete>", check_entry)
         b_submit['state'] = NORMAL
         b_redraw['state'] = NORMAL
-        b_submit['bg'] = '#f0f0f0'
-        b_submit['fg'] = 'black'
+        b_submit['bg'] = 'green'
+        b_submit['fg'] = 'white'
         b_redraw['bg'] = '#4B0082'
         b_redraw['fg'] = 'white'
 
@@ -603,10 +630,10 @@ def clicked(value):
         ge['state'] = NORMAL
         ge.focus()
 
-        b_radio1['bg'], b_radio2['bg'] = 'white', '#CAFF70'
-        marking_explain['bg'], input_explain['bg'] = 'white', '#CAFF70'
+        b_radio1['bg'], b_radio2['bg'] = 'white', '#a68e9b'
+        input_explain1['bg'], input_explain2['bg'] = '#a68e9b', '#a68e9b'
         b_radio1['relief'], b_radio2['relief'] = RAISED, RIDGE
-        marking_explain['relief'], input_explain['relief'] = FLAT, RIDGE
+        input_explain1['relief'], input_explain2['relief'] = RIDGE, RIDGE
 
     else:
         # Forget previous assessment and drawings
@@ -627,7 +654,7 @@ def clicked(value):
 
         # Border Line + Label
         update_parameters()
-        print(border)
+        print("border: " + str(border))
         canvas.create_line(border, 0, border, canvas.winfo_height(), fill="black", dash=(50, 10), width=6, tags='border_line')
         border_label = Label(canvas, text="Fruitlets zone", font='sans 13 bold', bg='#CAFF70', relief=RIDGE)
         border_label.place(x=zone, y=3)
@@ -640,53 +667,79 @@ def clicked(value):
         ge.delete(0, END)
         ge['state'] = DISABLED
 
-        b_radio1['bg'], b_radio2['bg'] = '#CAFF70', 'white'
-        marking_explain['bg'], input_explain['bg'] = '#CAFF70', 'white'
+        b_radio1['bg'], b_radio2['bg'] = '#a68e9b', 'white'
+        input_explain1['bg'], input_explain2['bg'] = 'white', 'white'
         b_radio1['relief'], b_radio2['relief'] = RIDGE, RAISED
-        marking_explain['relief'], input_explain['relief'] = RIDGE, FLAT
+        input_explain1['relief'], input_explain2['relief'] = FLAT, FLAT
 
         b_submit['state'] = DISABLED
+        b_submit['bg'] = '#f0f0f0'
+        b_submit['fg'] = 'black'
         b_redraw['state'] = NORMAL
         b_redraw['bg'] = '#4B0082'
         b_redraw['fg'] = 'white'
 
 def range_calculator(str_opr, assessment):
-    blocks = round(assessment_before / 3)
+    blocks = 200
     if str_opr == 'number':
         if assessment > 0 and assessment < blocks:
-            return random.randint(50, 60)
+            return random.randint(50, 54)
         elif assessment >= blocks and assessment < 2 * blocks:
-            return random.randint(61, 70)
+            return random.randint(55, 59)
+        elif assessment >= 2*blocks and assessment < 3 * blocks:
+            return random.randint(60, 64)
+        elif assessment >= 3*blocks and assessment < 4 * blocks:
+            return random.randint(65, 69)
+        elif assessment >= 4*blocks and assessment < 5 * blocks:
+            return random.randint(70, 74)
         else:
-            return random.randint(71, 80)
+            return random.randint(75, 80)
     else:
         coord1, coord2, coord3, coord4 = assessment[0], assessment[1], assessment[2], assessment[3]
         avg_x, avg_y = (coord1+coord3)/2, (coord2+coord4)/2
         if img_selection == 1:
-            if avg_x <= border and avg_x > 360:
-                return random.randint(50, 60)
-            elif avg_x <= 360 and avg_x > 265:
-                return random.randint(61, 70)
-            elif avg_x <= 265 and avg_x >= 120:
-                return random.randint(71, 80)
+            if avg_x <= border and avg_x > 465:
+                return random.randint(50, 54)
+            elif avg_x <= 465 and avg_x > 415:
+                return random.randint(55, 59)
+            elif avg_x <= 415 and avg_x > 367:
+                return random.randint(60, 64)
+            elif avg_x <= 367 and avg_x > 333:
+                return random.randint(65, 69)
+            elif avg_x <= 333 and avg_x > 300:
+                return random.randint(70, 74)
+            elif avg_x <= 300 and avg_x >= 278:
+                return random.randint(75, 80)
             else:
                 return None
         elif img_selection == 2:
-            if avg_x <= border and avg_x > 430:
-                return random.randint(50, 60)
-            elif avg_x <= 430 and avg_x > 300:
-                return random.randint(61, 70)
-            elif avg_x <= 300 and avg_x >= 100:
-                return random.randint(71, 80)
+            if avg_x <= border and avg_x > 547:
+                return random.randint(50, 54)
+            elif avg_x <= 547 and avg_x > 508:
+                return random.randint(55, 59)
+            elif avg_x <= 508 and avg_x > 478:
+                return random.randint(60, 64)
+            elif avg_x <= 478 and avg_x > 444:
+                return random.randint(65, 69)
+            elif avg_x <= 444 and avg_x > 403:
+                return random.randint(70, 74)
+            elif avg_x <= 403 and avg_x >= 370:
+                return random.randint(75, 80)
             else:
                 return None
         else:
-            if avg_x <= border and avg_x > 578:
-                return random.randint(50, 60)
-            elif avg_x <= 578 and avg_x > 466:
-                return random.randint(61, 70)
-            elif avg_x <= 466 and avg_x >= 365:
-                return random.randint(71, 80)
+            if avg_x <= border and avg_x > 687:
+                return random.randint(50, 54)
+            elif avg_x <= 687 and avg_x > 649:
+                return random.randint(55, 59)
+            elif avg_x <= 649 and avg_x > 605:
+                return random.randint(60, 64)
+            elif avg_x <= 605 and avg_x > 567:
+                return random.randint(65, 69)
+            elif avg_x <= 567 and avg_x > 529:
+                return random.randint(70, 74)
+            elif avg_x <= 529 and avg_x >= 497:
+                return random.randint(75, 80)
             else:
                 return None
 
@@ -703,6 +756,8 @@ def clear_entry():
     assessment_afterCut_num_label['relief'] = FLAT
     assessment_afterCut_num_label['bg'] = 'white'
     b_submit['state'] = NORMAL
+    b_submit['bg'] = 'green'
+    b_submit['fg'] = 'white'
     b_redraw['state'] = NORMAL
     b_redraw['bg'] = '#4B0082'
     b_redraw['fg'] = 'white'
@@ -746,7 +801,7 @@ def submit_entry():
                 Show_2_last_frames()
                 assessment_afterCut_label['text'] = "Expected remaining fruitlets:"
                 assessment_afterCut_label['relief'] = GROOVE
-                assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-50, 50))
+                assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-15, 15))
                 assessment_afterCut_num_label['relief'] = GROOVE
                 assessment_afterCut_num_label['bg'] = '#CAFF70'
                 L_length_range_label_text['text'] = "Spikelets remaining length:"
@@ -759,6 +814,8 @@ def submit_entry():
                 # Random Line
                 create_random_line(int(ge.get()))
                 b_submit['state'] = DISABLED
+                b_submit['bg'] = '#f0f0f0'
+                b_submit['fg'] = 'black'
                 b_redraw['state'] = DISABLED
                 b_redraw['bg'] = '#f0f0f0'
                 b_redraw['fg'] = 'black'
@@ -769,7 +826,7 @@ def submit_entry():
                 Show_2_last_frames()
                 assessment_afterCut_label['text'] = "Expected remaining fruitlets:"
                 assessment_afterCut_label['relief'] = GROOVE
-                assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(0, 75))
+                assessment_afterCut_num_label['text'] = str(int(ge.get()) + random.randint(-15, 15))
                 assessment_afterCut_num_label['relief'] = GROOVE
                 assessment_afterCut_num_label['bg'] = '#CAFF70'
                 L_length_range_label_text['text'] = "Spikelets remaining length:"
@@ -780,6 +837,8 @@ def submit_entry():
                 # Random Line
                 create_random_line(int(ge.get()))
                 b_submit['state'] = DISABLED
+                b_submit['bg'] = '#f0f0f0'
+                b_submit['fg'] = 'black'
                 b_redraw['state'] = DISABLED
                 b_redraw['bg'] = '#f0f0f0'
                 b_redraw['fg'] = 'black'
@@ -830,30 +889,48 @@ def afterCut_calculator(assessment):
     avg_x, avg_y = (coord1 + coord3) / 2, (coord2 + coord4) / 2
     blocks = round(assessment_before / 3)
     if img_selection == 1:
-        if avg_x <= border and avg_x > 360:
-            return random.randint(0, blocks)
-        elif avg_x <= 360 and avg_x > 265:
-            return random.randint(blocks, blocks*2)
-        elif avg_x <= 265 and avg_x >= 120:
-            return random.randint(blocks*2, assessment_before)
+        if avg_x <= border and avg_x > 465:
+            return random.randint(0, 200)
+        elif avg_x <= 465 and avg_x > 415:
+            return random.randint(200, 400)
+        elif avg_x <= 415 and avg_x > 367:
+            return random.randint(400, 600)
+        elif avg_x <= 367 and avg_x > 333:
+            return random.randint(600, 800)
+        elif avg_x <= 333 and avg_x > 300:
+            return random.randint(800, 1000)
+        elif avg_x <= 300 and avg_x >= 278:
+            return random.randint(1000, 1200)
         else:
             return None
     elif img_selection == 2:
-        if avg_x <= border and avg_x > 430:
-            return random.randint(0, blocks)
-        elif avg_x <= 430 and avg_x > 280:
-            return random.randint(blocks, blocks*2)
-        elif avg_x <= 280 and avg_x >= 130:
-            return random.randint(blocks*2, assessment_before)
+        if avg_x <= border and avg_x > 547:
+            return random.randint(0, 200)
+        elif avg_x <= 547 and avg_x > 508:
+            return random.randint(200, 400)
+        elif avg_x <= 508 and avg_x > 478:
+            return random.randint(400, 600)
+        elif avg_x <= 478 and avg_x > 444:
+            return random.randint(600, 800)
+        elif avg_x <= 444 and avg_x > 403:
+            return random.randint(800, 1000)
+        elif avg_x <= 403 and avg_x >= 370:
+            return random.randint(1000, 1200)
         else:
             return None
     else:
-        if avg_x <= border and avg_x > 578:
-            return random.randint(0, blocks)
-        elif avg_x <= 578 and avg_x > 466:
-            return random.randint(blocks, blocks*2)
-        elif avg_x <= 466 and avg_x >= 365:
-            return random.randint(blocks*2, assessment_before)
+        if avg_x <= border and avg_x > 687:
+            return random.randint(0, 200)
+        elif avg_x <= 687 and avg_x > 649:
+            return random.randint(200, 400)
+        elif avg_x <= 649 and avg_x > 605:
+            return random.randint(400, 600)
+        elif avg_x <= 605 and avg_x > 567:
+            return random.randint(600, 800)
+        elif avg_x <= 567 and avg_x > 529:
+            return random.randint(800, 1000)
+        elif avg_x <= 529 and avg_x >= 497:
+            return random.randint(1000, 1200)
         else:
             return None
 
@@ -886,7 +963,7 @@ def done_drawing():
     else:
         Hide_2_last_frames()
         canvas.delete('currentline')
-        messagebox.showwarning("Drawing Error", "Draw only on the fruitlets zone.")
+        messagebox.showwarning("Drawing Error", "Draw only on the fruitlets zone.\n\nOr try to thin less.")
 
 def found_Cluster_Axis():
     # Found
@@ -907,7 +984,7 @@ def redraw_line():
                                          float(round((x2/width_pre_4_line)*width)), float(round((y2/height_pre_4_line)*heigth))
 
         canvas.coords('currentline', x1_new, y1_new, x2_new, y2_new)
-        print("currentline:" + str(canvas.coords('currentline')))
+        # print("currentline:" + str(canvas.coords('currentline')))
 
     elif len(canvas.coords("randomcurrentline")) != 0:
         x1, y1, x2, y2 = canvas.coords("randomcurrentline")[0], canvas.coords("randomcurrentline")[1],\
@@ -924,23 +1001,23 @@ def redraw_rectangle():
     global canvas, rec_x1, rec_y1, rec_x2, rec_y2
     width, height = canvas.winfo_width(), canvas.winfo_height()
 
-    print("startsqaure.coords: " + str(canvas.coords('startsqaure')))
+    # print("startsqaure.coords: " + str(canvas.coords('startsqaure')))
     if cnt > 1 and len(canvas.coords("startsqaure")) != 0:
         if img_selection == 1:
             new_rec_x1, new_rec_y1 = int(width) * 0.7, int(height) * 0.25
             new_rec_x2, new_rec_y2 = int(width)*0.72, int(height)*0.45
             canvas.coords('startsqaure', new_rec_x1, new_rec_y1, new_rec_x2, new_rec_y2)
-            print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
+            # print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
         elif img_selection == 2:
             new_rec_x1, new_rec_y1 = int(width) * 0.82, int(height) * 0.52
             new_rec_x2, new_rec_y2 = int(width) * 0.84, int(height) * 0.62
             canvas.coords('startsqaure', new_rec_x1, new_rec_y1, new_rec_x2, new_rec_y2)
-            print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
+            # print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
         else:
             new_rec_x1, new_rec_y1 = int(width) * 0.84, int(height) * 0.25
             new_rec_x2, new_rec_y2 = int(width) * 0.865, int(height) * 0.38
             canvas.coords('startsqaure', new_rec_x1, new_rec_y1, new_rec_x2, new_rec_y2)
-            print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
+            # print("startsqaure.coords after: " + str(canvas.coords('startsqaure')))
     else:
         pass
 
@@ -948,7 +1025,7 @@ def redraw_arc():
     global canvas, R, o1, o2, found
     width, heigth = canvas.winfo_width(), canvas.winfo_height()
     if found == True and len(points_san) == 0:
-        print("width, heigth:" + str(width), str(heigth))
+        # print("width, heigth:" + str(width), str(heigth))
         if width_pre_4_line > 1 and height_pre_4_line > 1:
             canvas.delete('currentArc')
             update_parameters()
@@ -1009,7 +1086,7 @@ def size(event):
     global new_image, resized_image, canvas
 
     width, heigth = canvas.winfo_width(), canvas.winfo_height()
-    print('Canvas size:', width, 'x', heigth)
+    # print('Canvas size:', width, 'x', heigth)
 
     resized_image = palm_img.resize((width, heigth))#, Image.Resampling.LANCZOS)
     new_image = ImageTk.PhotoImage(resized_image)
@@ -1134,34 +1211,38 @@ r = StringVar()
 r.set("None")
 
 b_radio1 = Radiobutton(top2_right_frame, text=" Manual marking", font='sans 11 bold', relief=RAISED, variable=r, value="Manual marking", command=lambda : clicked(r.get()), bg='white')
-b_radio2 = Radiobutton(top2_right_frame, text=" Input of amount\n(that will remain)", font='sans 11 bold', relief=RAISED, variable=r, value="Input of amount", command=lambda : clicked(r.get()), bg='white')
+b_radio2 = Radiobutton(top2_right_frame, text=" Input amount\n(that will remain)", font='sans 11 bold', relief=RAISED, variable=r, value="Input of amount", command=lambda : clicked(r.get()), bg='white')
 
-b_radio1.grid(row=2, column=0)
+b_radio1.grid(row=2, column=0, pady=15)
 separator1 = Separator(top2_right_frame, orient='horizontal')
 separator1.grid(row=4, column=0, sticky='nsew', pady=(0, 15))
-b_radio2.grid(row=5, column=0, padx=5)
+b_radio2.grid(row=5, column=0, padx=5, pady=(0, 15))
+
+# # marking explain
+# marking_explain = Label(top2_right_frame, text="* Using the left mouse button,\ndraw a line.",
+#                         font='sans 12', bg='white')
+# marking_explain.grid(row=3, column=0, pady=10, sticky='nsew')
 
 # marking explain
-marking_explain = Label(top2_right_frame, text="* Using the left mouse button,\ndraw a line.",
-                        font='sans 12', bg='white')
-marking_explain.grid(row=3, column=0, pady=10, sticky='nsew')
+input_explain1 = Label(top2_right_frame, text="Type in a number: ", font='sans 11 bold', bg='white')
+input_explain1.grid(row=6, column=0, padx=(5, 110))
+input_explain2 = Label(top2_right_frame, text="[ 400 - 1200 ]", font='sans 11 bold', bg='white')
+# input_explain2.grid(row=7, column=0, padx=(0, 110))
+input_explain2.grid(row=7, column=0, padx=10, sticky="e")
 
-# marking explain
-input_explain = Label(top2_right_frame, text="* Type in a number: ", font='sans 12', bg='white')
-input_explain.grid(row=6, column=0, padx=(0, 110), pady=10, sticky='nsew')
 # Input Box DISABLED
-ge = Entry(top2_right_frame, width=10, borderwidth=2, font='sans 11 bold', state=DISABLED)
-ge.grid(row=6, column=0, padx=10, pady=15, sticky="e")
+ge = Entry(top2_right_frame, width=11, borderwidth=2, font='sans 11 bold', state=DISABLED)
+ge.grid(row=6, column=0, padx=10, pady=10, sticky="e")
 
-# separator2 = Separator(top2_right_frame, orient='horizontal')
-# separator2.grid(row=7, column=0, sticky='nsew')
+separator2 = Separator(top2_right_frame, orient='horizontal')
+separator2.grid(row=8, column=0, pady=(15, 0), sticky='nsew')
 # Univarsal Continue button
 b_submit = Button(top2_right_frame, text="Continue", font='sans 11 bold', command=univarsal_continue, state=DISABLED)
-b_submit.grid(row=8, column=0, padx=50, pady=5, sticky="w")
+b_submit.grid(row=9, column=0, padx=50, pady=5, sticky="w")
 
 # Univarsal Clear button
 b_clear = Button(top2_right_frame, text="Clear", font='sans 11 bold', command=univarsal_clear, state=DISABLED)
-b_clear.grid(row=8, column=0, padx=50, pady=10, sticky="e")
+b_clear.grid(row=9, column=0, padx=50, pady=10, sticky="e")
 
 ##--------------------------Right Top 3 Frame-------------------------##
 
